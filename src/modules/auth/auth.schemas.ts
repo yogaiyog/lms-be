@@ -1,4 +1,4 @@
-import { Category, Role } from "@prisma/client";
+import { Category, Role } from "../../types/enums";
 import { z } from "zod";
 
 export const registerSchema = z.object({

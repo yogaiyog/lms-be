@@ -1,4 +1,4 @@
-import { Category } from "@prisma/client";
+import { Category } from "../../types/enums";
 import { z } from "zod";
 
 export const classCreateSchema = z.object({

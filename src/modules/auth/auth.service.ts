@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Category, type User } from "@prisma/client";
+import type { User } from "@prisma/client";
+import { Category, Role } from "../../types/enums";
 import { randomUUID } from "node:crypto";
 import { env } from "../../config/env";
 import { prisma } from "../../lib/prisma";
@@ -62,7 +63,7 @@ function signAccessToken(user: Pick<User, "id" | "email" | "role">) {
   const payload: JwtAccessPayload = {
     sub: user.id,
     email: user.email,
-    role: user.role,
+    role: user.role as Role,
   };
 
   const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET, {

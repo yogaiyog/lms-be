@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import { env } from "../../config/env";
 import { unauthorized, forbidden } from "./auth.errors";
 import type { JwtAccessPayload } from "./auth.types";
-import { Role } from "@prisma/client";
+import { Role } from "../../types/enums";
 
 export function authenticate(req: Request, _res: Response, next: NextFunction) {
   const header = req.header("authorization");

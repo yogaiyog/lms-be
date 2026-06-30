@@ -1,4 +1,4 @@
-import { DayOfWeek } from "@prisma/client";
+import { DayOfWeek } from "../../types/enums";
 import { z } from "zod";
 
 export const scheduleCreateSchema = z.object({

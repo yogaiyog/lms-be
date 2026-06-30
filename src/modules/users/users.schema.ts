@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Role } from "../../types/enums";
 import { z } from "zod";
 
 export const userCreateSchema = z.object({

@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -7,42 +7,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Role {
-  ADMIN
-  TUTOR
-  PARENT
-  STUDENT
-}
-
-enum Category {
-  KIDS
-  JUNIOR_I
-  JUNIOR_II
-}
-
-enum DayOfWeek {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
-}
-
-enum AttendanceStatus {
-  PRESENT
-  ABSENT
-  LATE
-  SICK
-  PERMISSION
-}
-
 model User {
   id             String           @id @default(uuid())
   email          String           @unique
   password       String
-  role           Role             @default(PARENT)
+  role           String           @default("PARENT") // ADMIN | TUTOR | PARENT | STUDENT
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   parentProfile  ParentProfile?
@@ -82,7 +51,7 @@ model StudentProfile {
   nickname      String
   birthDate     DateTime
   avatarUrl     String?
-  category      Category
+  category      String         // KIDS | JUNIOR_I | JUNIOR_II
   totalXp       Int            @default(0)
   currentStreak Int            @default(0)
   lastActive    DateTime?
@@ -94,7 +63,7 @@ model StudentProfile {
 model Class {
   id            String         @id @default(uuid())
   name          String
-  category      Category
+  category      String         // KIDS | JUNIOR_I | JUNIOR_II
   tutorId       String
   tutor         TutorProfile   @relation(fields: [tutorId], references: [id])
   isActive      Boolean        @default(true)
@@ -120,7 +89,7 @@ model Schedule {
   id          String      @id @default(uuid())
   classId     String
   class       Class       @relation(fields: [classId], references: [id], onDelete: Cascade)
-  dayOfWeek   DayOfWeek
+  dayOfWeek   String      // MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY
   startTime   String
   endTime     String
   meetLink    String
@@ -129,15 +98,15 @@ model Schedule {
 }
 
 model Attendance {
-  id         String           @id @default(uuid())
+  id         String  @id @default(uuid())
   scheduleId String
-  schedule   Schedule         @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   studentId  String
-  student    StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student    StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
   date       DateTime
-  status     AttendanceStatus @default(PRESENT)
+  status     String  @default("PRESENT") // PRESENT | ABSENT | LATE | SICK | PERMISSION
   notes      String?
-  createdAt  DateTime         @default(now())
+  createdAt  DateTime @default(now())
 
   @@unique([scheduleId, studentId, date])
 }
@@ -149,7 +118,7 @@ model Announcement {
   tutorId   String
   tutor     TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   title     String
-  content   String       @db.Text
+  content   String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 }
@@ -175,11 +144,11 @@ model StudentBadge {
 }
 
 model RefreshToken {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   familyId      String
-  tokenHash     String   @unique
+  tokenHash     String    @unique
   deviceId      String?
   deviceName    String?
   userAgent     String?
@@ -187,8 +156,8 @@ model RefreshToken {
   revokedAt     DateTime?
   lastUsedAt    DateTime?
   expiresAt     DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([userId])
   @@index([familyId])
