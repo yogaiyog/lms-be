@@ -37,8 +37,11 @@ model TutorProfile {
   phone         String
   bio           String?
   avatarUrl     String?
+  dayoff1       Int?            // 0=Mon..6=Sun
+  dayoff2       Int?            // 0=Mon..6=Sun
   classes       Class[]
   announcements Announcement[]
+  slots         TutorSlot[]
 }
 
 model StudentProfile {
@@ -72,6 +75,7 @@ model Class {
   enrollments   Enrollment[]
   schedules     Schedule[]
   announcements Announcement[]
+  curriculum    Curriculum?
 }
 
 model Enrollment {
@@ -94,7 +98,21 @@ model Schedule {
   endTime     String
   meetLink    String
   topic       String?
+  topicId     String?
+  topicRef    Topic?      @relation(fields: [topicId], references: [id])
   attendances Attendance[]
+}
+
+model TutorSlot {
+  id          String        @id @default(uuid())
+  tutorId     String
+  tutor       TutorProfile  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  dayOfWeek   String        // MONDAY..SUNDAY
+  startTime   String        // "09:00"
+  endTime     String        // "10:00"
+  createdAt   DateTime      @default(now())
+
+  @@unique([tutorId, dayOfWeek, startTime])
 }
 
 model Attendance {
@@ -121,6 +139,31 @@ model Announcement {
   content   String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
+}
+
+model Curriculum {
+  id        String   @id @default(uuid())
+  classId   String   @unique
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  name      String
+  topics    Topic[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Topic {
+  id                 String     @id @default(uuid())
+  curriculumId       String
+  curriculum         Curriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+  title              String
+  materialLink       String?
+  exampleProjectLink String?
+  goals              String?
+  tools              String?
+  order              Int        @default(0)
+  schedules          Schedule[]
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 }
 
 model Badge {

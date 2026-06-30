@@ -30,6 +30,8 @@ async function main() {
           phone: "081234567890",
           bio: "Tutor Scratch & Web Development untuk anak-anak",
           avatarUrl: null,
+          dayoff1: 1, // Tuesday
+          dayoff2: 3, // Thursday
         },
       },
     },
@@ -46,6 +48,8 @@ async function main() {
           phone: "081234567891",
           bio: "Tutor Python & Game Development",
           avatarUrl: null,
+          dayoff1: 0, // Monday
+          dayoff2: 2, // Wednesday
         },
       },
     },
@@ -231,6 +235,86 @@ async function main() {
   });
   console.log("✓ Enrollments created");
 
+  // === CURRICULUMS & TOPICS ===
+  const scratchTopics = [
+    { title: "Apa itu Coding? & Pengenalan Scratch", materialLink: "https://docs.google.com/presentation/d/scratch1", exampleProjectLink: "https://scratch.mit.edu/projects/example1", goals: "Memahami konsep dasar coding dan interface Scratch", tools: "Browser, Scratch Editor" },
+    { title: "Gerakan Dasar & Koordinat", materialLink: "https://docs.google.com/presentation/d/scratch2", exampleProjectLink: "https://scratch.mit.edu/projects/example2", goals: "Mengerti sistem koordinat dan blok gerakan", tools: "Scratch Editor" },
+    { title: "Event & Trigger", materialLink: "https://docs.google.com/presentation/d/scratch3", exampleProjectLink: "https://scratch.mit.edu/projects/example3", goals: "Memahami event-driven programming", tools: "Scratch Editor" },
+    { title: "Variable & Data", materialLink: "https://docs.google.com/presentation/d/scratch4", exampleProjectLink: "https://scratch.mit.edu/projects/example4", goals: "Mengerti konsep variable dan penggunaannya", tools: "Scratch Editor" },
+    { title: "Looping: Ulangi & Forever", materialLink: "https://docs.google.com/presentation/d/scratch5", exampleProjectLink: "https://scratch.mit.edu/projects/example5", goals: "Memahami perulangan dalam Scratch", tools: "Scratch Editor" },
+    { title: "Conditional: If-Then-Else", materialLink: "https://docs.google.com/presentation/d/scratch6", exampleProjectLink: "https://scratch.mit.edu/projects/example6", goals: "Memahami percabangan dalam Scratch", tools: "Scratch Editor" },
+    { title: "Animasi Sederhana", materialLink: "https://docs.google.com/presentation/d/scratch7", exampleProjectLink: "https://scratch.mit.edu/projects/example7", goals: "Membuat animasi dengan costume dan backdrop", tools: "Scratch Editor" },
+    { title: "Suara & Multimedia", materialLink: "https://docs.google.com/presentation/d/scratch8", exampleProjectLink: "https://scratch.mit.edu/projects/example8", goals: "Menambahkan suara dan efek multimedia", tools: "Scratch Editor" },
+    { title: "Game Sederhana: Catch Game", materialLink: "https://docs.google.com/presentation/d/scratch9", exampleProjectLink: "https://scratch.mit.edu/projects/example9", goals: "Membuat game tangkap objek", tools: "Scratch Editor" },
+    { title: "Game: Maze Runner", materialLink: "https://docs.google.com/presentation/d/scratch10", exampleProjectLink: "https://scratch.mit.edu/projects/example10", goals: "Membuat game labirin dengan timer", tools: "Scratch Editor" },
+    { title: "Project Akhir: Animasi Cerita", materialLink: "https://docs.google.com/presentation/d/scratch11", exampleProjectLink: "https://scratch.mit.edu/projects/example11", goals: "Membuat animasi cerita interaktif", tools: "Scratch Editor" },
+    { title: "Presentasi & Sharing Project", materialLink: "https://docs.google.com/presentation/d/scratch12", exampleProjectLink: null, goals: "Mempresentasikan project ke teman-teman", tools: "Scratch Editor, Zoom" },
+  ];
+
+  const pythonTopics = [
+    { title: "Apa itu Python? & Instalasi", materialLink: "https://docs.google.com/presentation/d/py1", exampleProjectLink: "https://github.com/example/python1", goals: "Menginstall Python dan menjalankan program pertama", tools: "Python, VS Code" },
+    { title: "Variable & Tipe Data", materialLink: "https://docs.google.com/presentation/d/py2", exampleProjectLink: "https://github.com/example/python2", goals: "Memahami tipe data: string, integer, float, boolean", tools: "Python, VS Code" },
+    { title: "Input, Output & String Manipulation", materialLink: "https://docs.google.com/presentation/d/py3", exampleProjectLink: "https://github.com/example/python3", goals: "Membuat program interaktif dengan input/output", tools: "Python, VS Code" },
+    { title: "List & Tuple", materialLink: "https://docs.google.com/presentation/d/py4", exampleProjectLink: "https://github.com/example/python4", goals: "Memahami struktur data list dan tuple", tools: "Python, VS Code" },
+    { title: "Dictionary & Set", materialLink: "https://docs.google.com/presentation/d/py5", exampleProjectLink: "https://github.com/example/python5", goals: "Memahami dictionary dan set", tools: "Python, VS Code" },
+    { title: "Loop: For & While", materialLink: "https://docs.google.com/presentation/d/py6", exampleProjectLink: "https://github.com/example/python6", goals: "Memahami perulangan for dan while", tools: "Python, VS Code" },
+    { title: "Conditionals: If-Elif-Else", materialLink: "https://docs.google.com/presentation/d/py7", exampleProjectLink: "https://github.com/example/python7", goals: "Membuat program dengan percabangan", tools: "Python, VS Code" },
+    { title: "Functions", materialLink: "https://docs.google.com/presentation/d/py8", exampleProjectLink: "https://github.com/example/python8", goals: "Membuat dan menggunakan fungsi", tools: "Python, VS Code" },
+    { title: "Error Handling & Debugging", materialLink: "https://docs.google.com/presentation/d/py9", exampleProjectLink: "https://github.com/example/python9", goals: "Memahami try-except dan debugging", tools: "Python, VS Code" },
+    { title: "File I/O", materialLink: "https://docs.google.com/presentation/d/py10", exampleProjectLink: "https://github.com/example/python10", goals: "Membaca dan menulis file", tools: "Python, VS Code" },
+    { title: "Project: Calculator App", materialLink: "https://docs.google.com/presentation/d/py11", exampleProjectLink: "https://github.com/example/python11", goals: "Membuat aplikasi kalkulator", tools: "Python, VS Code" },
+    { title: "Project Akhir: Simple Game", materialLink: "https://docs.google.com/presentation/d/py12", exampleProjectLink: "https://github.com/example/python12", goals: "Membuat game sederhana dengan Python", tools: "Python, VS Code" },
+  ];
+
+  const webTopics = [
+    { title: "How Internet Works & Web Basics", materialLink: "https://docs.google.com/presentation/d/web1", exampleProjectLink: "https://github.com/example/web1", goals: "Memahami cara kerja internet dan web", tools: "Browser, VS Code" },
+    { title: "HTML Fundamentals: Tags & Structure", materialLink: "https://docs.google.com/presentation/d/web2", exampleProjectLink: "https://github.com/example/web2", goals: "Membuat struktur halaman HTML dasar", tools: "VS Code, Browser" },
+    { title: "HTML Forms & Tables", materialLink: "https://docs.google.com/presentation/d/web3", exampleProjectLink: "https://github.com/example/web3", goals: "Membuat form dan tabel HTML", tools: "VS Code, Browser" },
+    { title: "CSS Fundamentals: Selectors & Properties", materialLink: "https://docs.google.com/presentation/d/web4", exampleProjectLink: "https://github.com/example/web4", goals: "Memahami CSS selectors dan properties", tools: "VS Code, Browser" },
+    { title: "CSS Box Model & Layout", materialLink: "https://docs.google.com/presentation/d/web5", exampleProjectLink: "https://github.com/example/web5", goals: "Memahami box model, margin, padding, border", tools: "VS Code, Browser" },
+    { title: "CSS Flexbox", materialLink: "https://docs.google.com/presentation/d/web6", exampleProjectLink: "https://github.com/example/web6", goals: "Layout dengan Flexbox", tools: "VS Code, Browser" },
+    { title: "CSS Grid", materialLink: "https://docs.google.com/presentation/d/web7", exampleProjectLink: "https://github.com/example/web7", goals: "Layout dengan CSS Grid", tools: "VS Code, Browser" },
+    { title: "Responsive Design & Media Queries", materialLink: "https://docs.google.com/presentation/d/web8", exampleProjectLink: "https://github.com/example/web8", goals: "Membuat website responsive", tools: "VS Code, Browser" },
+    { title: "CSS Animations & Transitions", materialLink: "https://docs.google.com/presentation/d/web9", exampleProjectLink: "https://github.com/example/web9", goals: "Menambahkan animasi CSS", tools: "VS Code, Browser" },
+    { title: "Git & GitHub Basics", materialLink: "https://docs.google.com/presentation/d/web10", exampleProjectLink: "https://github.com/example/web10", goals: "Mengenal Git untuk version control", tools: "Git, GitHub, VS Code" },
+    { title: "Project: Landing Page", materialLink: "https://docs.google.com/presentation/d/web11", exampleProjectLink: "https://github.com/example/web11", goals: "Membuat landing page responsif", tools: "VS Code, Browser, Git" },
+    { title: "Project Akhir: Portfolio Website", materialLink: "https://docs.google.com/presentation/d/web12", exampleProjectLink: "https://github.com/example/web12", goals: "Membuat website portfolio pribadi", tools: "VS Code, Browser, Git, GitHub Pages" },
+  ];
+
+  const curriculum1 = await prisma.curriculum.create({
+    data: {
+      classId: class1.id,
+      name: "Kurikulum Scratch Adventurer 2026",
+      topics: {
+        create: scratchTopics.map((t, i) => ({ ...t, order: i })),
+      },
+    },
+    include: { topics: true },
+  });
+
+  const curriculum2 = await prisma.curriculum.create({
+    data: {
+      classId: class2.id,
+      name: "Kurikulum Python Explorer 2026",
+      topics: {
+        create: pythonTopics.map((t, i) => ({ ...t, order: i })),
+      },
+    },
+    include: { topics: true },
+  });
+
+  const curriculum3 = await prisma.curriculum.create({
+    data: {
+      classId: class3.id,
+      name: "Kurikulum Web Dev Warrior 2026",
+      topics: {
+        create: webTopics.map((t, i) => ({ ...t, order: i })),
+      },
+    },
+    include: { topics: true },
+  });
+  console.log("✓ Curriculums & Topics created");
+
   // === SCHEDULES ===
   const schedule1 = await prisma.schedule.create({
     data: {
@@ -239,7 +323,8 @@ async function main() {
       startTime: "09:00",
       endTime: "10:30",
       meetLink: "https://meet.google.com/abc-defg-hij",
-      topic: "Membuat Animasi Interaktif di Scratch",
+      topic: scratchTopics[0].title,
+      topicId: curriculum1.topics[0].id,
     },
   });
 
@@ -250,7 +335,8 @@ async function main() {
       startTime: "15:00",
       endTime: "16:00",
       meetLink: "https://meet.google.com/xyz-uvwx-rst",
-      topic: "Quiz: Variabel dan Event",
+      topic: scratchTopics[3].title,
+      topicId: curriculum1.topics[3].id,
     },
   });
 
@@ -261,7 +347,8 @@ async function main() {
       startTime: "10:30",
       endTime: "12:00",
       meetLink: "https://meet.google.com/jkl-mnop-qrs",
-      topic: "Loop dan Conditionals di Python",
+      topic: pythonTopics[5].title,
+      topicId: curriculum2.topics[5].id,
     },
   });
 
@@ -272,10 +359,37 @@ async function main() {
       startTime: "13:00",
       endTime: "15:00",
       meetLink: "https://meet.google.com/tuv-wxya-bcd",
-      topic: "HTML & CSS Fundamentals",
+      topic: webTopics[1].title,
+      topicId: curriculum3.topics[1].id,
     },
   });
   console.log("✓ Schedules created");
+
+  // === TUTOR SLOTS (1-hour slots, hanya dalam range yg diizinkan) ===
+  async function createDefaultSlots(tutorId: string) {
+    const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+    const data: { tutorId: string; dayOfWeek: string; startTime: string; endTime: string }[] = [];
+
+    for (let d = 0; d < 7; d++) {
+      const isWeekend = d >= 5;
+      const startHour = isWeekend ? 9 : 15;
+      for (let h = startHour; h < 21; h++) {
+        data.push({
+          tutorId,
+          dayOfWeek: days[d],
+          startTime: `${String(h).padStart(2, "0")}:00`,
+          endTime: `${String(h + 1).padStart(2, "0")}:00`,
+        });
+      }
+    }
+
+    await prisma.tutorSlot.createMany({ data });
+    return data.length;
+  }
+
+  const budiSlots = await createDefaultSlots(tutor1.id);
+  const sariSlots = await createDefaultSlots(tutor2.id);
+  console.log(`✓ Tutor slots created (Budi: ${budiSlots}, Sari: ${sariSlots})`);
 
   // === ATTENDANCES ===
   const now = new Date();
@@ -439,6 +553,7 @@ async function main() {
   console.log("Parents:     andi.parent@lms.com, maya.parent@lms.com");
   console.log("Students:    rafa.student@lms.com, luna.student@lms.com,");
   console.log("             ardhi.student@lms.com, nisa.student@lms.com");
+  console.log("Curriculums: Scratch Adventurer (12 topics), Python Explorer (12 topics), Web Dev Warrior (12 topics)");
   console.log("Password:    password123 (all accounts)");
   console.log("--------------------\n");
 }
