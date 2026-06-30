@@ -1,0 +1,196 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  TUTOR
+  PARENT
+  STUDENT
+}
+
+enum Category {
+  KIDS
+  JUNIOR_I
+  JUNIOR_II
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  SICK
+  PERMISSION
+}
+
+model User {
+  id             String           @id @default(uuid())
+  email          String           @unique
+  password       String
+  role           Role             @default(PARENT)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  parentProfile  ParentProfile?
+  tutorProfile   TutorProfile?
+  studentProfile StudentProfile?
+  refreshTokens  RefreshToken[]
+}
+
+model ParentProfile {
+  id       String           @id @default(uuid())
+  userId   String           @unique
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName String
+  phone    String
+  students StudentProfile[]
+}
+
+model TutorProfile {
+  id            String          @id @default(uuid())
+  userId        String          @unique
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName      String
+  phone         String
+  bio           String?
+  avatarUrl     String?
+  classes       Class[]
+  announcements Announcement[]
+}
+
+model StudentProfile {
+  id            String         @id @default(uuid())
+  userId        String         @unique
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId      String
+  parent        ParentProfile  @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  fullName      String
+  nickname      String
+  birthDate     DateTime
+  avatarUrl     String?
+  category      Category
+  totalXp       Int            @default(0)
+  currentStreak Int            @default(0)
+  lastActive    DateTime?
+  enrollments   Enrollment[]
+  attendances   Attendance[]
+  badgeLogs     StudentBadge[]
+}
+
+model Class {
+  id            String         @id @default(uuid())
+  name          String
+  category      Category
+  tutorId       String
+  tutor         TutorProfile   @relation(fields: [tutorId], references: [id])
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  enrollments   Enrollment[]
+  schedules     Schedule[]
+  announcements Announcement[]
+}
+
+model Enrollment {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId   String
+  class     Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
+  joinedAt  DateTime       @default(now())
+
+  @@unique([studentId, classId])
+}
+
+model Schedule {
+  id          String      @id @default(uuid())
+  classId     String
+  class       Class       @relation(fields: [classId], references: [id], onDelete: Cascade)
+  dayOfWeek   DayOfWeek
+  startTime   String
+  endTime     String
+  meetLink    String
+  topic       String?
+  attendances Attendance[]
+}
+
+model Attendance {
+  id         String           @id @default(uuid())
+  scheduleId String
+  schedule   Schedule         @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  studentId  String
+  student    StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date       DateTime
+  status     AttendanceStatus @default(PRESENT)
+  notes      String?
+  createdAt  DateTime         @default(now())
+
+  @@unique([scheduleId, studentId, date])
+}
+
+model Announcement {
+  id        String       @id @default(uuid())
+  classId   String
+  class     Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
+  tutorId   String
+  tutor     TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  title     String
+  content   String       @db.Text
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Badge {
+  id            String         @id @default(uuid())
+  title         String
+  description   String
+  imageUrl      String
+  xpBonus       Int            @default(0)
+  studentBadges StudentBadge[]
+}
+
+model StudentBadge {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge          @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt  DateTime       @default(now())
+
+  @@unique([studentId, badgeId])
+}
+
+model RefreshToken {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyId      String
+  tokenHash     String   @unique
+  deviceId      String?
+  deviceName    String?
+  userAgent     String?
+  ipAddress     String?
+  revokedAt     DateTime?
+  lastUsedAt    DateTime?
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+}
