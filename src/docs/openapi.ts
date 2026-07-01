@@ -634,8 +634,8 @@ const swaggerDoc: OpenAPIV3.Document = {
   },
   servers: [
     {
-      url: "http://localhost:4000",
-      description: "Local development",
+      url: "/api/v1",
+      description: "API server (same origin)",
     },
   ],
   tags: [
