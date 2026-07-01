@@ -112,7 +112,7 @@ async function main() {
           fullName: "Rafa Pratama",
           nickname: "Rafa",
           birthDate: new Date("2016-05-15"),
-          category: "KIDS",
+          category: "JUNIOR_I",
           totalXp: 350,
           currentStreak: 5,
           lastActive: new Date(),
@@ -132,7 +132,7 @@ async function main() {
           fullName: "Luna Pratama",
           nickname: "Luna",
           birthDate: new Date("2014-08-20"),
-          category: "JUNIOR_I",
+          category: "JUNIOR_II",
           totalXp: 720,
           currentStreak: 12,
           lastActive: new Date(),
@@ -152,7 +152,7 @@ async function main() {
           fullName: "Ardhi Saputra",
           nickname: "Ardhi",
           birthDate: new Date("2012-03-10"),
-          category: "JUNIOR_II",
+          category: "JUNIOR_III",
           totalXp: 1250,
           currentStreak: 20,
           lastActive: new Date(),
@@ -172,10 +172,29 @@ async function main() {
           fullName: "Nisa Saputra",
           nickname: "Nisa",
           birthDate: new Date("2017-11-05"),
-          category: "KIDS",
+          category: "JUNIOR_I",
           totalXp: 180,
           currentStreak: 2,
           lastActive: new Date(),
+        },
+      },
+    },
+  });
+  // Student tanpa class (untuk test flow request class -> baru diassign)
+  const student5User = await prisma.user.create({
+    data: {
+      email: "dito.student@lms.com",
+      password,
+      role: "STUDENT",
+      studentProfile: {
+        create: {
+          parentId: parent2.id,
+          fullName: "Dito Saputra",
+          nickname: "Dito",
+          birthDate: new Date("2015-06-20"),
+          category: "JUNIOR_II",
+          totalXp: 0,
+          currentStreak: 0,
         },
       },
     },
@@ -194,48 +213,11 @@ async function main() {
   const student4 = await prisma.studentProfile.findUniqueOrThrow({
     where: { userId: student4User.id },
   });
-
-  // === CLASSES ===
-  const class1 = await prisma.class.create({
-    data: {
-      name: "Scratch Adventurer - Batch 4",
-      category: "KIDS",
-      tutorId: tutor1.id,
-      isActive: true,
-    },
+  const student5 = await prisma.studentProfile.findUniqueOrThrow({
+    where: { userId: student5User.id },
   });
 
-  const class2 = await prisma.class.create({
-    data: {
-      name: "Python Explorer - Batch 2",
-      category: "JUNIOR_I",
-      tutorId: tutor2.id,
-      isActive: true,
-    },
-  });
-
-  const class3 = await prisma.class.create({
-    data: {
-      name: "Web Dev Warrior - Batch 1",
-      category: "JUNIOR_II",
-      tutorId: tutor1.id,
-      isActive: true,
-    },
-  });
-  console.log("✓ Classes created");
-
-  // === ENROLLMENTS ===
-  await prisma.enrollment.createMany({
-    data: [
-      { studentId: student1.id, classId: class1.id },
-      { studentId: student4.id, classId: class1.id },
-      { studentId: student2.id, classId: class2.id },
-      { studentId: student3.id, classId: class3.id },
-    ],
-  });
-  console.log("✓ Enrollments created");
-
-  // === CURRICULUMS & TOPICS ===
+  // === CURRICULUMS (by category) ===
   const scratchTopics = [
     { title: "Apa itu Coding? & Pengenalan Scratch", materialLink: "https://docs.google.com/presentation/d/scratch1", exampleProjectLink: "https://scratch.mit.edu/projects/example1", goals: "Memahami konsep dasar coding dan interface Scratch", tools: "Browser, Scratch Editor" },
     { title: "Gerakan Dasar & Koordinat", materialLink: "https://docs.google.com/presentation/d/scratch2", exampleProjectLink: "https://scratch.mit.edu/projects/example2", goals: "Mengerti sistem koordinat dan blok gerakan", tools: "Scratch Editor" },
@@ -281,10 +263,10 @@ async function main() {
     { title: "Project Akhir: Portfolio Website", materialLink: "https://docs.google.com/presentation/d/web12", exampleProjectLink: "https://github.com/example/web12", goals: "Membuat website portfolio pribadi", tools: "VS Code, Browser, Git, GitHub Pages" },
   ];
 
-  const curriculum1 = await prisma.curriculum.create({
+  const curriculumJunior1 = await prisma.curriculum.create({
     data: {
-      classId: class1.id,
-      name: "Kurikulum Scratch Adventurer 2026",
+      category: "JUNIOR_I",
+      name: "Scratch Junior",
       topics: {
         create: scratchTopics.map((t, i) => ({ ...t, order: i })),
       },
@@ -292,10 +274,10 @@ async function main() {
     include: { topics: true },
   });
 
-  const curriculum2 = await prisma.curriculum.create({
+  const curriculumJunior2 = await prisma.curriculum.create({
     data: {
-      classId: class2.id,
-      name: "Kurikulum Python Explorer 2026",
+      category: "JUNIOR_II",
+      name: "Python Explorer",
       topics: {
         create: pythonTopics.map((t, i) => ({ ...t, order: i })),
       },
@@ -303,10 +285,10 @@ async function main() {
     include: { topics: true },
   });
 
-  const curriculum3 = await prisma.curriculum.create({
+  const curriculumJunior3 = await prisma.curriculum.create({
     data: {
-      classId: class3.id,
-      name: "Kurikulum Web Dev Warrior 2026",
+      category: "JUNIOR_III",
+      name: "Web Dev Warrior",
       topics: {
         create: webTopics.map((t, i) => ({ ...t, order: i })),
       },
@@ -315,7 +297,139 @@ async function main() {
   });
   console.log("✓ Curriculums & Topics created");
 
+  // === CLASSES ===
+  const class1 = await prisma.class.create({
+    data: {
+      name: "Scratch Junior - Batch 4",
+      category: "JUNIOR_I",
+      tutorId: tutor1.id,
+      curriculumId: curriculumJunior1.id,
+      batch: 4,
+      isActive: true,
+    },
+  });
+
+  const class2 = await prisma.class.create({
+    data: {
+      name: "Python Explorer - Batch 2",
+      category: "JUNIOR_II",
+      tutorId: tutor2.id,
+      curriculumId: curriculumJunior2.id,
+      batch: 2,
+      isActive: true,
+    },
+  });
+
+  const class3 = await prisma.class.create({
+    data: {
+      name: "Web Dev Warrior - Batch 1",
+      category: "JUNIOR_III",
+      tutorId: tutor1.id,
+      curriculumId: curriculumJunior3.id,
+      batch: 1,
+      isActive: true,
+    },
+  });
+  console.log("✓ Classes created");
+
+  // === ENROLLMENTS ===
+  await prisma.enrollment.createMany({
+    data: [
+      { studentId: student1.id, classId: class1.id, totalMeetPurchased: 4, totalMeetLeft: 4 },
+      { studentId: student4.id, classId: class1.id, totalMeetPurchased: 8, totalMeetLeft: 8 },
+      { studentId: student2.id, classId: class2.id, totalMeetPurchased: 4, totalMeetLeft: 4 },
+      { studentId: student3.id, classId: class3.id, totalMeetPurchased: 4, totalMeetLeft: 4 },
+    ],
+  });
+  console.log("✓ Enrollments created");
+
+  // === REQUEST CLASS ===
+  // Dito (student5) - baru daftar, belum punya kelas, status PENDING
+  await prisma.requestClass.create({
+    data: {
+      studentId: student5.id,
+      parentId: parent2.id,
+      category: student5.category,
+      curriculum: "Python Explorer",
+      days: JSON.stringify(["TUESDAY", "THURSDAY"]),
+      startTime: "15:00",
+      endTime: "16:30",
+      sessionCount: 2,
+      preferredTutorId: tutor2.id,
+      notes: "Dito pernah belajar Python dasar di sekolah, ingin melanjutkan",
+      status: "PENDING",
+    },
+  });
+
+  // Nisa (student4) - sudah punya kelas (class1), request ganti jadwal via prevClassId
+  await prisma.requestClass.create({
+    data: {
+      studentId: student4.id,
+      parentId: parent2.id,
+      prevClassId: class1.id,
+      category: student4.category,
+      curriculum: "Scratch Adventurer",
+      days: JSON.stringify(["SATURDAY"]),
+      startTime: "13:00",
+      endTime: "14:30",
+      sessionCount: 1,
+      notes: "Minta pindah hari Sabtu karena kegiatan sekolah hari Rabu",
+      status: "PENDING",
+    },
+  });
+
+  // Luna (student2) - requestnya sudah di-APPROVED & diassign ke class2
+  await prisma.requestClass.create({
+    data: {
+      studentId: student2.id,
+      parentId: parent1.id,
+      category: student2.category,
+      curriculum: "Python Explorer",
+      days: JSON.stringify(["SATURDAY"]),
+      startTime: "10:30",
+      endTime: "12:00",
+      sessionCount: 1,
+      notes: "Luna tertarik dengan coding Python",
+      status: "APPROVED",
+      approvedClassId: class2.id,
+      adminNotes: "Dimasukkan ke Python Explorer - Batch 2",
+      reviewedAt: new Date(),
+    },
+  });
+
+  // Ardhi (student3) - requestnya di-REJECTED
+  await prisma.requestClass.create({
+    data: {
+      studentId: student3.id,
+      parentId: parent2.id,
+      category: student3.category,
+      curriculum: "Mobile App Development",
+      days: JSON.stringify(["SUNDAY"]),
+      startTime: "09:00",
+      endTime: "11:00",
+      sessionCount: 1,
+      notes: "Ardhi ingin belajar bikin aplikasi Android",
+      status: "REJECTED",
+      adminNotes: "Mohon maaf, kurikulum Mobile App Development belum tersedia. Silakan pilih kurikulum Web Dev Warrior atau Python Explorer",
+      reviewedAt: new Date(),
+    },
+  });
+  console.log("✓ Request classes created");
+
   // === SCHEDULES ===
+  function nextDate(dayOfWeek: string, weeksFromNow = 0): Date {
+    const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+    const target = days.indexOf(dayOfWeek);
+    const today = new Date();
+    const current = today.getDay();
+    let diff = target - current;
+    if (diff <= 0) diff += 7;
+    const d = new Date(today);
+    d.setDate(d.getDate() + diff + weeksFromNow * 7);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
   const schedule1 = await prisma.schedule.create({
     data: {
       classId: class1.id,
@@ -323,8 +437,9 @@ async function main() {
       startTime: "09:00",
       endTime: "10:30",
       meetLink: "https://meet.google.com/abc-defg-hij",
-      topic: scratchTopics[0].title,
-      topicId: curriculum1.topics[0].id,
+      topic: curriculumJunior1.topics[0].title,
+      topicId: curriculumJunior1.topics[0].id,
+      date: nextDate("SATURDAY"),
     },
   });
 
@@ -335,8 +450,9 @@ async function main() {
       startTime: "15:00",
       endTime: "16:00",
       meetLink: "https://meet.google.com/xyz-uvwx-rst",
-      topic: scratchTopics[3].title,
-      topicId: curriculum1.topics[3].id,
+      topic: curriculumJunior1.topics[3].title,
+      topicId: curriculumJunior1.topics[3].id,
+      date: nextDate("WEDNESDAY"),
     },
   });
 
@@ -347,8 +463,9 @@ async function main() {
       startTime: "10:30",
       endTime: "12:00",
       meetLink: "https://meet.google.com/jkl-mnop-qrs",
-      topic: pythonTopics[5].title,
-      topicId: curriculum2.topics[5].id,
+      topic: curriculumJunior2.topics[5].title,
+      topicId: curriculumJunior2.topics[5].id,
+      date: nextDate("SATURDAY"),
     },
   });
 
@@ -359,8 +476,9 @@ async function main() {
       startTime: "13:00",
       endTime: "15:00",
       meetLink: "https://meet.google.com/tuv-wxya-bcd",
-      topic: webTopics[1].title,
-      topicId: curriculum3.topics[1].id,
+      topic: curriculumJunior3.topics[1].title,
+      topicId: curriculumJunior3.topics[1].id,
+      date: nextDate("SUNDAY"),
     },
   });
   console.log("✓ Schedules created");
@@ -552,8 +670,8 @@ async function main() {
   console.log("Tutors:      budi.tutor@lms.com, sari.tutor@lms.com");
   console.log("Parents:     andi.parent@lms.com, maya.parent@lms.com");
   console.log("Students:    rafa.student@lms.com, luna.student@lms.com,");
-  console.log("             ardhi.student@lms.com, nisa.student@lms.com");
-  console.log("Curriculums: Scratch Adventurer (12 topics), Python Explorer (12 topics), Web Dev Warrior (12 topics)");
+  console.log("             ardhi.student@lms.com, nisa.student@lms.com, dito.student@lms.com");
+  console.log("Curriculums: Scratch Junior - JUNIOR_I (12 topics), Python Explorer - JUNIOR_II (12 topics), Web Dev Warrior - JUNIOR_III (12 topics)");
   console.log("Password:    password123 (all accounts)");
   console.log("--------------------\n");
 }

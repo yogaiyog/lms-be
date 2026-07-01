@@ -10,4 +10,35 @@ export const attendancesRouter = createCrudRouter({
     schedule: true,
     student: true,
   },
+  afterCreate: async (payload, _item) => {
+    const { scheduleId, studentId, date } = payload as any;
+
+    const schedule = await prisma.schedule.findUnique({
+      where: { id: scheduleId },
+      select: { classId: true },
+    });
+    if (!schedule) return;
+
+    const enrollment = await prisma.enrollment.findUnique({
+      where: {
+        studentId_classId: { studentId, classId: schedule.classId },
+      },
+    });
+    if (!enrollment || enrollment.totalMeetLeft <= 0) return;
+
+    await prisma.$transaction([
+      prisma.enrollment.update({
+        where: { id: enrollment.id },
+        data: { totalMeetLeft: { decrement: 1 } },
+      }),
+      prisma.meetUsage.create({
+        data: {
+          enrollmentId: enrollment.id,
+          scheduleId,
+          studentId,
+          date: new Date(date),
+        },
+      }),
+    ]);
+  },
 });

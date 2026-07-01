@@ -381,6 +381,19 @@ export const authService = {
     return { success: true };
   },
 
+  async impersonate(userId: string, meta: RequestMeta = {}) {
+    const target = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, role: true },
+    });
+    if (!target) throw new AppError("User not found", 404);
+    if (target.role !== "STUDENT") throw new AppError("Hanya bisa impersonate student", 403);
+    return createAuthForExistingUser(
+      { id: target.id, email: target.email, role: target.role },
+      meta,
+    );
+  },
+
   async me(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },

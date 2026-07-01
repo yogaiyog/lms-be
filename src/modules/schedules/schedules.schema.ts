@@ -9,6 +9,7 @@ export const scheduleCreateSchema = z.object({
   meetLink: z.string().url(),
   topic: z.string().min(1).optional().nullable(),
   topicId: z.string().uuid().optional().nullable(),
+  date: z.coerce.date(),
 });
 
 export const scheduleUpdateSchema = scheduleCreateSchema.partial().refine(

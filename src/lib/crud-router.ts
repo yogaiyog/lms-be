@@ -18,6 +18,7 @@ type CreateCrudRouterOptions = {
   include?: Record<string, unknown>;
   listWhere?: (req: Request) => Record<string, unknown>;
   orderBy?: Record<string, "asc" | "desc">;
+  afterCreate?: (payload: any, item: any, req: Request) => Promise<void>;
 };
 
 function parsePagination(req: Request) {
@@ -56,6 +57,7 @@ export function createCrudRouter({
   include,
   listWhere,
   orderBy,
+  afterCreate,
 }: CreateCrudRouterOptions) {
   const router = Router();
 
@@ -108,6 +110,10 @@ export function createCrudRouter({
         data: payload,
         include,
       });
+
+      if (afterCreate) {
+        await afterCreate(payload, item, req);
+      }
 
       return res.status(201).json({
         success: true,

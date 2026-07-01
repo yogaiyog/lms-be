@@ -11,7 +11,7 @@ export const curriculumsRouter = createCrudRouter({
   updateSchema: curriculumUpdateSchema,
   listWhere: (req) => {
     const where: Record<string, unknown> = {};
-    if (req.query.classId) where.classId = req.query.classId;
+    if (req.query.category) where.category = req.query.category;
     return where;
   },
   include: {

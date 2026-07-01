@@ -8,6 +8,7 @@ import { academicRouter } from "../modules/academic/academic.route";
 import { gamificationRouter } from "../modules/gamification/gamification.route";
 import { healthRouter } from "./health.route";
 import { docsRouter } from "./docs.route";
+import { requestClassRouter } from "../modules/request-class/request-class.route";
 
 export const apiRouter = Router();
 
@@ -20,3 +21,4 @@ apiRouter.use("/tutor-profiles", tutorProfilesRouter);
 apiRouter.use("/student-profiles", studentProfilesRouter);
 apiRouter.use("/academic", academicRouter);
 apiRouter.use("/gamification", gamificationRouter);
+apiRouter.use("/request-class", requestClassRouter);

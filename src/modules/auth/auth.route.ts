@@ -110,6 +110,24 @@ authRouter.post("/logout-all", authenticate, async (req, res, next) => {
   }
 });
 
+authRouter.post(
+  "/impersonate",
+  authenticate,
+  requireRole(Role.ADMIN),
+  async (req, res, next) => {
+    try {
+      const { userId } = req.body as { userId: string };
+      if (!userId) {
+        return res.status(400).json({ success: false, message: "userId is required" });
+      }
+      const result = await authService.impersonate(userId, requestMeta(req));
+      return res.json({ success: true, data: result });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
 authRouter.get("/me", authenticate, async (req, res, next) => {
   try {
     if (!req.auth) {

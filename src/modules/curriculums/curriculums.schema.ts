@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { Category } from "../../types/enums";
 
 export const curriculumCreateSchema = z.object({
-  classId: z.string().uuid(),
+  category: z.nativeEnum(Category),
   name: z.string().min(1),
 });
 

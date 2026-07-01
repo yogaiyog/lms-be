@@ -21,12 +21,13 @@ model User {
 }
 
 model ParentProfile {
-  id       String           @id @default(uuid())
-  userId   String           @unique
-  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fullName String
-  phone    String
-  students StudentProfile[]
+  id             String           @id @default(uuid())
+  userId         String           @unique
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName       String
+  phone          String
+  students       StudentProfile[]
+  requestClasses RequestClass[]
 }
 
 model TutorProfile {
@@ -42,6 +43,7 @@ model TutorProfile {
   classes       Class[]
   announcements Announcement[]
   slots         TutorSlot[]
+  requestClasses RequestClass[] @relation("PreferredTutor")
 }
 
 model StudentProfile {
@@ -61,32 +63,52 @@ model StudentProfile {
   enrollments   Enrollment[]
   attendances   Attendance[]
   badgeLogs     StudentBadge[]
+  requestClasses RequestClass[]
 }
 
 model Class {
-  id            String         @id @default(uuid())
-  name          String
-  category      String         // KIDS | JUNIOR_I | JUNIOR_II
-  tutorId       String
-  tutor         TutorProfile   @relation(fields: [tutorId], references: [id])
-  isActive      Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  enrollments   Enrollment[]
-  schedules     Schedule[]
-  announcements Announcement[]
-  curriculum    Curriculum?
+  id               String         @id @default(uuid())
+  name             String
+  category         String         // JUNIOR_I | JUNIOR_II | JUNIOR_III
+  tutorId          String
+  tutor            TutorProfile   @relation(fields: [tutorId], references: [id])
+  curriculumId     String?
+  curriculum       Curriculum?    @relation(fields: [curriculumId], references: [id])
+  batch            Int
+  startDate        DateTime?
+  isActive         Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  enrollments      Enrollment[]
+  schedules        Schedule[]
+  announcements    Announcement[]
+  prevRequests     RequestClass[] @relation("PrevClass")
+  approvedRequests RequestClass[] @relation("ApprovedClass")
 }
 
 model Enrollment {
-  id        String         @id @default(uuid())
-  studentId String
-  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  classId   String
-  class     Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
-  joinedAt  DateTime       @default(now())
+  id                 String       @id @default(uuid())
+  studentId          String
+  student            StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId            String
+  class              Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
+  joinedAt           DateTime     @default(now())
+  totalMeetPurchased Int          @default(0)
+  totalMeetLeft      Int          @default(0)
+  meetUsages         MeetUsage[]
 
   @@unique([studentId, classId])
+}
+
+model MeetUsage {
+  id           String     @id @default(uuid())
+  enrollmentId String
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  scheduleId   String
+  schedule     Schedule   @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  studentId    String
+  date         DateTime
+  createdAt    DateTime   @default(now())
 }
 
 model Schedule {
@@ -100,7 +122,9 @@ model Schedule {
   topic       String?
   topicId     String?
   topicRef    Topic?      @relation(fields: [topicId], references: [id])
+  date        DateTime
   attendances Attendance[]
+  meetUsages  MeetUsage[]
 }
 
 model TutorSlot {
@@ -143,10 +167,10 @@ model Announcement {
 
 model Curriculum {
   id        String   @id @default(uuid())
-  classId   String   @unique
-  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  category  String   // JUNIOR_I | JUNIOR_II | JUNIOR_III
   name      String
   topics    Topic[]
+  classes   Class[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -205,4 +229,31 @@ model RefreshToken {
   @@index([userId])
   @@index([familyId])
   @@index([expiresAt])
+}
+
+model RequestClass {
+  id               String         @id @default(uuid())
+  studentId        String
+  student          StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  parentId         String
+  parent           ParentProfile  @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  prevClassId      String?        // optional, untuk student yg sudah punya kelas aktif & ingin ganti jadwal
+  prevClass        Class?         @relation("PrevClass", fields: [prevClassId], references: [id])
+  category         String         // KIDS | JUNIOR_I | JUNIOR_II (denormalized)
+  curriculum       String         // kurikulum yg diminta (e.g. "Scratch Adventurer")
+  days             String         // JSON array of day strings: ["MONDAY","WEDNESDAY"]
+  startTime        String         // "09:00"
+  endTime          String         // "10:30"
+  sessionCount     Int            @default(1) // 1 atau 2 (sesi per minggu)
+  preferredTutorId String?
+  preferredTutor   TutorProfile?  @relation("PreferredTutor", fields: [preferredTutorId], references: [id])
+  notes            String?        // catatan dari parent/student
+  status           String         @default("PENDING") // PENDING | APPROVED | REJECTED | CANCELLED
+  adminNotes       String?        // catatan admin
+  approvedClassId  String?        // class yg diassign setelah approval
+  approvedClass    Class?         @relation("ApprovedClass", fields: [approvedClassId], references: [id])
+  reviewedBy       String?        // userId admin yg mereview
+  reviewedAt       DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 }

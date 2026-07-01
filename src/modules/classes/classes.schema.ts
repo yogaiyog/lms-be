@@ -5,6 +5,8 @@ export const classCreateSchema = z.object({
   name: z.string().min(1),
   category: z.nativeEnum(Category),
   tutorId: z.string().uuid(),
+  curriculumId: z.string().uuid().optional().nullable(),
+  startDate: z.string().datetime().optional().nullable(),
   isActive: z.boolean().optional(),
 });
 

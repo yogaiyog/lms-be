@@ -8,9 +8,9 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role];
 
 export const Category = {
-  KIDS: "KIDS",
   JUNIOR_I: "JUNIOR_I",
   JUNIOR_II: "JUNIOR_II",
+  JUNIOR_III: "JUNIOR_III",
 } as const;
 
 export type Category = (typeof Category)[keyof typeof Category];
