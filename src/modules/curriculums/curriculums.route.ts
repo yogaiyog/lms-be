@@ -16,5 +16,8 @@ export const curriculumsRouter = createCrudRouter({
   },
   include: {
     topics: true,
+    assessmentSet: {
+      include: { aspects: { orderBy: { order: "asc" as const } } },
+    },
   },
 });

@@ -27,6 +27,14 @@ export const DayOfWeek = {
 
 export type DayOfWeek = (typeof DayOfWeek)[keyof typeof DayOfWeek];
 
+export const ClassType = {
+  BATCH: "BATCH",
+  PRIVATE: "PRIVATE",
+  MAKEUP: "MAKEUP",
+} as const;
+
+export type ClassType = (typeof ClassType)[keyof typeof ClassType];
+
 export const AttendanceStatus = {
   PRESENT: "PRESENT",
   ABSENT: "ABSENT",

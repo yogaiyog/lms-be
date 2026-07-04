@@ -14,6 +14,11 @@ const commonInclude = {
   curriculum: {
     include: {
       topics: true,
+      assessmentSet: {
+        include: {
+          aspects: { orderBy: { order: "asc" as const } },
+        },
+      },
     },
   },
 };

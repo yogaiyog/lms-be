@@ -10,6 +10,7 @@ export const scheduleCreateSchema = z.object({
   topic: z.string().min(1).optional().nullable(),
   topicId: z.string().uuid().optional().nullable(),
   date: z.coerce.date(),
+  isDone: z.boolean().optional(),
 });
 
 export const scheduleUpdateSchema = scheduleCreateSchema.partial().refine(

@@ -4,6 +4,7 @@ import { Category } from "../../types/enums";
 export const curriculumCreateSchema = z.object({
   category: z.nativeEnum(Category),
   name: z.string().min(1),
+  assessmentSetId: z.string().uuid().optional().nullable(),
 });
 
 export const curriculumUpdateSchema = curriculumCreateSchema.partial().refine(

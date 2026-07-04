@@ -43,6 +43,7 @@ model TutorProfile {
   classes       Class[]
   announcements Announcement[]
   slots         TutorSlot[]
+  savedReports  SavedReport[]
   requestClasses RequestClass[] @relation("PreferredTutor")
 }
 
@@ -69,13 +70,14 @@ model StudentProfile {
 model Class {
   id               String         @id @default(uuid())
   name             String
+  type             String         @default("BATCH") // BATCH | PRIVATE | MAKEUP
   category         String         // JUNIOR_I | JUNIOR_II | JUNIOR_III
   tutorId          String
   tutor            TutorProfile   @relation(fields: [tutorId], references: [id])
   curriculumId     String?
   curriculum       Curriculum?    @relation(fields: [curriculumId], references: [id])
   batch            Int
-  startDate        DateTime?
+  startDate        DateTime
   isActive         Boolean        @default(true)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
@@ -90,8 +92,10 @@ model Enrollment {
   id                 String       @id @default(uuid())
   studentId          String
   student            StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  classId            String
-  class              Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classId            String?
+  class              Class?       @relation(fields: [classId], references: [id])
+  curriculumId       String
+  curriculum         Curriculum   @relation(fields: [curriculumId], references: [id])
   joinedAt           DateTime     @default(now())
   totalMeetPurchased Int          @default(0)
   totalMeetLeft      Int          @default(0)
@@ -123,6 +127,7 @@ model Schedule {
   topicId     String?
   topicRef    Topic?      @relation(fields: [topicId], references: [id])
   date        DateTime
+  isDone      Boolean     @default(false)
   attendances Attendance[]
   meetUsages  MeetUsage[]
 }
@@ -140,15 +145,16 @@ model TutorSlot {
 }
 
 model Attendance {
-  id         String  @id @default(uuid())
+  id         String                @id @default(uuid())
   scheduleId String
-  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  schedule   Schedule              @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   studentId  String
-  student    StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student    StudentProfile        @relation(fields: [studentId], references: [id], onDelete: Cascade)
   date       DateTime
-  status     String  @default("PRESENT") // PRESENT | ABSENT | LATE | SICK | PERMISSION
+  status     String                @default("PRESENT") // PRESENT | ABSENT | LATE | SICK | PERMISSION
   notes      String?
-  createdAt  DateTime @default(now())
+  assessment AttendanceAssessment?
+  createdAt  DateTime              @default(now())
 
   @@unique([scheduleId, studentId, date])
 }
@@ -166,13 +172,16 @@ model Announcement {
 }
 
 model Curriculum {
-  id        String   @id @default(uuid())
-  category  String   // JUNIOR_I | JUNIOR_II | JUNIOR_III
-  name      String
-  topics    Topic[]
-  classes   Class[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String          @id @default(uuid())
+  category        String          // JUNIOR_I | JUNIOR_II | JUNIOR_III
+  name            String
+  assessmentSetId String?
+  assessmentSet   AssessmentSet?  @relation(fields: [assessmentSetId], references: [id])
+  topics          Topic[]
+  classes         Class[]
+  enrollments     Enrollment[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 model Topic {
@@ -256,4 +265,67 @@ model RequestClass {
   reviewedAt       DateTime?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+}
+
+// === ASSESSMENT / PENILAIAN ===
+
+model AssessmentSet {
+  id          String             @id @default(uuid())
+  name        String
+  description String?
+  aspects     AssessmentAspect[]
+  curriculums Curriculum[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model AssessmentAspect {
+  id             String                    @id @default(uuid())
+  assessmentSetId String
+  assessmentSet  AssessmentSet            @relation(fields: [assessmentSetId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  minScore       Int                      @default(1)
+  maxScore       Int                      @default(5)
+  order          Int                      @default(0)
+  scores         AttendanceAssessmentScore[]
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+}
+
+model AttendanceAssessment {
+  id            String                      @id @default(uuid())
+  attendanceId  String                      @unique
+  attendance    Attendance                  @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
+  totalScore    Int?
+  percentage    Float?
+  projectLink   String?
+  mentorComment String?
+  scores        AttendanceAssessmentScore[]
+  createdAt     DateTime                    @default(now())
+  updatedAt     DateTime                    @updatedAt
+}
+
+model AttendanceAssessmentScore {
+  id           String              @id @default(uuid())
+  assessmentId String
+  assessment   AttendanceAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  aspectId     String
+  aspect       AssessmentAspect    @relation(fields: [aspectId], references: [id], onDelete: Cascade)
+  score        Int
+  notes        String?
+  createdAt    DateTime            @default(now())
+
+  @@unique([assessmentId, aspectId])
+}
+
+model SavedReport {
+  id        String        @id @default(uuid())
+  tutorId   String
+  tutor     TutorProfile  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  studentId String
+  title     String
+  data      String        // JSON — full GeneratedReport snapshot
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }

@@ -7,6 +7,12 @@ import { announcementsRouter } from "../announcements/announcements.route";
 import { curriculumsRouter } from "../curriculums/curriculums.route";
 import { topicsRouter } from "../topics/topics.route";
 import { tutorSlotsRouter } from "../tutor-slots/tutor-slots.route";
+import { assessmentSetsRouter } from "../assessment-sets/assessment-sets.route";
+import { assessmentAspectsRouter } from "../assessment-aspects/assessment-aspects.route";
+import { attendanceAssessmentsRouter } from "../attendance-assessments/attendance-assessments.route";
+import { attendanceAssessmentScoresRouter } from "../attendance-assessment-scores/attendance-assessment-scores.route";
+import { reportsRouter } from "./reports.route";
+import { savedReportsRouter } from "./saved-reports.route";
 
 export const academicRouter = Router();
 
@@ -18,3 +24,9 @@ academicRouter.use("/announcements", announcementsRouter);
 academicRouter.use("/curriculums", curriculumsRouter);
 academicRouter.use("/topics", topicsRouter);
 academicRouter.use("/tutor-slots", tutorSlotsRouter);
+academicRouter.use("/assessment-sets", assessmentSetsRouter);
+academicRouter.use("/assessment-aspects", assessmentAspectsRouter);
+academicRouter.use("/attendance-assessments", attendanceAssessmentsRouter);
+academicRouter.use("/attendance-assessment-scores", attendanceAssessmentScoresRouter);
+academicRouter.use("/reports", reportsRouter);
+academicRouter.use("/saved-reports", savedReportsRouter);

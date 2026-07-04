@@ -9,6 +9,14 @@ export const attendancesRouter = createCrudRouter({
   include: {
     schedule: true,
     student: true,
+    assessment: {
+      include: {
+        scores: {
+          include: { aspect: true },
+          orderBy: { aspect: { order: "asc" as const } },
+        },
+      },
+    },
   },
   afterCreate: async (payload, _item) => {
     const { scheduleId, studentId, date } = payload as any;
