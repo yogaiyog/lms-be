@@ -26,6 +26,7 @@ export const parentRegisterSchema = registerSchema;
 export const tutorRegisterSchema = registerSchema.extend({
   bio: z.string().optional().nullable(),
   avatarUrl: z.string().url().optional().nullable(),
+  meetLink: z.string().url().optional().nullable(),
 });
 
 export const studentRegisterSchema = registerSchema.extend({

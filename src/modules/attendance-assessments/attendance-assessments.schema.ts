@@ -5,6 +5,7 @@ export const attendanceAssessmentCreateSchema = z.object({
   totalScore: z.number().int().optional().nullable(),
   percentage: z.number().min(0).max(100).optional().nullable(),
   mentorComment: z.string().min(1).optional().nullable(),
+  projectLink: z.string().url().optional().nullable(),
 });
 
 export const attendanceAssessmentUpdateSchema = attendanceAssessmentCreateSchema.partial().refine(

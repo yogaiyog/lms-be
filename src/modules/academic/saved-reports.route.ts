@@ -9,6 +9,11 @@ async function getTutorId(userId: string): Promise<string | null> {
   return tutor?.id ?? null;
 }
 
+async function getStudentId(userId: string): Promise<string | null> {
+  const student = await prisma.studentProfile.findUnique({ where: { userId } });
+  return student?.id ?? null;
+}
+
 savedReportsRouter.get("/", authenticate, async (req, res, next) => {
   try {
     if (!req.auth) return res.status(401).json({ message: "Unauthorized" });
@@ -22,6 +27,41 @@ savedReportsRouter.get("/", authenticate, async (req, res, next) => {
 
     const parsed = reports.map((r) => ({
       id: r.id,
+      studentId: r.studentId,
+      title: r.title,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      data: JSON.parse(r.data),
+    }));
+
+    res.json({ success: true, data: parsed });
+  } catch (error) {
+    next(error);
+  }
+});
+
+savedReportsRouter.get("/student/:studentId", authenticate, async (req, res, next) => {
+  try {
+    if (!req.auth) return res.status(401).json({ message: "Unauthorized" });
+    const studentId = Array.isArray(req.params.studentId) ? req.params.studentId[0] : req.params.studentId;
+
+    const studentProfileId = await getStudentId(req.auth.userId);
+    const tutorProfileId = await getTutorId(req.auth.userId);
+    const isStudent = studentProfileId === studentId;
+    const isTutor = !!tutorProfileId;
+
+    if (!isStudent && !isTutor) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    const reports = await prisma.savedReport.findMany({
+      where: { studentId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const parsed = reports.map((r) => ({
+      id: r.id,
+      tutorId: r.tutorId,
       studentId: r.studentId,
       title: r.title,
       createdAt: r.createdAt,

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const topicCreateSchema = z.object({
-  curriculumId: z.string().uuid(),
+  curriculumId: z.string().uuid().optional(),
   title: z.string().min(1),
   materialLink: z.string().url().optional().nullable(),
   exampleProjectLink: z.string().url().optional().nullable(),

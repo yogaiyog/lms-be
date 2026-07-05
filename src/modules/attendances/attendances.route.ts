@@ -9,6 +9,7 @@ export const attendancesRouter = createCrudRouter({
   include: {
     schedule: true,
     student: true,
+    tutor: true,
     assessment: {
       include: {
         scores: {

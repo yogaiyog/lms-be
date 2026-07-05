@@ -33,6 +33,7 @@ type RegisterParentInput = {
 type RegisterTutorInput = RegisterParentInput & {
   bio?: string | null;
   avatarUrl?: string | null;
+  meetLink?: string | null;
 };
 
 type RegisterStudentInput = RegisterParentInput & {
@@ -196,6 +197,7 @@ export const authService = {
             phone: input.phone,
             bio: input.bio,
             avatarUrl: input.avatarUrl,
+            meetLink: input.meetLink,
           },
         },
       },

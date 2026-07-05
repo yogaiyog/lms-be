@@ -38,6 +38,7 @@ model TutorProfile {
   phone         String
   bio           String?
   avatarUrl     String?
+  meetLink      String?         // default meeting link for tutor
   dayoff1       Int?            // 0=Mon..6=Sun
   dayoff2       Int?            // 0=Mon..6=Sun
   classes       Class[]
@@ -45,6 +46,7 @@ model TutorProfile {
   slots         TutorSlot[]
   savedReports  SavedReport[]
   requestClasses RequestClass[] @relation("PreferredTutor")
+  attendance     Attendance[]
 }
 
 model StudentProfile {
@@ -153,6 +155,8 @@ model Attendance {
   date       DateTime
   status     String                @default("PRESENT") // PRESENT | ABSENT | LATE | SICK | PERMISSION
   notes      String?
+  teachedBy  String?
+  tutor      TutorProfile?         @relation(fields: [teachedBy], references: [id])
   assessment AttendanceAssessment?
   createdAt  DateTime              @default(now())
 
@@ -185,18 +189,18 @@ model Curriculum {
 }
 
 model Topic {
-  id                 String     @id @default(uuid())
-  curriculumId       String
-  curriculum         Curriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+  id                 String      @id @default(uuid())
+  curriculumId       String?
+  curriculum         Curriculum? @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
   title              String
   materialLink       String?
   exampleProjectLink String?
   goals              String?
   tools              String?
-  order              Int        @default(0)
+  order              Int         @default(0)
   schedules          Schedule[]
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 }
 
 model Badge {

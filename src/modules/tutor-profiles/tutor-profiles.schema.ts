@@ -6,6 +6,7 @@ export const tutorProfileCreateSchema = z.object({
   phone: z.string().min(1),
   bio: z.string().optional().nullable(),
   avatarUrl: z.string().url().optional().nullable(),
+  meetLink: z.string().url().optional().nullable(),
   dayoff1: z.number().int().min(0).max(6).optional().nullable(),
   dayoff2: z.number().int().min(0).max(6).optional().nullable(),
 });

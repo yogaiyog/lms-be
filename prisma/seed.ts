@@ -461,28 +461,6 @@ async function main() {
   });
   console.log("✓ Class created: Design & Kreativitas - Batch 1");
 
-  // === ENROLLMENTS ===
-  // totalMeetPurchased = curriculum.topic count (12), totalMeetLeft = sisa setelah sesi yg sudah done
-  await prisma.enrollment.createMany({
-    data: [
-      { studentId: student1.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 8 },
-      { studentId: student4.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 8 },
-      { studentId: student2.id, classId: class2.id, curriculumId: curriculumJunior2.id, totalMeetPurchased: 12, totalMeetLeft: 8 },
-      { studentId: student3.id, classId: class3.id, curriculumId: curriculumJunior3.id, totalMeetPurchased: 12, totalMeetLeft: 8 },
-      { studentId: student1.id, classId: classDesign.id, curriculumId: curriculumJuniorDesign.id, totalMeetPurchased: 12, totalMeetLeft: 9 },
-    ],
-  });
-  console.log("✓ Enrollments created");
-
-  // Unassigned enrollments (classId=null) — student menunggu assign ke kelas
-  await prisma.enrollment.createMany({
-    data: [
-      { studentId: student5.id, curriculumId: curriculumJunior2.id, totalMeetPurchased: 0, totalMeetLeft: 0 },
-      { studentId: student4.id, curriculumId: curriculumJuniorDesign.id, totalMeetPurchased: 0, totalMeetLeft: 0 },
-    ],
-  });
-  console.log("✓ Unassigned enrollments created (waiting for class assignment)");
-
   // === REQUEST CLASS ===
   // Dito (student5) - baru daftar, belum punya kelas, status PENDING
   await prisma.requestClass.create({
@@ -557,59 +535,76 @@ async function main() {
   console.log("✓ Request classes created");
 
   // === SCHEDULES ===
-  function nextDate(dayOfWeek: string, weeksFromNow = 0): Date {
-    const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
-    const target = days.indexOf(dayOfWeek);
-    const today = new Date();
-    const current = today.getDay();
-    let diff = target - current;
-    if (diff <= 0) diff += 7;
-    const d = new Date(today);
-    d.setDate(d.getDate() + diff + weeksFromNow * 7);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
-
   async function createFullSchedules(
-    cls: { id: string },
+    cls: { id: string; startDate: Date },
     curriculum: { topics: { id: string; title: string; order: number }[] },
     dayOfWeek: string,
     startTime: string,
     endTime: string,
     meetLink: string,
-    doneCount: number,
   ) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const sorted = [...curriculum.topics].sort((a, b) => a.order - b.order);
-    const schedules = await Promise.all(
-      sorted.map((topic, i) =>
-        prisma.schedule.create({
-          data: {
-            classId: cls.id,
-            dayOfWeek,
-            startTime,
-            endTime,
-            meetLink,
-            topic: topic.title,
-            topicId: topic.id,
-            date: nextDate(dayOfWeek, i - doneCount),
-            isDone: i < doneCount,
-          },
-        }),
-      ),
-    );
+    const schedules: Awaited<ReturnType<typeof prisma.schedule.create>>[] = [];
+    for (const [i, topic] of sorted.entries()) {
+      const date = new Date(cls.startDate);
+      date.setDate(date.getDate() + i * 7);
+      const isDone = date < today;
+      const sched = await prisma.schedule.create({
+        data: {
+          classId: cls.id,
+          dayOfWeek,
+          startTime,
+          endTime,
+          meetLink,
+          topic: topic.title,
+          topicId: topic.id,
+          date,
+          isDone,
+        },
+      });
+      schedules.push(sched);
+    }
     return schedules;
   }
 
-  const doneCount1 = 4;
-  const doneCount2 = 4;
-  const doneCount3 = 4;
-  const doneCountDesign = 3;
+  const schedules1 = await createFullSchedules(class1, curriculumJunior1, "SATURDAY", "09:00", "09:55", "https://meet.google.com/abc-defg-hij");
+  const schedules2 = await createFullSchedules(class2, curriculumJunior2, "SATURDAY", "10:30", "11:25", "https://meet.google.com/jkl-mnop-qrs");
+  const schedules3 = await createFullSchedules(class3, curriculumJunior3, "SUNDAY", "13:00", "13:55", "https://meet.google.com/tuv-wxya-bcd");
+  const schedulesDesign = await createFullSchedules(classDesign, curriculumJuniorDesign, "WEDNESDAY", "15:00", "15:55", "https://meet.google.com/des-abc-def");
 
-  const schedules1 = await createFullSchedules(class1, curriculumJunior1, "SATURDAY", "09:00", "09:55", "https://meet.google.com/abc-defg-hij", doneCount1);
-  const schedules2 = await createFullSchedules(class2, curriculumJunior2, "SATURDAY", "10:30", "11:25", "https://meet.google.com/jkl-mnop-qrs", doneCount2);
-  const schedules3 = await createFullSchedules(class3, curriculumJunior3, "SUNDAY", "13:00", "13:55", "https://meet.google.com/tuv-wxya-bcd", doneCount3);
-  const schedulesDesign = await createFullSchedules(classDesign, curriculumJuniorDesign, "WEDNESDAY", "15:00", "15:55", "https://meet.google.com/des-abc-def", doneCountDesign);
-  console.log(`✓ Schedules created (${doneCount1 + doneCount2 + doneCount3 + doneCountDesign} past ✅, ${(12 * 4) - (doneCount1 + doneCount2 + doneCount3 + doneCountDesign)} future ⏳)`);
+  const doneTotal = schedules1.filter(s => s.isDone).length
+    + schedules2.filter(s => s.isDone).length
+    + schedules3.filter(s => s.isDone).length
+    + schedulesDesign.filter(s => s.isDone).length;
+  const futureTotal = (12 * 4) - doneTotal;
+  console.log(`✓ Schedules created (${doneTotal} past ✅, ${futureTotal} future ⏳)`);
+
+  // === ENROLLMENTS (berdasar done count aktual) ===
+  const doneCount1 = schedules1.filter(s => s.isDone).length;
+  const doneCount2 = schedules2.filter(s => s.isDone).length;
+  const doneCount3 = schedules3.filter(s => s.isDone).length;
+  const doneCountDesign = schedulesDesign.filter(s => s.isDone).length;
+
+  await prisma.enrollment.createMany({
+    data: [
+      { studentId: student1.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount1 },
+      { studentId: student4.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount1 },
+      { studentId: student2.id, classId: class2.id, curriculumId: curriculumJunior2.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount2 },
+      { studentId: student3.id, classId: class3.id, curriculumId: curriculumJunior3.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount3 },
+      { studentId: student1.id, classId: classDesign.id, curriculumId: curriculumJuniorDesign.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCountDesign },
+    ],
+  });
+  console.log("✓ Enrollments created");
+
+  await prisma.enrollment.createMany({
+    data: [
+      { studentId: student5.id, curriculumId: curriculumJunior2.id, totalMeetPurchased: 0, totalMeetLeft: 0 },
+      { studentId: student4.id, curriculumId: curriculumJuniorDesign.id, totalMeetPurchased: 0, totalMeetLeft: 0 },
+    ],
+  });
+  console.log("✓ Unassigned enrollments created (waiting for class assignment)");
 
   // === TUTOR SLOTS (1-hour slots, hanya dalam range yg diizinkan) ===
   async function createDefaultSlots(tutorId: string) {

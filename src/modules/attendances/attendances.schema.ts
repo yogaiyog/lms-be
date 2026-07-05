@@ -7,6 +7,7 @@ export const attendanceCreateSchema = z.object({
   date: z.coerce.date(),
   status: z.nativeEnum(AttendanceStatus).optional(),
   notes: z.string().min(1).optional().nullable(),
+  teachedBy: z.string().uuid().optional().nullable(),
 });
 
 export const attendanceUpdateSchema = attendanceCreateSchema.partial().refine(
