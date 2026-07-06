@@ -7,7 +7,7 @@ import { AppError } from "../../utils/app-error";
 export const classesRouter = Router();
 
 const commonInclude = {
-  tutor: true,
+  tutors: true,
   enrollments: true,
   schedules: true,
   announcements: true,
@@ -26,7 +26,9 @@ const commonInclude = {
 classesRouter.get("/", async (req, res, next) => {
   try {
     const where: Record<string, unknown> = {};
-    if (req.query.tutorId) where.tutorId = req.query.tutorId;
+    if (req.query.tutorId) {
+      where.tutors = { some: { id: req.query.tutorId as string } };
+    }
 
     const data = await prisma.class.findMany({
       where,
@@ -65,8 +67,13 @@ classesRouter.post("/", async (req, res, next) => {
 
     const batch = (lastClass?.batch ?? 0) + 1;
 
+    const { tutorIds, ...rest } = payload;
     const item = await prisma.class.create({
-      data: { ...payload, batch },
+      data: {
+        ...rest,
+        batch,
+        tutors: { connect: tutorIds.map((id) => ({ id })) },
+      },
       include: commonInclude,
     });
 
@@ -79,9 +86,16 @@ classesRouter.post("/", async (req, res, next) => {
 classesRouter.patch("/:id", async (req, res, next) => {
   try {
     const payload = classUpdateSchema.parse(req.body);
+    const { tutorIds, ...rest } = payload;
+
+    const updateData: Record<string, unknown> = { ...rest };
+    if (tutorIds) {
+      updateData.tutors = { set: tutorIds.map((id) => ({ id })) };
+    }
+
     const item = await prisma.class.update({
       where: { id: req.params.id },
-      data: payload,
+      data: updateData,
       include: commonInclude,
     });
 

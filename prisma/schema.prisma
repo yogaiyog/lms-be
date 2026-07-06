@@ -41,7 +41,7 @@ model TutorProfile {
   meetLink      String?         // default meeting link for tutor
   dayoff1       Int?            // 0=Mon..6=Sun
   dayoff2       Int?            // 0=Mon..6=Sun
-  classes       Class[]
+  classes       Class[] @relation("ClassTutors")
   announcements Announcement[]
   slots         TutorSlot[]
   savedReports  SavedReport[]
@@ -72,15 +72,16 @@ model StudentProfile {
 model Class {
   id               String         @id @default(uuid())
   name             String
-  type             String         @default("BATCH") // BATCH | PRIVATE | MAKEUP
+  type             String         @default("BATCH") // BATCH | PRIVATE | MAKEUP | OFFLINE
   category         String         // JUNIOR_I | JUNIOR_II | JUNIOR_III
-  tutorId          String
-  tutor            TutorProfile   @relation(fields: [tutorId], references: [id])
+  tutors           TutorProfile[] @relation("ClassTutors")
   curriculumId     String?
   curriculum       Curriculum?    @relation(fields: [curriculumId], references: [id])
   batch            Int
   startDate        DateTime
   isActive         Boolean        @default(true)
+  isOffline        Boolean        @default(false)
+  location         String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   enrollments      Enrollment[]

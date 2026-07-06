@@ -33,7 +33,7 @@ tutorSlotsRouter.get("/:tutorId", async (req: Request, res: Response, next: Next
         orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
       }),
       prisma.class.findMany({
-        where: { tutorId, isActive: true },
+        where: { tutors: { some: { id: tutorId } }, isActive: true },
         include: { schedules: true },
       }),
     ]);
@@ -43,7 +43,7 @@ tutorSlotsRouter.get("/:tutorId", async (req: Request, res: Response, next: Next
     if (tutor.dayoff2 != null) dayoffs.add(tutor.dayoff2);
 
     const allSchedules = classes.flatMap((c) =>
-      c.schedules.map((s) => ({ ...s, className: c.name })),
+      c.schedules.filter((s) => !s.isDone).map((s) => ({ ...s, className: c.name })),
     );
 
     const result = slots.map((slot) => {
@@ -104,7 +104,7 @@ tutorSlotsRouter.patch("/:tutorId/toggle", async (req: Request, res: Response, n
 
       // Check class overlap
       const classes = await prisma.class.findMany({
-        where: { tutorId, isActive: true },
+        where: { tutors: { some: { id: tutorId } }, isActive: true },
         include: { schedules: true },
       });
       const hasClass = classes.some((c) =>

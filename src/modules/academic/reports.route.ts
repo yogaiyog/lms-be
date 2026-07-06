@@ -9,7 +9,7 @@ type ScheduleReportPayload = Prisma.ScheduleGetPayload<{
   include: {
     class: {
       include: {
-        tutor: true;
+        tutors: true;
       };
     };
     attendances: {
@@ -22,7 +22,7 @@ type ScheduleReportPayload = Prisma.ScheduleGetPayload<{
                 aspect: true;
               };
             };
-          };
+          },
         };
       };
     };
@@ -77,7 +77,7 @@ reportsRouter.get("/schedule/:scheduleId", authenticate, async (req, res, next) 
       include: {
         class: {
           include: {
-            tutor: true,
+            tutors: true,
           },
         },
         attendances: {
@@ -186,7 +186,7 @@ reportsRouter.get("/schedule/:scheduleId", authenticate, async (req, res, next) 
         topic: schedule.topic,
         topicRef: schedule.topicRef,
         className: schedule.class.name,
-        tutorName: schedule.class.tutor.fullName,
+        tutorName: schedule.class.tutors.map((t) => t.fullName).join(", "),
       },
       classAverage,
       students: studentsReports,

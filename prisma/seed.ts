@@ -415,7 +415,7 @@ async function main() {
     data: {
       name: "Scratch Junior - Batch 4",
       category: "JUNIOR_I",
-      tutorId: tutor1.id,
+      tutors: { connect: [{ id: tutor1.id }] },
       curriculumId: curriculumJunior1.id,
       batch: 4,
       startDate: classStartDate("SATURDAY", 4),
@@ -427,7 +427,7 @@ async function main() {
     data: {
       name: "Python Explorer - Batch 2",
       category: "JUNIOR_II",
-      tutorId: tutor2.id,
+      tutors: { connect: [{ id: tutor2.id }] },
       curriculumId: curriculumJunior2.id,
       batch: 2,
       startDate: classStartDate("SATURDAY", 4),
@@ -439,7 +439,7 @@ async function main() {
     data: {
       name: "Web Dev Warrior - Batch 1",
       category: "JUNIOR_III",
-      tutorId: tutor1.id,
+      tutors: { connect: [{ id: tutor1.id }] },
       curriculumId: curriculumJunior3.id,
       batch: 1,
       startDate: classStartDate("SUNDAY", 4),
@@ -452,7 +452,7 @@ async function main() {
     data: {
       name: "Design & Kreativitas - Batch 1",
       category: "JUNIOR_I",
-      tutorId: tutor2.id,
+      tutors: { connect: [{ id: tutor2.id }] },
       curriculumId: curriculumJuniorDesign.id,
       batch: 1,
       startDate: classStartDate("WEDNESDAY", 3),
