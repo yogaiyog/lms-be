@@ -8,7 +8,11 @@ export const classesRouter = Router();
 
 const commonInclude = {
   tutors: true,
-  enrollments: true,
+  enrollments: {
+    include: {
+      meetUsages: true,
+    },
+  },
   schedules: true,
   announcements: true,
   curriculum: {

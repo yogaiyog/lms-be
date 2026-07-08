@@ -19,8 +19,9 @@ export const attendancesRouter = createCrudRouter({
       },
     },
   },
-  afterCreate: async (payload, _item) => {
-    const { scheduleId, studentId, date } = payload as any;
+  afterCreate: async (payload, item) => {
+    const { scheduleId, studentId, date, status } = payload as any;
+    if (status === "RESCHEDULE") return;
 
     const schedule = await prisma.schedule.findUnique({
       where: { id: scheduleId },
@@ -45,6 +46,7 @@ export const attendancesRouter = createCrudRouter({
           enrollmentId: enrollment.id,
           scheduleId,
           studentId,
+          attendanceId: item.id,
           date: new Date(date),
         },
       }),

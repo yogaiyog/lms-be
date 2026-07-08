@@ -67,6 +67,8 @@ model StudentProfile {
   attendances   Attendance[]
   badgeLogs     StudentBadge[]
   requestClasses RequestClass[]
+  certificates  Certificate[]
+  savedReports  SavedReport[]
 }
 
 model Class {
@@ -114,6 +116,8 @@ model MeetUsage {
   scheduleId   String
   schedule     Schedule   @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   studentId    String
+  attendanceId String     @unique
+  attendance   Attendance @relation(fields: [attendanceId], references: [id], onDelete: Cascade)
   date         DateTime
   createdAt    DateTime   @default(now())
 }
@@ -154,11 +158,12 @@ model Attendance {
   studentId  String
   student    StudentProfile        @relation(fields: [studentId], references: [id], onDelete: Cascade)
   date       DateTime
-  status     String                @default("PRESENT") // PRESENT | ABSENT | LATE | SICK | PERMISSION
+  status     String                @default("PRESENT") // PRESENT | ABSENT | LATE | SICK | PERMISSION | RESCHEDULE
   notes      String?
   teachedBy  String?
   tutor      TutorProfile?         @relation(fields: [teachedBy], references: [id])
   assessment AttendanceAssessment?
+  meetUsage  MeetUsage?
   createdAt  DateTime              @default(now())
 
   @@unique([scheduleId, studentId, date])
@@ -185,8 +190,26 @@ model Curriculum {
   topics          Topic[]
   classes         Class[]
   enrollments     Enrollment[]
+  certificates    Certificate[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+}
+
+model Certificate {
+  id                String          @id @default(uuid())
+  studentId         String
+  student           StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  curriculumId      String
+  curriculum        Curriculum      @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+  certificateNumber String          @unique
+  grade             String?
+  filePath          String?
+  issuedAt          DateTime        @default(now())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([studentId])
+  @@index([curriculumId])
 }
 
 model Topic {
@@ -325,12 +348,13 @@ model AttendanceAssessmentScore {
 }
 
 model SavedReport {
-  id        String        @id @default(uuid())
+  id        String          @id @default(uuid())
   tutorId   String
-  tutor     TutorProfile  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  tutor     TutorProfile    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   studentId String
+  student   StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   title     String
-  data      String        // JSON — full GeneratedReport snapshot
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  data      String          // JSON — full GeneratedReport snapshot
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }

@@ -13,6 +13,7 @@ import { attendanceAssessmentsRouter } from "../attendance-assessments/attendanc
 import { attendanceAssessmentScoresRouter } from "../attendance-assessment-scores/attendance-assessment-scores.route";
 import { reportsRouter } from "./reports.route";
 import { savedReportsRouter } from "./saved-reports.route";
+import { certificatesRouter } from "../certificates/certificates.route";
 
 export const academicRouter = Router();
 
@@ -30,3 +31,4 @@ academicRouter.use("/attendance-assessments", attendanceAssessmentsRouter);
 academicRouter.use("/attendance-assessment-scores", attendanceAssessmentScoresRouter);
 academicRouter.use("/reports", reportsRouter);
 academicRouter.use("/saved-reports", savedReportsRouter);
+academicRouter.use("/certificates", certificatesRouter);

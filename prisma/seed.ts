@@ -775,6 +775,7 @@ async function main() {
           enrollmentId: enrollment.id,
           scheduleId: att.scheduleId,
           studentId: att.studentId,
+          attendanceId: att.id,
           date: att.schedule.date,
         },
       });

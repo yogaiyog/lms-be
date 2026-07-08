@@ -171,9 +171,33 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
+// GET enrollment by ID with full includes
+router.get("/:id", async (req, res, next) => {
+  try {
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { id: req.params.id },
+      include: {
+        student: true,
+        class: { include: { tutors: true } },
+        curriculum: true,
+      },
+    });
+    if (!enrollment) {
+      return res.status(404).json({ success: false, message: "Enrollment not found" });
+    }
+    return res.json({ success: true, data: enrollment });
+  } catch (error) {
+    const appError = mapPrismaError(error);
+    return res.status(appError.statusCode).json({
+      success: false,
+      message: appError.message,
+      code: appError.code,
+    });
+  }
+});
+
 // Delegate remaining CRUD methods to baseRouter
 router.get("/", (req, res, next) => baseRouter(req, res, next));
-router.get("/:id", (req, res, next) => baseRouter(req, res, next));
 router.delete("/:id", (req, res, next) => baseRouter(req, res, next));
 
 export { router as enrollmentsRouter };
