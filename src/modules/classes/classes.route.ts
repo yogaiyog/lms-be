@@ -112,8 +112,14 @@ classesRouter.patch("/:id", async (req, res, next) => {
 
 classesRouter.delete("/:id", async (req, res, next) => {
   try {
+    const { id } = req.params;
+
+    await prisma.enrollment.updateMany({ where: { classId: id }, data: { classId: null } });
+    await prisma.requestClass.updateMany({ where: { prevClassId: id }, data: { prevClassId: null } });
+    await prisma.requestClass.updateMany({ where: { approvedClassId: id }, data: { approvedClassId: null } });
+
     const item = await prisma.class.delete({
-      where: { id: req.params.id },
+      where: { id },
     });
 
     return res.json({ success: true, data: item });
