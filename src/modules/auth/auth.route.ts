@@ -53,6 +53,21 @@ authRouter.post(
 );
 
 authRouter.post(
+  "/register/parent",
+  authenticate,
+  requireRole(Role.ADMIN),
+  async (req, res, next) => {
+    try {
+      const payload = parentRegisterSchema.parse(req.body);
+      const result = await authService.registerParentByAdmin(payload, requestMeta(req));
+      return res.status(201).json({ success: true, data: result });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
+authRouter.post(
   "/register/student",
   authenticate,
   requireRole(Role.PARENT, Role.ADMIN),

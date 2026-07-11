@@ -42,6 +42,7 @@ export const AttendanceStatus = {
   LATE: "LATE",
   SICK: "SICK",
   PERMISSION: "PERMISSION",
+  RESCHEDULE: "RESCHEDULE",
 } as const;
 
 export type AttendanceStatus =

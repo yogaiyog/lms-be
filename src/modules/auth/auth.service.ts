@@ -44,6 +44,7 @@ type RegisterStudentInput = RegisterParentInput & {
   avatarUrl?: string | null;
   category?: Category;
   categoryId?: string | null;
+  school?: string | null;
 };
 
 type LoginInput = {
@@ -195,16 +196,12 @@ export const authService = {
     await ensureEmailAvailable(input.email);
     const hashedPassword = await bcrypt.hash(input.password, passwordSaltRounds);
 
-    const verificationToken = randomBytes(32).toString("hex");
-    const verificationTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
     const user = await prisma.user.create({
       data: {
         email: input.email.toLowerCase(),
         password: hashedPassword,
         role: "TUTOR",
-        emailVerificationToken: verificationToken,
-        emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
+        emailVerified: true,
         tutorProfile: {
           create: {
             fullName: input.fullName,
@@ -217,7 +214,27 @@ export const authService = {
       },
     });
 
-    emailService.sendVerificationEmail(user.email, verificationToken).catch(() => {});
+    return buildAuthResponse(user, meta);
+  },
+
+  async registerParentByAdmin(input: RegisterParentInput, meta: RequestMeta = {}) {
+    await ensureEmailAvailable(input.email);
+    const hashedPassword = await bcrypt.hash(input.password, passwordSaltRounds);
+
+    const user = await prisma.user.create({
+      data: {
+        email: input.email.toLowerCase(),
+        password: hashedPassword,
+        role: "PARENT",
+        emailVerified: true,
+        parentProfile: {
+          create: {
+            fullName: input.fullName,
+            phone: input.phone ?? "",
+          },
+        },
+      },
+    });
 
     return buildAuthResponse(user, meta);
   },
@@ -254,6 +271,7 @@ export const authService = {
             birthDate: input.birthDate,
             avatarUrl: input.avatarUrl,
             categoryId: categoryId,
+            school: input.school,
           },
         },
       },

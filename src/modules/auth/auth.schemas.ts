@@ -37,6 +37,7 @@ export const studentRegisterSchema = registerSchema.extend({
   avatarUrl: z.string().url().optional().nullable(),
   categoryId: z.string().uuid().optional().nullable(),
   category: z.nativeEnum(Category).optional(),
+  school: z.string().optional().nullable(),
 });
 
 export const forgotPasswordSchema = z.object({

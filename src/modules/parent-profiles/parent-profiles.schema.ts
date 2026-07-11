@@ -6,7 +6,9 @@ export const parentProfileCreateSchema = z.object({
   phone: z.string().min(1),
 });
 
-export const parentProfileUpdateSchema = parentProfileCreateSchema.partial().refine(
+export const parentProfileUpdateSchema = parentProfileCreateSchema.partial().extend({
+  isActive: z.boolean().optional(),
+}).refine(
   (value) => Object.keys(value).length > 0,
   "At least one field must be provided",
 );

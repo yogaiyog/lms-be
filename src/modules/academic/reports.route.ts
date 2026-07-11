@@ -2,8 +2,12 @@ import { Router } from "express";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { authenticate } from "../auth/auth.middleware";
+import { requireRole } from "../auth/auth.middleware";
+import { Role } from "../../types/enums";
+import { ReportPdfService } from "../../services/report-pdf/report-pdf.service";
 
 export const reportsRouter = Router();
+const reportPdfService = new ReportPdfService();
 
 type ScheduleReportPayload = Prisma.ScheduleGetPayload<{
   include: {
@@ -314,6 +318,21 @@ reportsRouter.get("/class/:classId/done-schedules", authenticate, async (req, re
       success: true,
       data: schedules,
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+reportsRouter.post("/generate-pdf", authenticate, async (req, res, next) => {
+  try {
+    const pdfBuffer = await reportPdfService.generatePdf(req.body);
+    const filename = `laporan-${(req.body.student?.fullName || "siswa").toLowerCase().replace(/\s+/g, "-")}.pdf`;
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Length": pdfBuffer.length.toString(),
+    });
+    res.send(pdfBuffer);
   } catch (error) {
     next(error);
   }

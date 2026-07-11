@@ -13,13 +13,16 @@ const studentProfileBase = z.object({
   totalXp: z.number().int().min(0).optional(),
   currentStreak: z.number().int().min(0).optional(),
   lastActive: z.coerce.date().optional().nullable(),
+  school: z.string().optional().nullable(),
 });
 
 export const studentProfileCreateSchema = studentProfileBase.transform(
   ({ category, ...rest }) => rest,
 );
 
-export const studentProfileUpdateSchema = studentProfileBase.partial().refine(
+export const studentProfileUpdateSchema = studentProfileBase.partial().extend({
+  isActive: z.boolean().optional(),
+}).refine(
   (value) => Object.keys(value).length > 0,
   "At least one field must be provided",
 ).transform(

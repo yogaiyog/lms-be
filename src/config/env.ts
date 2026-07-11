@@ -22,6 +22,8 @@ const envSchema = z.object({
     .default("false")
     .transform((v) => v === "true"),
 
+  COMPANY_NAME: z.string().default("Juara Kita"),
+
   SMTP_HOST: z.string().default("smtp.gmail.com"),
   SMTP_PORT: z.coerce.number().int().positive().default(587),
   SMTP_ENCRYPTION: z.enum(["TLS", "SSL", "NONE"]).default("TLS"),
