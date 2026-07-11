@@ -71,3 +71,79 @@ Tidak boleh ada error TypeScript. ESLint minimal zero errors (warnings diperbole
 7. Selesai
 
 <!-- END:typescript-check-rules -->
+
+<!-- BEGIN:production-deployment-rules -->
+
+# Production Deployment — Database Migration
+
+## ℹ️ Database Environment
+
+| Environment | Database | File |
+|---|---|---|
+| Development (local) | SQLite (`dev.db`) | `.env` → `DATABASE_URL="file:./dev.db"` |
+| Production (VM/server) | **PostgreSQL** | `.env` → `DATABASE_URL="postgresql://user:pass@host:5432/db"` |
+
+Migration files (`prisma/migrations/`) kompatibel untuk kedua database — Prisma menangani perbedaan sintaks SQL secara otomatis.
+
+## 🚀 Deploy ke VM / Production
+
+```bash
+# 1. Pull code terbaru
+git pull
+
+# 2. Generate Prisma Client
+cd backend && npx prisma generate
+
+# 3. Backup database
+cp prisma/dev.db prisma/dev.db.backup.$(date +%Y%m%d)
+
+# 4. Apply migration pending
+npx prisma migrate deploy
+
+# 5. Restart backend
+pm2 restart lms-backend || systemctl restart lms-backend
+```
+
+## ❌ Dilarang di Production
+
+| Perintah | Efek |
+|---|---|
+| `prisma db push` | Tidak buat migration file — tidak ada riwayat |
+| `prisma migrate dev` | Bisa reset database (interaktif) |
+
+## ✅ Wajib di Local
+
+Setiap perubahan skema:
+```bash
+npx prisma migrate dev --name nama_perubahan
+```
+
+## 🧯 Jika Error Migration di VM
+
+```bash
+# Cek status
+npx prisma migrate status
+
+# Jika ada migration gagal — resolve
+npx prisma migrate resolve --rolled-back <nama_migration>
+
+# Atau jika perlu baseline untuk DB existing (database sudah ada tabel)
+npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/migrations/xxx_baseline/migration.sql
+npx prisma migrate resolve --applied xxx_baseline
+```
+
+## 📁 Commit ke Git — WAJIB
+
+Pastikan file berikut selalu ikut commit:
+```
+prisma/schema.prisma
+prisma/migrations/*/migration.sql
+```
+
+Jangan commit:
+```
+prisma/dev.db
+prisma/dev.db.backup.*
+```
+
+<!-- END:production-deployment-rules -->

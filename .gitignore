@@ -27,7 +27,6 @@ pids
 *.pid.lock
 
 # Build and Compilation outputs (if using TypeScript/Babel)
-dist/
 build/
 out/
 
