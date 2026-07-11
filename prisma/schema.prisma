@@ -8,16 +8,21 @@ generator client {
 }
 
 model User {
-  id             String           @id @default(uuid())
-  email          String           @unique
-  password       String
-  role           String           @default("PARENT") // ADMIN | TUTOR | PARENT | STUDENT
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  parentProfile  ParentProfile?
-  tutorProfile   TutorProfile?
-  studentProfile StudentProfile?
-  refreshTokens  RefreshToken[]
+  id                          String           @id @default(uuid())
+  email                       String           @unique
+  password                    String
+  role                        String           @default("PARENT") // ADMIN | TUTOR | PARENT | STUDENT
+  emailVerified               Boolean          @default(false)
+  emailVerificationToken      String?          @unique
+  emailVerificationTokenExpiresAt DateTime?
+  passwordResetToken          String?          @unique
+  passwordResetTokenExpiresAt DateTime?
+  createdAt                   DateTime         @default(now())
+  updatedAt                   DateTime         @updatedAt
+  parentProfile               ParentProfile?
+  tutorProfile                TutorProfile?
+  studentProfile              StudentProfile?
+  refreshTokens               RefreshToken[]
 }
 
 model ParentProfile {
@@ -59,7 +64,8 @@ model StudentProfile {
   nickname      String
   birthDate     DateTime
   avatarUrl     String?
-  category      String         // KIDS | JUNIOR_I | JUNIOR_II
+  categoryId    String?
+  category      Category?      @relation(fields: [categoryId], references: [id])
   totalXp       Int            @default(0)
   currentStreak Int            @default(0)
   lastActive    DateTime?
@@ -68,21 +74,23 @@ model StudentProfile {
   badgeLogs     StudentBadge[]
   requestClasses RequestClass[]
   certificates  Certificate[]
+  galleries     Gallery[]
   savedReports  SavedReport[]
 }
 
 model Class {
   id               String         @id @default(uuid())
   name             String
-  type             String         @default("BATCH") // BATCH | PRIVATE | MAKEUP | OFFLINE
-  category         String         // JUNIOR_I | JUNIOR_II | JUNIOR_III
+  type             String         @default("BATCH") // BATCH | PRIVATE | MAKEUP | TRIAL
+  categoryId       String?
+  category         Category?      @relation(fields: [categoryId], references: [id])
   tutors           TutorProfile[] @relation("ClassTutors")
   curriculumId     String?
   curriculum       Curriculum?    @relation(fields: [curriculumId], references: [id])
   batch            Int
   startDate        DateTime
   isActive         Boolean        @default(true)
-  isOffline        Boolean        @default(false)
+  isOnline         Boolean        @default(true)
   location         String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
@@ -104,6 +112,7 @@ model Enrollment {
   joinedAt           DateTime     @default(now())
   totalMeetPurchased Int          @default(0)
   totalMeetLeft      Int          @default(0)
+  verified           Boolean      @default(false)
   meetUsages         MeetUsage[]
 
   @@unique([studentId, classId])
@@ -182,17 +191,36 @@ model Announcement {
 }
 
 model Curriculum {
-  id              String          @id @default(uuid())
-  category        String          // JUNIOR_I | JUNIOR_II | JUNIOR_III
+  id              String              @id @default(uuid())
   name            String
   assessmentSetId String?
-  assessmentSet   AssessmentSet?  @relation(fields: [assessmentSetId], references: [id])
+  assessmentSet   AssessmentSet?      @relation(fields: [assessmentSetId], references: [id])
+  categories      CurriculumCategory[]
   topics          Topic[]
   classes         Class[]
   enrollments     Enrollment[]
   certificates    Certificate[]
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model CurriculumCategory {
+  curriculumId  String
+  curriculum    Curriculum @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
+  categoryId    String
+  category      Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([curriculumId, categoryId])
+}
+
+model Category {
+  id           String               @id @default(uuid())
+  name         String               @unique // "Kelas 1", "Kelas 2", ...
+  label        String               // "Kelas 1 SD", "Kelas 2 SD", ...
+  curriculums  CurriculumCategory[]
+  classes      Class[]
+  students     StudentProfile[]
+  createdAt    DateTime             @default(now())
 }
 
 model Certificate {
@@ -212,11 +240,24 @@ model Certificate {
   @@index([curriculumId])
 }
 
+model Gallery {
+  id         String          @id @default(uuid())
+  studentId  String
+  student    StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  imageUrl   String
+  caption    String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@index([studentId])
+}
+
 model Topic {
   id                 String      @id @default(uuid())
   curriculumId       String?
   curriculum         Curriculum? @relation(fields: [curriculumId], references: [id], onDelete: Cascade)
   title              String
+  imageUrl           String?
   materialLink       String?
   exampleProjectLink String?
   goals              String?
@@ -313,6 +354,7 @@ model AssessmentAspect {
   assessmentSet  AssessmentSet            @relation(fields: [assessmentSetId], references: [id], onDelete: Cascade)
   title          String
   description    String?
+  icon           String?
   minScore       Int                      @default(1)
   maxScore       Int                      @default(5)
   order          Int                      @default(0)
@@ -345,6 +387,21 @@ model AttendanceAssessmentScore {
   createdAt    DateTime            @default(now())
 
   @@unique([assessmentId, aspectId])
+}
+
+model Image {
+  id         String   @id @default(uuid())
+  url        String   @unique
+  filename   String
+  mimeType   String
+  size       Int
+  entityType String   // e.g. "avatar", "topic", "badge", "certificate", "announcement", "general"
+  entityId   String?  // ID of the related entity (nullable for standalone uploads)
+  uploadedBy String?  // userId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([entityType, entityId])
 }
 
 model SavedReport {

@@ -1,14 +1,15 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { User } from "@prisma/client";
+import { randomUUID, randomBytes } from "node:crypto";
 import { Category, Role } from "../../types/enums";
-import { randomUUID } from "node:crypto";
 import { env } from "../../config/env";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/app-error";
 import { generateOpaqueToken, hashToken } from "./auth.utils";
 import type { AuthTokenPair, JwtAccessPayload } from "./auth.types";
 import { unauthorized } from "./auth.errors";
+import { emailService } from "../../services/email.service";
 
 type RequestMeta = {
   userAgent?: string;
@@ -27,7 +28,7 @@ type RegisterParentInput = {
   email: string;
   password: string;
   fullName: string;
-  phone: string;
+  phone?: string;
 };
 
 type RegisterTutorInput = RegisterParentInput & {
@@ -41,7 +42,8 @@ type RegisterStudentInput = RegisterParentInput & {
   nickname: string;
   birthDate: Date;
   avatarUrl?: string | null;
-  category: Category;
+  category?: Category;
+  categoryId?: string | null;
 };
 
 type LoginInput = {
@@ -56,7 +58,7 @@ type RefreshInput = {
 const passwordSaltRounds = 12;
 
 function sanitizeUser(user: User & Record<string, unknown>): PublicUser {
-  const { password: _password, ...rest } = user;
+  const { password: _password, emailVerificationToken: _evt, emailVerificationTokenExpiresAt: _evta, passwordResetToken: _prt, passwordResetTokenExpiresAt: _prta, ...rest } = user;
   return rest as PublicUser;
 }
 
@@ -165,19 +167,26 @@ export const authService = {
     await ensureEmailAvailable(input.email);
     const hashedPassword = await bcrypt.hash(input.password, passwordSaltRounds);
 
+    const verificationToken = randomBytes(32).toString("hex");
+    const verificationTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
     const user = await prisma.user.create({
       data: {
         email: input.email.toLowerCase(),
         password: hashedPassword,
         role: "PARENT",
+        emailVerificationToken: verificationToken,
+        emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
         parentProfile: {
           create: {
             fullName: input.fullName,
-            phone: input.phone,
+            phone: input.phone ?? "",
           },
         },
       },
     });
+
+    emailService.sendVerificationEmail(user.email, verificationToken).catch(() => {});
 
     return buildAuthResponse(user, meta);
   },
@@ -186,15 +195,20 @@ export const authService = {
     await ensureEmailAvailable(input.email);
     const hashedPassword = await bcrypt.hash(input.password, passwordSaltRounds);
 
+    const verificationToken = randomBytes(32).toString("hex");
+    const verificationTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
     const user = await prisma.user.create({
       data: {
         email: input.email.toLowerCase(),
         password: hashedPassword,
         role: "TUTOR",
+        emailVerificationToken: verificationToken,
+        emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
         tutorProfile: {
           create: {
             fullName: input.fullName,
-            phone: input.phone,
+            phone: input.phone ?? "",
             bio: input.bio,
             avatarUrl: input.avatarUrl,
             meetLink: input.meetLink,
@@ -202,6 +216,8 @@ export const authService = {
         },
       },
     });
+
+    emailService.sendVerificationEmail(user.email, verificationToken).catch(() => {});
 
     return buildAuthResponse(user, meta);
   },
@@ -211,11 +227,25 @@ export const authService = {
     await ensureParentProfileExists(input.parentId);
     const hashedPassword = await bcrypt.hash(input.password, passwordSaltRounds);
 
+    const categoryName = input.categoryId
+      ? undefined
+      : input.category === "JUNIOR_I" ? "Kelas 1"
+        : input.category === "JUNIOR_II" ? "Kelas 4"
+          : input.category === "JUNIOR_III" ? "Kelas 7"
+            : undefined;
+    const categoryId = input.categoryId ?? (categoryName
+      ? (await prisma.category.findUnique({ where: { name: categoryName } }))?.id
+      : undefined);
+
+    const verificationToken = randomBytes(32).toString("hex");
+    const verificationTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
     const user = await prisma.user.create({
       data: {
         email: input.email.toLowerCase(),
         password: hashedPassword,
         role: "STUDENT",
+        emailVerified: true,
         studentProfile: {
           create: {
             parentId: input.parentId,
@@ -223,7 +253,7 @@ export const authService = {
             nickname: input.nickname,
             birthDate: input.birthDate,
             avatarUrl: input.avatarUrl,
-            category: input.category,
+            categoryId: categoryId,
           },
         },
       },
@@ -250,6 +280,14 @@ export const authService = {
 
     if (!isValid) {
       throw unauthorized("Email atau password salah");
+    }
+
+    if (!user.emailVerified) {
+      throw new AppError(
+        "Email belum diverifikasi. Silakan cek inbox/spam email kamu untuk verifikasi.",
+        403,
+        "EMAIL_NOT_VERIFIED",
+      );
     }
 
     return createAuthForExistingUser(
@@ -411,5 +449,109 @@ export const authService = {
     }
 
     return sanitizeUser(user);
+  },
+
+  async forgotPassword(input: { email: string }) {
+    const user = await prisma.user.findUnique({
+      where: { email: input.email.toLowerCase() },
+    });
+
+    if (!user) {
+      return { success: true };
+    }
+
+    const resetToken = randomBytes(32).toString("hex");
+    const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordResetToken: resetToken,
+        passwordResetTokenExpiresAt: resetTokenExpiresAt,
+      },
+    });
+
+    emailService.sendResetPasswordEmail(user.email, resetToken).catch(() => {});
+
+    return { success: true };
+  },
+
+  async resetPassword(input: { token: string; password: string }) {
+    const user = await prisma.user.findFirst({
+      where: {
+        passwordResetToken: input.token,
+        passwordResetTokenExpiresAt: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new AppError("Token reset password tidak valid atau sudah kedaluwarsa", 400, "INVALID_RESET_TOKEN");
+    }
+
+    const hashedPassword = await bcrypt.hash(input.password, passwordSaltRounds);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetTokenExpiresAt: null,
+      },
+    });
+
+    return { success: true };
+  },
+
+  async verifyEmail(input: { token: string }) {
+    const user = await prisma.user.findFirst({
+      where: {
+        emailVerificationToken: input.token,
+        emailVerificationTokenExpiresAt: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new AppError("Token verifikasi tidak valid atau sudah kedaluwarsa", 400, "INVALID_VERIFICATION_TOKEN");
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        emailVerificationToken: null,
+        emailVerificationTokenExpiresAt: null,
+      },
+    });
+
+    return { success: true, message: "Email berhasil diverifikasi" };
+  },
+
+  async resendVerification(input: { email: string }) {
+    const user = await prisma.user.findUnique({
+      where: { email: input.email.toLowerCase() },
+    });
+
+    if (!user) {
+      throw new AppError("Email tidak ditemukan", 404, "EMAIL_NOT_FOUND");
+    }
+
+    if (user.emailVerified) {
+      throw new AppError("Email sudah diverifikasi", 400, "ALREADY_VERIFIED");
+    }
+
+    const verificationToken = randomBytes(32).toString("hex");
+    const verificationTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerificationToken: verificationToken,
+        emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
+      },
+    });
+
+    emailService.sendVerificationEmail(user.email, verificationToken).catch(() => {});
+
+    return { success: true, message: "Email verifikasi telah dikirim ulang" };
   },
 };

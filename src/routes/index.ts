@@ -9,6 +9,8 @@ import { gamificationRouter } from "../modules/gamification/gamification.route";
 import { healthRouter } from "./health.route";
 import { docsRouter } from "./docs.route";
 import { requestClassRouter } from "../modules/request-class/request-class.route";
+import { uploadRouter } from "../modules/upload/upload.route";
+import { galleriesRouter } from "../modules/galleries/galleries.route";
 
 export const apiRouter = Router();
 
@@ -22,3 +24,5 @@ apiRouter.use("/student-profiles", studentProfilesRouter);
 apiRouter.use("/academic", academicRouter);
 apiRouter.use("/gamification", gamificationRouter);
 apiRouter.use("/request-class", requestClassRouter);
+apiRouter.use("/upload", uploadRouter);
+apiRouter.use("/galleries", galleriesRouter);

@@ -33,6 +33,7 @@ type ScheduleReportPayload = Prisma.ScheduleGetPayload<{
 type AspectAnalysis = {
   aspectTitle: string;
   aspectDescription: string | null;
+  icon: string | null;
   score: number;
   maxScore: number;
   percentage: number;
@@ -138,6 +139,7 @@ reportsRouter.get("/schedule/:scheduleId", authenticate, async (req, res, next) 
           return {
             aspectTitle: s.aspect.title,
             aspectDescription: s.aspect.description,
+            icon: s.aspect.icon,
             score: s.score,
             maxScore: s.aspect.maxScore,
             percentage: pct,

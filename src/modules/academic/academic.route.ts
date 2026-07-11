@@ -14,6 +14,7 @@ import { attendanceAssessmentScoresRouter } from "../attendance-assessment-score
 import { reportsRouter } from "./reports.route";
 import { savedReportsRouter } from "./saved-reports.route";
 import { certificatesRouter } from "../certificates/certificates.route";
+import { categoriesRouter } from "../categories/categories.route";
 
 export const academicRouter = Router();
 
@@ -32,3 +33,4 @@ academicRouter.use("/attendance-assessment-scores", attendanceAssessmentScoresRo
 academicRouter.use("/reports", reportsRouter);
 academicRouter.use("/saved-reports", savedReportsRouter);
 academicRouter.use("/certificates", certificatesRouter);
+academicRouter.use("/categories", categoriesRouter);

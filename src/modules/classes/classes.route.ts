@@ -8,6 +8,7 @@ export const classesRouter = Router();
 
 const commonInclude = {
   tutors: true,
+  category: true,
   enrollments: {
     include: {
       meetUsages: true,
@@ -71,7 +72,7 @@ classesRouter.post("/", async (req, res, next) => {
 
     const batch = (lastClass?.batch ?? 0) + 1;
 
-    const { tutorIds, ...rest } = payload;
+    const { tutorIds, category, ...rest } = payload;
     const item = await prisma.class.create({
       data: {
         ...rest,
@@ -90,7 +91,7 @@ classesRouter.post("/", async (req, res, next) => {
 classesRouter.patch("/:id", async (req, res, next) => {
   try {
     const payload = classUpdateSchema.parse(req.body);
-    const { tutorIds, ...rest } = payload;
+    const { tutorIds, category, ...rest } = payload;
 
     const updateData: Record<string, unknown> = { ...rest };
     if (tutorIds) {

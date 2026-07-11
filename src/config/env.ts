@@ -11,6 +11,22 @@ const envSchema = z.object({
   JWT_ACCESS_SECRET: z.string().min(32),
   ACCESS_TOKEN_TTL_MINUTES: z.coerce.number().int().positive().default(15),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(30),
+
+  MINIO_ENDPOINT: z.string().min(1),
+  MINIO_PORT: z.coerce.number().int().positive().default(9000),
+  MINIO_ACCESS_KEY: z.string().min(1),
+  MINIO_SECRET_KEY: z.string().min(1),
+  MINIO_BUCKET: z.string().min(1),
+  MINIO_USE_SSL: z
+    .string()
+    .default("false")
+    .transform((v) => v === "true"),
+
+  SMTP_HOST: z.string().default("smtp.gmail.com"),
+  SMTP_PORT: z.coerce.number().int().positive().default(587),
+  SMTP_ENCRYPTION: z.enum(["TLS", "SSL", "NONE"]).default("TLS"),
+  SMTP_USERNAME: z.string().min(1),
+  SMTP_PASSWORD: z.string().min(1),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

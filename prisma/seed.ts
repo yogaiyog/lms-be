@@ -11,7 +11,6 @@ async function main() {
   await prisma.attendanceAssessmentScore.deleteMany();
   await prisma.attendanceAssessment.deleteMany();
   await prisma.assessmentAspect.deleteMany();
-  await prisma.assessmentSet.deleteMany();
   await prisma.studentBadge.deleteMany();
   await prisma.badge.deleteMany();
   await prisma.meetUsage.deleteMany();
@@ -22,7 +21,10 @@ async function main() {
   await prisma.enrollment.deleteMany();
   await prisma.requestClass.deleteMany();
   await prisma.topic.deleteMany();
+  await prisma.curriculumCategory.deleteMany();
   await prisma.curriculum.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.assessmentSet.deleteMany();
   await prisma.class.deleteMany();
   await prisma.studentProfile.deleteMany();
   await prisma.tutorProfile.deleteMany();
@@ -38,6 +40,7 @@ async function main() {
       email: "admin@lms.com",
       password,
       role: "ADMIN",
+      emailVerified: true,
     },
   });
   console.log("✓ Admin created:", adminUser.email);
@@ -48,6 +51,7 @@ async function main() {
       email: "budi.tutor@lms.com",
       password,
       role: "TUTOR",
+      emailVerified: true,
       tutorProfile: {
         create: {
           fullName: "Budi Santoso",
@@ -66,6 +70,7 @@ async function main() {
       email: "sari.tutor@lms.com",
       password,
       role: "TUTOR",
+      emailVerified: true,
       tutorProfile: {
         create: {
           fullName: "Sari Dewi",
@@ -93,6 +98,7 @@ async function main() {
       email: "andi.parent@lms.com",
       password,
       role: "PARENT",
+      emailVerified: true,
       parentProfile: {
         create: {
           fullName: "Andi Pratama",
@@ -107,6 +113,7 @@ async function main() {
       email: "maya.parent@lms.com",
       password,
       role: "PARENT",
+      emailVerified: true,
       parentProfile: {
         create: {
           fullName: "Maya Sari",
@@ -124,19 +131,41 @@ async function main() {
     where: { userId: parent2User.id },
   });
 
+  console.log("✓ Parents created");
+
+  // === CATEGORIES (must be before students & curriculums) ===
+  const categoryData = [
+    { name: "Kelas 1", label: "Kelas 1 SD" },
+    { name: "Kelas 2", label: "Kelas 2 SD" },
+    { name: "Kelas 3", label: "Kelas 3 SD" },
+    { name: "Kelas 4", label: "Kelas 4 SD" },
+    { name: "Kelas 5", label: "Kelas 5 SD" },
+    { name: "Kelas 6", label: "Kelas 6 SD" },
+    { name: "Kelas 7", label: "Kelas 7 SMP" },
+    { name: "Kelas 8", label: "Kelas 8 SMP" },
+    { name: "Kelas 9", label: "Kelas 9 SMP" },
+  ];
+
+  const categories = await Promise.all(
+    categoryData.map((c) => prisma.category.create({ data: c })),
+  );
+  const [kelas1, kelas2, kelas3, kelas4, kelas5, kelas6, kelas7, kelas8, kelas9] = categories;
+  console.log(`✓ ${categories.length} categories created`);
+
   // === STUDENTS ===
   const student1User = await prisma.user.create({
     data: {
       email: "rafa.student@lms.com",
       password,
       role: "STUDENT",
+      emailVerified: true,
       studentProfile: {
         create: {
           parentId: parent1.id,
           fullName: "Rafa Pratama",
           nickname: "Rafa",
           birthDate: new Date("2016-05-15"),
-          category: "JUNIOR_I",
+          categoryId: kelas1.id,
           totalXp: 350,
           currentStreak: 5,
           lastActive: new Date(),
@@ -150,13 +179,14 @@ async function main() {
       email: "luna.student@lms.com",
       password,
       role: "STUDENT",
+      emailVerified: true,
       studentProfile: {
         create: {
           parentId: parent1.id,
           fullName: "Luna Pratama",
           nickname: "Luna",
           birthDate: new Date("2014-08-20"),
-          category: "JUNIOR_II",
+          categoryId: kelas4.id,
           totalXp: 720,
           currentStreak: 12,
           lastActive: new Date(),
@@ -170,13 +200,14 @@ async function main() {
       email: "ardhi.student@lms.com",
       password,
       role: "STUDENT",
+      emailVerified: true,
       studentProfile: {
         create: {
           parentId: parent2.id,
           fullName: "Ardhi Saputra",
           nickname: "Ardhi",
           birthDate: new Date("2012-03-10"),
-          category: "JUNIOR_III",
+          categoryId: kelas7.id,
           totalXp: 1250,
           currentStreak: 20,
           lastActive: new Date(),
@@ -190,13 +221,14 @@ async function main() {
       email: "nisa.student@lms.com",
       password,
       role: "STUDENT",
+      emailVerified: true,
       studentProfile: {
         create: {
           parentId: parent2.id,
           fullName: "Nisa Saputra",
           nickname: "Nisa",
           birthDate: new Date("2017-11-05"),
-          category: "JUNIOR_I",
+          categoryId: kelas1.id,
           totalXp: 180,
           currentStreak: 2,
           lastActive: new Date(),
@@ -210,13 +242,14 @@ async function main() {
       email: "dito.student@lms.com",
       password,
       role: "STUDENT",
+      emailVerified: true,
       studentProfile: {
         create: {
           parentId: parent2.id,
           fullName: "Dito Saputra",
           nickname: "Dito",
           birthDate: new Date("2015-06-20"),
-          category: "JUNIOR_II",
+          categoryId: kelas4.id,
           totalXp: 0,
           currentStreak: 0,
         },
@@ -334,9 +367,15 @@ async function main() {
 
   const curriculumJunior1 = await prisma.curriculum.create({
     data: {
-      category: "JUNIOR_I",
       name: "Scratch Junior",
       assessmentSetId: defaultAssessment.id,
+      categories: {
+        create: [
+          { categoryId: kelas1.id },
+          { categoryId: kelas2.id },
+          { categoryId: kelas3.id },
+        ],
+      },
       topics: {
         create: scratchTopics.map((t, i) => ({ ...t, order: i })),
       },
@@ -346,9 +385,15 @@ async function main() {
 
   const curriculumJunior2 = await prisma.curriculum.create({
     data: {
-      category: "JUNIOR_II",
       name: "Python Explorer",
       assessmentSetId: defaultAssessment.id,
+      categories: {
+        create: [
+          { categoryId: kelas4.id },
+          { categoryId: kelas5.id },
+          { categoryId: kelas6.id },
+        ],
+      },
       topics: {
         create: pythonTopics.map((t, i) => ({ ...t, order: i })),
       },
@@ -358,9 +403,15 @@ async function main() {
 
   const curriculumJunior3 = await prisma.curriculum.create({
     data: {
-      category: "JUNIOR_III",
       name: "Web Dev Warrior",
       assessmentSetId: defaultAssessment.id,
+      categories: {
+        create: [
+          { categoryId: kelas7.id },
+          { categoryId: kelas8.id },
+          { categoryId: kelas9.id },
+        ],
+      },
       topics: {
         create: webTopics.map((t, i) => ({ ...t, order: i })),
       },
@@ -386,16 +437,22 @@ async function main() {
 
   const curriculumJuniorDesign = await prisma.curriculum.create({
     data: {
-      category: "JUNIOR_I",
       name: "Design & Kreativitas",
       assessmentSetId: designAssessment.id,
+      categories: {
+        create: [
+          { categoryId: kelas1.id },
+          { categoryId: kelas2.id },
+          { categoryId: kelas3.id },
+        ],
+      },
       topics: {
         create: designTopics.map((t, i) => ({ ...t, order: i })),
       },
     },
     include: { topics: true },
   });
-  console.log("✓ Curriculum created: Design & Kreativitas (JUNIOR_I, 12 topics, with dedicated assessment set)");
+  console.log("✓ Curriculum created: Design & Kreativitas (Kelas 1-3, 12 topics, with dedicated assessment set)");
 
   // === CLASSES ===
   function classStartDate(dayOfWeek: string, weeksAgo: number): Date {
@@ -414,7 +471,7 @@ async function main() {
   const class1 = await prisma.class.create({
     data: {
       name: "Scratch Junior - Batch 4",
-      category: "JUNIOR_I",
+      categoryId: kelas1.id,
       tutors: { connect: [{ id: tutor1.id }] },
       curriculumId: curriculumJunior1.id,
       batch: 4,
@@ -426,7 +483,7 @@ async function main() {
   const class2 = await prisma.class.create({
     data: {
       name: "Python Explorer - Batch 2",
-      category: "JUNIOR_II",
+      categoryId: kelas4.id,
       tutors: { connect: [{ id: tutor2.id }] },
       curriculumId: curriculumJunior2.id,
       batch: 2,
@@ -438,7 +495,7 @@ async function main() {
   const class3 = await prisma.class.create({
     data: {
       name: "Web Dev Warrior - Batch 1",
-      category: "JUNIOR_III",
+      categoryId: kelas7.id,
       tutors: { connect: [{ id: tutor1.id }] },
       curriculumId: curriculumJunior3.id,
       batch: 1,
@@ -451,7 +508,7 @@ async function main() {
   const classDesign = await prisma.class.create({
     data: {
       name: "Design & Kreativitas - Batch 1",
-      category: "JUNIOR_I",
+      categoryId: kelas1.id,
       tutors: { connect: [{ id: tutor2.id }] },
       curriculumId: curriculumJuniorDesign.id,
       batch: 1,
@@ -467,7 +524,7 @@ async function main() {
     data: {
       studentId: student5.id,
       parentId: parent2.id,
-      category: student5.category,
+      category: "JUNIOR_II",
       curriculum: "Python Explorer",
       days: JSON.stringify(["TUESDAY", "THURSDAY"]),
       startTime: "15:00",
@@ -485,7 +542,7 @@ async function main() {
       studentId: student4.id,
       parentId: parent2.id,
       prevClassId: class1.id,
-      category: student4.category,
+      category: "JUNIOR_I",
       curriculum: "Scratch Adventurer",
       days: JSON.stringify(["SATURDAY"]),
       startTime: "13:00",
@@ -501,7 +558,7 @@ async function main() {
     data: {
       studentId: student2.id,
       parentId: parent1.id,
-      category: student2.category,
+      category: "JUNIOR_II",
       curriculum: "Python Explorer",
       days: JSON.stringify(["SATURDAY"]),
       startTime: "10:30",
@@ -520,7 +577,7 @@ async function main() {
     data: {
       studentId: student3.id,
       parentId: parent2.id,
-      category: student3.category,
+      category: "JUNIOR_III",
       curriculum: "Mobile App Development",
       days: JSON.stringify(["SUNDAY"]),
       startTime: "09:00",
@@ -589,11 +646,11 @@ async function main() {
 
   await prisma.enrollment.createMany({
     data: [
-      { studentId: student1.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount1 },
-      { studentId: student4.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount1 },
-      { studentId: student2.id, classId: class2.id, curriculumId: curriculumJunior2.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount2 },
-      { studentId: student3.id, classId: class3.id, curriculumId: curriculumJunior3.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount3 },
-      { studentId: student1.id, classId: classDesign.id, curriculumId: curriculumJuniorDesign.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCountDesign },
+      { studentId: student1.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount1, verified: true },
+      { studentId: student4.id, classId: class1.id, curriculumId: curriculumJunior1.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount1, verified: true },
+      { studentId: student2.id, classId: class2.id, curriculumId: curriculumJunior2.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount2, verified: true },
+      { studentId: student3.id, classId: class3.id, curriculumId: curriculumJunior3.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCount3, verified: true },
+      { studentId: student1.id, classId: classDesign.id, curriculumId: curriculumJuniorDesign.id, totalMeetPurchased: 12, totalMeetLeft: 12 - doneCountDesign, verified: true },
     ],
   });
   console.log("✓ Enrollments created");
@@ -877,7 +934,7 @@ async function main() {
   console.log("Parents:     andi.parent@lms.com, maya.parent@lms.com");
   console.log("Students:    rafa.student@lms.com, luna.student@lms.com,");
   console.log("             ardhi.student@lms.com, nisa.student@lms.com, dito.student@lms.com");
-  console.log("Curriculums: Scratch Junior - JUNIOR_I (12 topics), Design & Kreativitas - JUNIOR_I (12 topics), Python Explorer - JUNIOR_II (12 topics), Web Dev Warrior - JUNIOR_III (12 topics)");
+  console.log("Curriculums: Scratch Junior - Kelas 1-3 (12 topics), Design & Kreativitas - Kelas 1-3 (12 topics), Python Explorer - Kelas 4-6 (12 topics), Web Dev Warrior - Kelas 7-9 (12 topics)");
   console.log("Password:    password123 (all accounts)");
   console.log("--------------------\n");
 }

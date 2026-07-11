@@ -3,6 +3,7 @@ import { z } from "zod";
 export const topicCreateSchema = z.object({
   curriculumId: z.string().uuid().optional(),
   title: z.string().min(1),
+  imageUrl: z.string().trim().min(1).optional().nullable(),
   materialLink: z.string().url().optional().nullable(),
   exampleProjectLink: z.string().url().optional().nullable(),
   goals: z.string().optional().nullable(),

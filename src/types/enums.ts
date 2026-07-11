@@ -31,7 +31,7 @@ export const ClassType = {
   BATCH: "BATCH",
   PRIVATE: "PRIVATE",
   MAKEUP: "MAKEUP",
-  OFFLINE: "OFFLINE",
+  TRIAL: "TRIAL",
 } as const;
 
 export type ClassType = (typeof ClassType)[keyof typeof ClassType];

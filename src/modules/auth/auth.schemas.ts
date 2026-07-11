@@ -33,8 +33,23 @@ export const studentRegisterSchema = registerSchema.extend({
   parentId: z.string().uuid(),
   nickname: z.string().min(1),
   birthDate: z.coerce.date(),
+  phone: z.string().min(1).optional(),
   avatarUrl: z.string().url().optional().nullable(),
-  category: z.nativeEnum(Category),
+  categoryId: z.string().uuid().optional().nullable(),
+  category: z.nativeEnum(Category).optional(),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8).max(100),
+});
+
+export const verifyEmailSchema = z.object({
+  token: z.string().min(1),
 });
 
 export const roleSchema = z.nativeEnum(Role);

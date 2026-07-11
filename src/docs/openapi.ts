@@ -111,7 +111,7 @@ const baseSchemas: Record<string, OpenAPIV3.SchemaObject> = {
       },
       tutors: { type: "array", items: { $ref: "#/components/schemas/TutorProfile" } },
       isActive: { type: "boolean" },
-      isOffline: { type: "boolean" },
+      isOnline: { type: "boolean" },
       location: { type: "string", nullable: true },
       createdAt: stringDate,
       updatedAt: stringDate,

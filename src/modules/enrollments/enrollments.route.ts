@@ -6,7 +6,7 @@ import { enrollmentCreateSchema, enrollmentUpdateSchema } from "./enrollments.sc
 import { mapPrismaError } from "../../lib/prisma-error";
 import { AppError } from "../../utils/app-error";
 
-const include = { student: true, class: true };
+const include = { student: true, class: true, curriculum: true };
 
 const baseRouter = createCrudRouter({
   delegate: prisma.enrollment,
@@ -48,7 +48,7 @@ router.post("/", async (req, res, next) => {
     if (!curriculum) throw new AppError("Curriculum not found", 404);
 
     const maxTopics = curriculum._count.topics;
-    const totalMeetPurchased = payload.totalMeetPurchased ?? maxTopics;
+    const totalMeetPurchased = payload.totalMeetPurchased ?? 0;
     if (totalMeetPurchased > maxTopics) {
       throw new AppError(
         `totalMeetPurchased (${totalMeetPurchased}) cannot exceed curriculum topics (${maxTopics})`,

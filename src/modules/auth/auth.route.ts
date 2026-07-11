@@ -8,8 +8,12 @@ import {
   refreshSchema,
   studentRegisterSchema,
   tutorRegisterSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  verifyEmailSchema,
 } from "./auth.schemas";
 import { authenticate, requireRole } from "./auth.middleware";
+import { prisma } from "../../lib/prisma";
 
 export const authRouter = Router();
 
@@ -128,6 +132,19 @@ authRouter.post(
   },
 );
 
+authRouter.get("/check-email", async (req, res, next) => {
+  try {
+    const email = req.query.email as string | undefined;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+    const user = await prisma.user.findUnique({ where: { email } });
+    return res.json({ success: true, data: { available: !user } });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 authRouter.get("/me", authenticate, async (req, res, next) => {
   try {
     if (!req.auth) {
@@ -135,6 +152,46 @@ authRouter.get("/me", authenticate, async (req, res, next) => {
     }
 
     const result = await authService.me(req.auth.userId);
+    return res.json({ success: true, data: result });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+authRouter.post("/forgot-password", async (req, res, next) => {
+  try {
+    const payload = forgotPasswordSchema.parse(req.body);
+    const result = await authService.forgotPassword(payload);
+    return res.json({ success: true, data: result });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+authRouter.post("/reset-password", async (req, res, next) => {
+  try {
+    const payload = resetPasswordSchema.parse(req.body);
+    const result = await authService.resetPassword(payload);
+    return res.json({ success: true, data: result });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+authRouter.post("/verify-email", async (req, res, next) => {
+  try {
+    const payload = verifyEmailSchema.parse(req.body);
+    const result = await authService.verifyEmail(payload);
+    return res.json({ success: true, data: result });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+authRouter.post("/resend-verification", async (req, res, next) => {
+  try {
+    const payload = forgotPasswordSchema.parse(req.body);
+    const result = await authService.resendVerification(payload);
     return res.json({ success: true, data: result });
   } catch (error) {
     return next(error);
