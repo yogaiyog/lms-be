@@ -6,13 +6,14 @@ const prisma_1 = require("../../lib/prisma");
 const app_error_1 = require("../../utils/app-error");
 exports.tutorSlotsRouter = (0, express_1.Router)();
 const DAY_NAMES = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+const RESTRICT_WEEKDAY_MORNING = process.env.RESTRICT_WEEKDAY_MORNING_SLOTS === "true";
 function isWeekend(dayIdx) {
     return dayIdx >= 5;
 }
 function isValidHour(dayIdx, hour) {
     if (hour < 9 || hour >= 21)
         return false;
-    if (!isWeekend(dayIdx) && hour < 15)
+    if (RESTRICT_WEEKDAY_MORNING && !isWeekend(dayIdx) && hour < 15)
         return false;
     return true;
 }
@@ -53,6 +54,7 @@ exports.tutorSlotsRouter.get("/:tutorId", async (req, res, next) => {
             data: {
                 slots: result,
                 dayoffs: Array.from(dayoffs),
+                restrictWeekdayMorning: RESTRICT_WEEKDAY_MORNING,
             },
         });
     }

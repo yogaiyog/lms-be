@@ -5,6 +5,7 @@ import { AppError } from "../../utils/app-error";
 export const tutorSlotsRouter = Router();
 
 const DAY_NAMES = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+const RESTRICT_WEEKDAY_MORNING = process.env.RESTRICT_WEEKDAY_MORNING_SLOTS === "true";
 
 function isWeekend(dayIdx: number) {
   return dayIdx >= 5;
@@ -12,7 +13,7 @@ function isWeekend(dayIdx: number) {
 
 function isValidHour(dayIdx: number, hour: number) {
   if (hour < 9 || hour >= 21) return false;
-  if (!isWeekend(dayIdx) && hour < 15) return false;
+  if (RESTRICT_WEEKDAY_MORNING && !isWeekend(dayIdx) && hour < 15) return false;
   return true;
 }
 
@@ -64,6 +65,7 @@ tutorSlotsRouter.get("/:tutorId", async (req: Request, res: Response, next: Next
       data: {
         slots: result,
         dayoffs: Array.from(dayoffs),
+        restrictWeekdayMorning: RESTRICT_WEEKDAY_MORNING,
       },
     });
   } catch (error) {
