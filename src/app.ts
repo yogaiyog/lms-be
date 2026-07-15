@@ -10,20 +10,10 @@ import { notFoundMiddleware } from "./middlewares/not-found.middleware";
 export function createApp() {
   const app = express();
 
-  const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) => o.trim());
-
   app.set("trust proxy", true);
   app.use(helmet({ contentSecurityPolicy: false }));
-  app.use(cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  }));
+  // CORS handled by Nginx - disabled here to avoid duplicate headers
+  // app.use(cors({ origin: true, credentials: true }));
   app.use(express.json({ limit: "2mb" }));
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
