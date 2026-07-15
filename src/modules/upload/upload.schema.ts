@@ -16,7 +16,7 @@ export const uploadImageSchema = z.object({
       "Format file tidak didukung. Gunakan jpg, png, webp, atau gif",
     )
     .refine(
-      (f: Express.Multer.File) => f.size <= 5 * 1024 * 1024,
-      "Ukuran file maksimal 5MB",
+      (f: Express.Multer.File) => f.size <= 10 * 1024 * 1024,
+      "Ukuran file maksimal 10MB",
     ),
 });

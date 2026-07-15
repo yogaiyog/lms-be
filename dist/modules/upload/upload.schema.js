@@ -13,5 +13,5 @@ exports.uploadImageSchema = zod_1.z.object({
         .any()
         .refine((f) => !!f, "File gambar wajib diunggah")
         .refine((f) => exports.IMAGE_MIMETYPES.includes(f.mimetype), "Format file tidak didukung. Gunakan jpg, png, webp, atau gif")
-        .refine((f) => f.size <= 5 * 1024 * 1024, "Ukuran file maksimal 5MB"),
+        .refine((f) => f.size <= 10 * 1024 * 1024, "Ukuran file maksimal 10MB"),
 });

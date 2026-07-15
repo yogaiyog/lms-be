@@ -21,7 +21,7 @@ const ENTITY_TYPES = [
 const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 },
+    limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter: (_req, file, cb) => {
         const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
         if (!allowed.includes(file.mimetype)) {
