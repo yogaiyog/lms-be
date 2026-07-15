@@ -21,6 +21,7 @@ const envSchema = z.object({
     .string()
     .default("false")
     .transform((v) => v === "true"),
+  MINIO_PUBLIC_URL: z.string().optional(),
 
   COMPANY_NAME: z.string().default("Juara Kita"),
 

@@ -24,6 +24,7 @@ const envSchema = zod_1.z.object({
         .string()
         .default("false")
         .transform((v) => v === "true"),
+    MINIO_PUBLIC_URL: zod_1.z.string().optional(),
     COMPANY_NAME: zod_1.z.string().default("Juara Kita"),
     SMTP_HOST: zod_1.z.string().default("smtp.gmail.com"),
     SMTP_PORT: zod_1.z.coerce.number().int().positive().default(587),

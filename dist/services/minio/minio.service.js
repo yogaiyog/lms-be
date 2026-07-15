@@ -34,8 +34,8 @@ async function uploadFile(buffer, filename, mimeType) {
     await mc.putObject(env_1.env.MINIO_BUCKET, key, buffer, buffer.length, {
         "Content-Type": mimeType,
     });
-    const protocol = env_1.env.MINIO_USE_SSL ? "https" : "http";
-    return `${protocol}://${env_1.env.MINIO_ENDPOINT}:${env_1.env.MINIO_PORT}/${env_1.env.MINIO_BUCKET}/${key}`;
+    const publicUrl = env_1.env.MINIO_PUBLIC_URL || `${env_1.env.MINIO_ENDPOINT}:${env_1.env.MINIO_PORT}`;
+    return `${publicUrl}/${env_1.env.MINIO_BUCKET}/${key}`;
 }
 async function deleteFile(url) {
     const mc = getClient();

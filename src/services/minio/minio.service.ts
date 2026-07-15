@@ -40,8 +40,8 @@ export async function uploadFile(
     "Content-Type": mimeType,
   });
 
-  const protocol = env.MINIO_USE_SSL ? "https" : "http";
-  return `${protocol}://${env.MINIO_ENDPOINT}:${env.MINIO_PORT}/${env.MINIO_BUCKET}/${key}`;
+  const publicUrl = env.MINIO_PUBLIC_URL || `${env.MINIO_ENDPOINT}:${env.MINIO_PORT}`;
+  return `${publicUrl}/${env.MINIO_BUCKET}/${key}`;
 }
 
 export async function deleteFile(url: string): Promise<void> {
