@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { ZodError } from "zod";
 import { AppError } from "../utils/app-error";
 import { mapPrismaError } from "../lib/prisma-error";
 
@@ -13,6 +14,16 @@ export function errorMiddleware(
       success: false,
       message: err.message,
       code: err.code,
+    });
+  }
+
+  if (err instanceof ZodError) {
+    return res.status(400).json({
+      success: false,
+      message: err.errors
+        .map((e) => `${e.path.join(".")}: ${e.message}`)
+        .join("; "),
+      code: "VALIDATION_ERROR",
     });
   }
 

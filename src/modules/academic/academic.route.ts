@@ -15,6 +15,8 @@ import { reportsRouter } from "./reports.route";
 import { savedReportsRouter } from "./saved-reports.route";
 import { certificatesRouter } from "../certificates/certificates.route";
 import { categoriesRouter } from "../categories/categories.route";
+import { studentTopicProgressRouter } from "../student-topic-progress/student-topic-progress.route";
+import { roadmapRouter } from "../roadmap/roadmap.route";
 
 export const academicRouter = Router();
 
@@ -34,3 +36,5 @@ academicRouter.use("/reports", reportsRouter);
 academicRouter.use("/saved-reports", savedReportsRouter);
 academicRouter.use("/certificates", certificatesRouter);
 academicRouter.use("/categories", categoriesRouter);
+academicRouter.use("/student-topic-progress", studentTopicProgressRouter);
+academicRouter.use("/roadmap", roadmapRouter);

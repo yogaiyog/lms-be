@@ -12,8 +12,10 @@ export function createApp() {
 
   app.set("trust proxy", true);
   app.use(helmet({ contentSecurityPolicy: false }));
-  // CORS handled by Nginx - disabled here to avoid duplicate headers
-  // app.use(cors({ origin: true, credentials: true }));
+  app.use(cors({
+    origin: env.CORS_ORIGIN.split(",").map((s) => s.trim()),
+    credentials: true,
+  }));
   app.use(express.json({ limit: "2mb" }));
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));

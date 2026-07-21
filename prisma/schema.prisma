@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -74,13 +74,14 @@ model StudentProfile {
   isActive      Boolean        @default(true)
   createdAt     DateTime       @default(now())
   school        String?
-  enrollments   Enrollment[]
-  attendances   Attendance[]
-  badgeLogs     StudentBadge[]
-  requestClasses RequestClass[]
-  certificates  Certificate[]
-  galleries     Gallery[]
-  savedReports  SavedReport[]
+  enrollments      Enrollment[]
+  attendances      Attendance[]
+  badgeLogs        StudentBadge[]
+  requestClasses   RequestClass[]
+  certificates     Certificate[]
+  galleries        Gallery[]
+  savedReports     SavedReport[]
+  topicProgress    StudentTopicProgress[]
 }
 
 model Class {
@@ -269,6 +270,7 @@ model Topic {
   tools              String?
   order              Int         @default(0)
   schedules          Schedule[]
+  tasks             TopicTask[]
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
 }
@@ -419,4 +421,39 @@ model SavedReport {
   data      String          // JSON — full GeneratedReport snapshot
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
+}
+
+// === SELF-PACED LEARNING (Scratch GUI roadmap integration) ===
+
+model TopicTask {
+  id          String                @id @default(uuid())
+  topicId     String
+  topic       Topic                 @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  code        String                // "m1", "l1", "capstone-motion", ... = taskId from Scratch GUI
+  label       String                // "1", "2", ... "Capstone"
+  url         String                // URL Scratch GUI per level
+  order       Int                   @default(0)
+  isCapstone  Boolean               @default(false)
+  createdAt   DateTime              @default(now())
+
+  @@unique([topicId, code])
+  @@index([topicId])
+  progress    StudentTopicProgress[]
+}
+
+model StudentTopicProgress {
+  id           String        @id @default(uuid())
+  studentId    String
+  student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  topicTaskId  String
+  topicTask    TopicTask     @relation(fields: [topicTaskId], references: [id], onDelete: Cascade)
+  status       String        @default("available") // available | in_progress | completed
+  metadata     String?       // JSON: { projectId, source, levelId }
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([studentId, topicTaskId])
+  @@index([studentId])
 }

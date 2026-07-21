@@ -928,6 +928,146 @@ async function main() {
   });
   console.log("✓ Student badges created");
 
+  // === SCRATCH FUNDAMENTAL ROADMAP CURRICULUM (for roadmap-client integration) ===
+  const SCRATCH_GUI_URL = "http://localhost:8601";
+  const scratchFundamentalUnits = [
+    {
+      id: "motion",
+      title: "Motion Fundamental",
+      projectId: "scratch-motion",
+      levels: [
+        { id: "m1", label: "1", url: `${SCRATCH_GUI_URL}/motion-tutorial.html` },
+        { id: "m2", label: "2", url: `${SCRATCH_GUI_URL}/motion-turn.html` },
+        { id: "m3", label: "3", url: `${SCRATCH_GUI_URL}/motion-move-turn.html` },
+        { id: "m4", label: "4", url: `${SCRATCH_GUI_URL}/motion-goto.html` },
+        { id: "m5", label: "5", url: `${SCRATCH_GUI_URL}/motion-glide.html` },
+        { id: "m6", label: "6", url: `${SCRATCH_GUI_URL}/motion-direction.html` },
+        { id: "m7", label: "7", url: `${SCRATCH_GUI_URL}/motion-complete.html` },
+      ],
+      capstone: { id: "capstone-motion", url: "https://juaraku-neon.vercel.app/catch-the-bus" },
+    },
+    {
+      id: "looks",
+      title: "Looks Fundamental",
+      projectId: "scratch-looks",
+      levels: [
+        { id: "l1", label: "1", url: `${SCRATCH_GUI_URL}/looks-say.html` },
+        { id: "l2", label: "2", url: `${SCRATCH_GUI_URL}/looks-costume.html` },
+        { id: "l3", label: "3", url: `${SCRATCH_GUI_URL}/looks-size.html` },
+        { id: "l4", label: "4", url: `${SCRATCH_GUI_URL}/looks-effect.html` },
+        { id: "l5", label: "5", url: `${SCRATCH_GUI_URL}/looks-layer.html` },
+        { id: "l6", label: "6", url: `${SCRATCH_GUI_URL}/sound-basic.html` },
+        { id: "l7", label: "7", url: `${SCRATCH_GUI_URL}/looks-sound-complete.html` },
+      ],
+      capstone: { id: "capstone-looks", url: "https://juaraku-neon.vercel.app/space-talk" },
+    },
+    {
+      id: "control",
+      title: "Control Loops",
+      projectId: "scratch-control-loops",
+      levels: [
+        { id: "c1", label: "1", url: `${SCRATCH_GUI_URL}/control-repeat.html` },
+        { id: "c2", label: "2", url: `${SCRATCH_GUI_URL}/control-forever.html` },
+        { id: "c3", label: "3", url: `${SCRATCH_GUI_URL}/control-pattern.html` },
+        { id: "c4", label: "4", url: `${SCRATCH_GUI_URL}/control-countdown.html` },
+        { id: "c5", label: "5", url: `${SCRATCH_GUI_URL}/control-repeatuntil.html` },
+        { id: "c6", label: "6", url: `${SCRATCH_GUI_URL}/control-foreverstop.html` },
+        { id: "c7", label: "7", url: `${SCRATCH_GUI_URL}/control-complete.html` },
+      ],
+      capstone: { id: "capstone-control", url: "https://juaraku-neon.vercel.app/find-the-bug" },
+    },
+    {
+      id: "control-conditional",
+      title: "Control Conditional",
+      projectId: "scratch-control-conditional",
+      levels: [
+        { id: "cc1", label: "1", url: `${SCRATCH_GUI_URL}/control-if.html` },
+        { id: "cc2", label: "2", url: `${SCRATCH_GUI_URL}/control-ifelse.html` },
+        { id: "cc3", label: "3", url: `${SCRATCH_GUI_URL}/control-waituntil.html` },
+        { id: "cc4", label: "4", url: `${SCRATCH_GUI_URL}/control-condition.html` },
+        { id: "cc5", label: "5", url: `${SCRATCH_GUI_URL}/control-clonebasic.html` },
+        { id: "cc6", label: "6", url: `${SCRATCH_GUI_URL}/control-clonelifecycle.html` },
+        { id: "cc7", label: "7", url: `${SCRATCH_GUI_URL}/control-conditional-complete.html` },
+      ],
+      capstone: { id: "capstone-control-conditional", url: "https://juaraku-neon.vercel.app/silly-eyes" },
+    },
+    {
+      id: "control-mix",
+      title: "Control Mix",
+      projectId: "scratch-control-mix",
+      levels: [
+        { id: "cm1", label: "1", url: `${SCRATCH_GUI_URL}/control-loopif.html` },
+        { id: "cm2", label: "2", url: `${SCRATCH_GUI_URL}/control-foreverifelse.html` },
+        { id: "cm3", label: "3", url: `${SCRATCH_GUI_URL}/control-start.html` },
+        { id: "cm4", label: "4", url: `${SCRATCH_GUI_URL}/control-clonerepeat.html` },
+        { id: "cm5", label: "5", url: `${SCRATCH_GUI_URL}/control-cloneifelse.html` },
+        { id: "cm6", label: "6", url: `${SCRATCH_GUI_URL}/control-counter.html` },
+        { id: "cm7", label: "7", url: `${SCRATCH_GUI_URL}/control-mixcomplete.html` },
+      ],
+      capstone: { id: "capstone-control-mix", url: "https://juaraku-neon.vercel.app/grow-a-dragonfly" },
+    },
+  ];
+
+  // Clean slate for roadmap-related tables (idempotent re-seed)
+  await prisma.studentTopicProgress.deleteMany();
+  // Cascade: deleting curriculum triggers Topic cascade → TopicTask cascade
+  const existingSF = await prisma.curriculum.findMany({
+    where: { name: "Scratch Fundamental" },
+    select: { id: true },
+  });
+  if (existingSF.length > 0) {
+    await prisma.curriculum.deleteMany({
+      where: { id: { in: existingSF.map((c) => c.id) } },
+    });
+  }
+
+  const scratchFundamental = await prisma.curriculum.create({
+    data: {
+      name: "Scratch Fundamental",
+      assessmentSetId: defaultAssessment.id,
+      topics: {
+        create: scratchFundamentalUnits.map((unit, i) => ({
+          title: unit.title,
+          order: i,
+          materialLink: null,
+          goals: `Pembelajaran ${unit.title} via Scratch GUI tutorial`,
+          tools: "Scratch Editor",
+        })),
+      },
+    },
+    include: { topics: true },
+  });
+
+  for (const [unitIdx, unit] of scratchFundamentalUnits.entries()) {
+    const topicRow = scratchFundamental.topics.find((t) => t.title === unit.title);
+    if (!topicRow) continue;
+
+    const tasksData = [
+      ...unit.levels.map((lvl, j) => ({
+        topicId: topicRow.id,
+        code: lvl.id,
+        label: lvl.label,
+        url: lvl.url,
+        order: j,
+        isCapstone: false,
+      })),
+      {
+        topicId: topicRow.id,
+        code: unit.capstone.id,
+        label: "Capstone",
+        url: unit.capstone.url,
+        order: unit.levels.length,
+        isCapstone: true,
+      },
+    ];
+
+    await prisma.topicTask.createMany({ data: tasksData });
+  }
+
+  console.log(
+    `✓ Scratch Fundamental curriculum created (${scratchFundamentalUnits.length} units, ${scratchFundamentalUnits.length * 8} tasks)`,
+  );
+
   console.log("\n--- Seed Summary ---");
   console.log("Admin:       admin@lms.com");
   console.log("Tutors:      budi.tutor@lms.com, sari.tutor@lms.com");
