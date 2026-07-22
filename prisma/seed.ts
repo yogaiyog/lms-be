@@ -929,7 +929,10 @@ async function main() {
   console.log("✓ Student badges created");
 
   // === SCRATCH FUNDAMENTAL ROADMAP CURRICULUM (for roadmap-client integration) ===
-  const SCRATCH_GUI_URL = "http://localhost:8601";
+  // Set SCRATCH_GUI_URL env var when seeding for non-local environments,
+  // e.g. SCRATCH_GUI_URL=https://scratch.juniortechcompetition.web.id npx prisma db seed
+  const SCRATCH_GUI_URL =
+    process.env.SCRATCH_GUI_URL ?? "http://localhost:8601";
   const scratchFundamentalUnits = [
     {
       id: "motion",
