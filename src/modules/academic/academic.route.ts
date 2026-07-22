@@ -17,6 +17,7 @@ import { certificatesRouter } from "../certificates/certificates.route";
 import { categoriesRouter } from "../categories/categories.route";
 import { studentTopicProgressRouter } from "../student-topic-progress/student-topic-progress.route";
 import { roadmapRouter } from "../roadmap/roadmap.route";
+import { quizRouter } from "../quiz/quiz.route";
 
 export const academicRouter = Router();
 
@@ -38,3 +39,4 @@ academicRouter.use("/certificates", certificatesRouter);
 academicRouter.use("/categories", categoriesRouter);
 academicRouter.use("/student-topic-progress", studentTopicProgressRouter);
 academicRouter.use("/roadmap", roadmapRouter);
+academicRouter.use("/quiz", quizRouter);

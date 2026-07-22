@@ -82,6 +82,7 @@ model StudentProfile {
   galleries        Gallery[]
   savedReports     SavedReport[]
   topicProgress    StudentTopicProgress[]
+  quizAttempts     QuizAttempt[]
 }
 
 model Class {
@@ -425,20 +426,55 @@ model SavedReport {
 
 // === SELF-PACED LEARNING (Scratch GUI roadmap integration) ===
 
+enum TaskType {
+  SCRATCH
+  QUIZ
+}
+
 model TopicTask {
   id          String                @id @default(uuid())
   topicId     String
   topic       Topic                 @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  type        TaskType              @default(SCRATCH)
   code        String                // "m1", "l1", "capstone-motion", ... = taskId from Scratch GUI
   label       String                // "1", "2", ... "Capstone"
-  url         String                // URL Scratch GUI per level
+  url         String?               // URL Scratch GUI per level
   order       Int                   @default(0)
   isCapstone  Boolean               @default(false)
   createdAt   DateTime              @default(now())
 
+  quiz        Quiz?
+
   @@unique([topicId, code])
   @@index([topicId])
   progress    StudentTopicProgress[]
+}
+
+model Quiz {
+  id          String         @id @default(uuid())
+  taskId      String         @unique
+  task        TopicTask      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  questions   QuizQuestion[]
+  attempts    QuizAttempt[]
+}
+
+model QuizQuestion {
+  id          String   @id @default(uuid())
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question    String   @db.Text
+  choices     Json     // [{ content: "blocks3...", isCorrect: boolean, feedback: "..." }]
+  createdAt   DateTime @default(now())
+}
+
+model QuizAttempt {
+  id          String   @id @default(uuid())
+  studentId   String
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score       Int
+  createdAt   DateTime @default(now())
 }
 
 model StudentTopicProgress {

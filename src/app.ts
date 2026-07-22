@@ -12,15 +12,12 @@ export function createApp() {
 
   app.set("trust proxy", true);
   app.use(helmet({ contentSecurityPolicy: false }));
+
+  const corsOrigins = env.CORS_ORIGIN === "*"
+    ? "*"
+    : env.CORS_ORIGIN.split(",").map((s) => s.trim());
   app.use(cors({
-    origin: (origin, callback) => {
-      if (env.CORS_ORIGIN === "*") {
-        callback(null, origin || true);
-      } else {
-        const allowed = env.CORS_ORIGIN.split(",").map((s) => s.trim());
-        callback(null, allowed);
-      }
-    },
+    origin: corsOrigins,
     credentials: true,
   }));
   app.use(express.json({ limit: "2mb" }));

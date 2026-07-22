@@ -10,7 +10,9 @@ import {
 export const curriculumsRouter = Router();
 
 const commonInclude = {
-  topics: true,
+  topics: {
+    include: { tasks: { orderBy: { order: "asc" as const } } },
+  },
   assessmentSet: {
     include: { aspects: { orderBy: { order: "asc" as const } } },
   },
