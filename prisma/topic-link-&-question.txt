@@ -1,0 +1,529 @@
+debugging 
+https://canva.link/bur63t7zpk5hiv7
+
+nonBlock3 quiz
+Quiz 2
+
+Karakter di Scratch tidak bergerak. Apa yang harus dilakukan?
+
+A. Menutup Scratch
+
+B. Mencari penyebabnya lalu memperbaikinya ✅
+
+C. Menghapus semua blok
+
+Jawaban: B
+
+Quiz 3
+
+Manakah yang termasuk kegiatan Debugging?
+
+A. Mengecek apakah Green Flag sudah dipasang ✅
+
+B. Mengganti nama Sprite
+
+C. Menggambar Stage
+
+Jawaban: A
+
+
+
+
+-------
+Varaible
+https://canva.link/9bhf0nmavat0ks7
+
+nonBlock3 question
+Manakah contoh tempat menyimpan?
+
+A. Dompet ✅
+
+B. Sepeda
+
+C. Bola
+
+Jawaban: A
+
+Quiz 2
+
+Variable digunakan untuk...
+
+A. Menggambar Sprite
+
+B. Menyimpan data ✅
+
+C. Mengubah warna Stage
+
+Jawaban: B
+
+Block3 quiz
+Quiz 3
+
+Blok apa yang digunakan untuk menyimpan nilai ke variable?
+
+A. {set [v] to []} ✅
+
+B. {change [v] by []}
+
+C. {show variable [v]}
+
+Jawaban: A
+
+Quiz 4
+
+Apa fungsi blok {change [v] by []}?
+
+A. Menambah atau mengurangi nilai variable ✅
+
+B. Mengganti nama variable
+
+C. Menyembunyikan variable dari stage
+
+Jawaban: A
+
+Quiz 5
+
+Apa perbedaan variable dengan list?
+
+A. List bisa menyimpan banyak item, variable hanya satu nilai ✅
+
+B. Variable bisa menyimpan banyak item, list hanya satu
+
+C. Tidak ada perbedaan
+
+Jawaban: A
+
+Quiz 6
+
+Blok apa untuk menampilkan monitor variable di stage?
+
+A. {set [v] to []}
+
+B. {show variable [v]} ✅
+
+C. {hide variable [v]}
+
+Jawaban: B
+
+--------
+control-loop
+https://canva.link/9so0cvzxqyyughd
+
+nonBlock3 quiz
+Quiz 1
+
+Manakah contoh Loop di kehidupan sehari-hari?
+
+A. Menyalakan TV sekali
+
+B. Kipas angin berputar terus ✅
+
+C. Membuka buku
+
+Jawaban: B
+
+Quiz 2
+
+Apa fungsi Loop?
+
+A. Menghapus program
+
+B. Mengulang perintah ✅
+
+C. Mengganti warna Sprite
+
+Jawaban: B
+
+
+-----
+
+control-conditional (percabangan)
+https://canva.link/r2dfl6rd26tjr9a
+
+nonBlock3 quiz
+Quiz 1
+
+Manakah contoh percabangan di kehidupan sehari-hari?
+
+A. Menghitung sampai 10
+
+B. Jika hujan, pakai payung. ✅
+
+C. Berjalan lurus terus
+
+Jawaban: B
+
+Quiz 2
+
+Blok If digunakan untuk...
+
+A. Mengulang perintah
+
+B. Menjalankan perintah jika kondisi benar. ✅
+
+C. Menghentikan Scratch
+
+Jawaban: B
+
+
+
+
+
+
+
+-----
+Event
+https://canva.link/sceg1ywo9srdpcy
+
+
+nonBlock3 quiz
+Quiz 1
+
+Manakah contoh Event di kehidupan sehari-hari?
+
+A. Lampu menyala
+
+B. Menekan saklar lampu ✅
+
+C. Cahaya lampu
+
+Jawaban: B
+
+Quiz 2
+
+Program pada Event Driven Programming akan...
+
+A. Berjalan terus tanpa henti
+
+B. Menunggu Event terlebih dahulu ✅
+
+C. Langsung selesai
+
+Jawaban: B
+
+Block3 quiz
+Quiz 3
+
+Apa perbedaan {broadcast [v]} dengan {broadcast [v] and wait}?
+
+A. {broadcast [v]} langsung lanjut ke blok berikutnya, {broadcast [v] and wait} menunggu semua penerima selesai ✅
+
+B. {broadcast [v] and wait} lebih cepat dari {broadcast [v]}
+
+C. Tidak ada perbedaan, keduanya sama
+
+Jawaban: A
+
+Quiz 4
+
+Blok event apa yang tepat agar sprite bereaksi saat tombol panah atas ditekan?
+
+A. {when [space v] key pressed}
+
+B. {when [up arrow v] key pressed} ✅
+
+C. {when this sprite clicked}
+
+Jawaban: B
+
+Quiz 5
+
+Saat {broadcast [mulai v]} dijalankan, berapa banyak script yang bereaksi?
+
+A. Hanya satu script di sprite yang sama
+
+B. Semua script {when I receive [mulai v]} di semua sprite ✅
+
+C. Tidak ada yang bereaksi
+
+Jawaban: B
+
+Quiz 6
+
+Apa fungsi blok {when backdrop switches to [v]}?
+
+A. Menjalankan script saat backdrop tertentu tampil di stage ✅
+
+B. Mengganti costume sprite ke kostum tertentu
+
+C. Memutar suara dari library Scratch
+
+Jawaban: A
+
+----
+Looks-fundamental (input-output)
+https://canva.link/xivq43w0u1d39ni
+
+nonBlock3 quiz
+Quiz 1
+
+Yang termasuk Input adalah...
+
+A. Sprite bergerak
+
+B. Menekan tombol Spasi ✅
+
+C. Suara diputar
+
+Jawaban: B
+
+Quiz 2
+
+Yang termasuk Output adalah...
+
+A. Mengklik Green Flag
+
+B. Menekan tombol panah
+
+C. Sprite berkata "Halo!" ✅
+
+Jawaban: C
+
+---
+motion-tutorial (sequence)
+https://canva.link/x0yr2fhd5di4ac3
+
+nonBlock3 quiz
+Quiz 2
+
+Mengapa Sequence penting dalam pemrograman?
+
+A. Agar komputer bisa menjalankan perintah sesuai urutan. ✅
+
+B. Agar warna Scratch menjadi lebih bagus.
+
+C. Agar sprite menjadi lebih besar.
+
+Jawaban: A
+
+----
+Operator
+https://canva.link/tx4ah3as1dgrveb
+
+nonBlock3 quiz
+Quiz 1
+
+Manakah yang merupakan operator perhitungan?
+
+A. + ✅
+
+B. Sprite
+
+C. Costume
+
+Jawaban: A
+
+Quiz 2
+
+Hasil dari 8 > 5 adalah...
+
+A. Salah
+
+B. Benar ✅
+
+C. 13
+
+Block3 quiz
+Quiz 3
+
+Blok operator apa yang menghasilkan nilai acak antara 1 sampai 10?
+
+A. {pick random (1) to (10)} ✅
+
+B. {() + ()}
+
+C. {() > ()}
+
+Jawaban: A
+
+Quiz 4
+
+Hasil dari {join [Halo] [Dunia]} adalah...
+
+A. HaloDunia ✅
+
+B. Halo Dunia
+
+C. Halo + Dunia
+
+Jawaban: A
+
+Quiz 5
+
+Operator {() and ()} bernilai benar (true) saat...
+
+A. Kedua kondisi bernilai benar ✅
+
+B. Salah satu kondisi bernilai benar
+
+C. Kedua kondisi bernilai salah
+
+Jawaban: A
+
+Quiz 6
+
+Manakah yang menghasilkan nilai 2 dari {() mod ()}?
+
+A. {10 mod 3}
+
+B. {11 mod 3} ✅
+
+C. {12 mod 3}
+
+Jawaban: B
+
+-------
+Clone-Object Instancing
+https://canva.link/rybbgio94k2i4si
+
+nonBlock3 quiz
+Quiz 1
+
+Manakah contoh Clone di kehidupan sehari-hari?
+
+A. Fotokopi buku ✅
+
+B. Menghapus gambar
+
+C. Menggambar lingkaran
+
+Jawaban: A
+
+Quiz 2
+
+Apa fungsi Clone di Scratch?
+
+A. Menghapus Sprite
+
+B. Membuat salinan Sprite ✅
+
+C. Mengubah warna Sprite
+
+Jawaban: B
+
+Block3 quiz
+Quiz 3
+
+Blok apa yang digunakan untuk membuat salinan sprite di Scratch?
+
+A. {create clone of [myself v]} ✅
+
+B. {broadcast [v]}
+
+C. {repeat (10)}
+
+Jawaban: A
+
+Quiz 4
+
+Apa yang terjadi saat {delete this clone} dijalankan?
+
+A. Clone langsung dihapus dari stage ✅
+
+B. Sprite asli ikut terhapus
+
+C. Clone berhenti bergerak tapi tetap di stage
+
+Jawaban: A
+
+Quiz 5
+
+Saat clone dibuat dengan {create clone of [myself v]}, script mana yang otomatis berjalan di clone?
+
+A. {when green flag clicked}
+
+B. {when I start as a clone} ✅
+
+C. {when this sprite clicked}
+
+Jawaban: B
+
+Quiz 6
+
+Dalam {repeat (10)} + {create clone of [myself v]}, berapa total clone yang dibuat?
+
+A. 10 clone ✅
+
+B. 1 clone
+
+C. Clone dibuat terus sampai dihentikan
+
+Jawaban: A
+
+----
+Debugging
+https://canva.link/bur63t7zpk5hiv7
+
+nonBlock3 quiz
+Quiz 1
+
+Apa yang dimaksud dengan bug dalam pemrograman?
+
+A. Kesalahan pada kode yang menyebabkan program tidak berjalan sesuai harapan ✅
+
+B. Fitur baru yang ditambahkan ke program
+
+C. Cara mempercepat program
+
+Jawaban: A
+
+Quiz 2
+
+Langkah pertama saat menemukan bug adalah...
+
+A. Menghapus semua kode dan mulai dari awal
+
+B. Membaca kode dengan teliti untuk mencari penyebab ✅
+
+C. Mengganti komputer
+
+Jawaban: B
+
+Block3 quiz
+Quiz 3
+
+Di Scratch, sprite tidak bergerak saat green flag diklik. Apa yang harus dicek pertama kali?
+
+A. Apakah ada blok {when green flag clicked} terpasang ✅
+
+B. Ganti sprite dengan sprite lain
+
+C. Hapus semua blok dan mulai lagi
+
+Jawaban: A
+
+Quiz 4
+
+Sebuah script menggunakan {broadcast [mulai v]} tetapi sprite lain tidak bereaksi. Apa kemungkinan penyebabnya?
+
+A. Sprite lain menggunakan {when I receive [go v]} — pesan tidak cocok ✅
+
+B. Broadcast hanya bisa diterima sprite yang sama
+
+C. Sprite penerima harus lebih besar dari pengirim
+
+Jawaban: A
+
+Quiz 5
+
+Sprite bergerak terlalu cepat dalam {repeat (10)}. Bagaimana cara memperlambatnya?
+
+A. Ganti repeat (10) menjadi repeat (100)
+
+B. Tambahkan {wait (0.5) secs} di dalam repeat ✅
+
+C. Gunakan sprite yang lebih kecil
+
+Jawaban: B
+
+Quiz 6
+
+Program berjalan terus tanpa henti meski pemain sudah menang. Blok apa yang kurang?
+
+A. {wait (1) secs}
+
+B. {broadcast [v]}
+
+C. {stop [all v]} ✅
+
+Jawaban: C

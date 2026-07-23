@@ -11,6 +11,7 @@ export async function seedTopics(
       id: "motion",
       title: "Motion Fundamental",
       projectId: "scratch-motion",
+      materialLink: "https://canva.link/x0yr2fhd5di4ac3",
       levels: [
         { id: "m1", label: "1", url: `${SCRATCH_GUI_URL}/motion-tutorial.html`, type: "SCRATCH" as const },
         { id: "m2", label: "2", url: `${SCRATCH_GUI_URL}/motion-turn.html`, type: "SCRATCH" as const },
@@ -27,6 +28,7 @@ export async function seedTopics(
       id: "looks",
       title: "Looks Fundamental",
       projectId: "scratch-looks",
+      materialLink: "https://canva.link/xivq43w0u1d39ni",
       levels: [
         { id: "l1", label: "1", url: `${SCRATCH_GUI_URL}/looks-say.html` },
         { id: "l2", label: "2", url: `${SCRATCH_GUI_URL}/looks-costume.html` },
@@ -40,9 +42,44 @@ export async function seedTopics(
       capstone: { id: "capstone-looks", url: "https://juaraku-neon.vercel.app/space-talk" },
     },
     {
+      id: "event",
+      title: "Event Driven Programming",
+      projectId: "scratch-event",
+      materialLink: "https://canva.link/sceg1ywo9srdpcy",
+      levels: [
+        { id: "e1", label: "1", url: `${SCRATCH_GUI_URL}/event-flag.html` },
+        { id: "e2", label: "2", url: `${SCRATCH_GUI_URL}/event-click.html` },
+        { id: "e3", label: "3", url: `${SCRATCH_GUI_URL}/event-keyboard.html` },
+        { id: "e-quiz", label: "Q", url: null, type: "QUIZ" as const },
+        { id: "e4", label: "4", url: `${SCRATCH_GUI_URL}/event-backdrop.html` },
+        { id: "e5", label: "5", url: `${SCRATCH_GUI_URL}/event-broadcast.html` },
+        { id: "e6", label: "6", url: `${SCRATCH_GUI_URL}/event-broadcastwait.html` },
+        { id: "e7", label: "7", url: `${SCRATCH_GUI_URL}/event-complete.html` },
+      ],
+      capstone: { id: "capstone-event", url: "https://juaraku-neon.vercel.app/broadcasting-spells" },
+    },
+    {
+      id: "variable",
+      title: "Variable & List",
+      projectId: "scratch-variable",
+      materialLink: "https://canva.link/9bhf0nmavat0ks7",
+      levels: [
+        { id: "v1", label: "1", url: `${SCRATCH_GUI_URL}/variable-basic.html` },
+        { id: "v2", label: "2", url: `${SCRATCH_GUI_URL}/variable-score.html` },
+        { id: "v3", label: "3", url: `${SCRATCH_GUI_URL}/variable-health.html` },
+        { id: "v-quiz", label: "Q", url: null, type: "QUIZ" as const },
+        { id: "v4", label: "4", url: `${SCRATCH_GUI_URL}/variable-speed.html` },
+        { id: "v5", label: "5", url: `${SCRATCH_GUI_URL}/variable-multivar.html` },
+        { id: "v6", label: "6", url: `${SCRATCH_GUI_URL}/variable-list.html` },
+        { id: "v7", label: "7", url: `${SCRATCH_GUI_URL}/variable-quiz.html` },
+      ],
+      capstone: { id: "capstone-variable", url: null },
+    },
+    {
       id: "control",
       title: "Control Loops",
       projectId: "scratch-control-loops",
+      materialLink: "https://canva.link/9so0cvzxqyyughd",
       levels: [
         { id: "c1", label: "1", url: `${SCRATCH_GUI_URL}/control-repeat.html` },
         { id: "c2", label: "2", url: `${SCRATCH_GUI_URL}/control-forever.html` },
@@ -56,9 +93,27 @@ export async function seedTopics(
       capstone: { id: "capstone-control", url: "https://juaraku-neon.vercel.app/find-the-bug" },
     },
     {
+      id: "debug",
+      title: "Debugging",
+      projectId: "scratch-debug",
+      materialLink: "https://canva.link/bur63t7zpk5hiv7",
+      levels: [
+        { id: "d1", label: "1", url: `${SCRATCH_GUI_URL}/debug-motion.html` },
+        { id: "d2", label: "2", url: `${SCRATCH_GUI_URL}/debug-looks-sound.html` },
+        { id: "d3", label: "3", url: `${SCRATCH_GUI_URL}/debug-event.html` },
+        { id: "d-quiz", label: "Q", url: null, type: "QUIZ" as const },
+        { id: "d4", label: "4", url: `${SCRATCH_GUI_URL}/debug-loop.html` },
+        { id: "d5", label: "5", url: `${SCRATCH_GUI_URL}/debug-conditional.html` },
+        { id: "d6", label: "6", url: `${SCRATCH_GUI_URL}/debug-mixed.html` },
+        { id: "d7", label: "7", url: `${SCRATCH_GUI_URL}/debug-complete.html` },
+      ],
+      capstone: { id: "capstone-debug", url: "https://juaraku-neon.vercel.app/next-customer-please" },
+    },
+    {
       id: "control-conditional",
       title: "Control Conditional",
       projectId: "scratch-control-conditional",
+      materialLink: "https://canva.link/r2dfl6rd26tjr9a",
       levels: [
         { id: "cc1", label: "1", url: `${SCRATCH_GUI_URL}/control-if.html` },
         { id: "cc2", label: "2", url: `${SCRATCH_GUI_URL}/control-ifelse.html` },
@@ -75,6 +130,7 @@ export async function seedTopics(
       id: "control-mix",
       title: "Control Mix",
       projectId: "scratch-control-mix",
+      materialLink: null,
       levels: [
         { id: "cm1", label: "1", url: `${SCRATCH_GUI_URL}/control-loopif.html` },
         { id: "cm2", label: "2", url: `${SCRATCH_GUI_URL}/control-foreverifelse.html` },
@@ -86,6 +142,40 @@ export async function seedTopics(
         { id: "cm7", label: "7", url: `${SCRATCH_GUI_URL}/control-mixcomplete.html` },
       ],
       capstone: { id: "capstone-control-mix", url: "https://juaraku-neon.vercel.app/grow-a-dragonfly" },
+    },
+    {
+      id: "operator",
+      title: "Operator - Matematika & Logika",
+      projectId: "scratch-operator",
+      materialLink: "https://canva.link/tx4ah3as1dgrveb",
+      levels: [
+        { id: "o1", label: "1", url: `${SCRATCH_GUI_URL}/operator-arithmetic.html` },
+        { id: "o2", label: "2", url: `${SCRATCH_GUI_URL}/operator-comparison.html` },
+        { id: "o3", label: "3", url: `${SCRATCH_GUI_URL}/operator-logic.html` },
+        { id: "o-quiz", label: "Q", url: null, type: "QUIZ" as const },
+        { id: "o4", label: "4", url: `${SCRATCH_GUI_URL}/operator-string.html` },
+        { id: "o5", label: "5", url: `${SCRATCH_GUI_URL}/operator-math.html` },
+        { id: "o6", label: "6", url: `${SCRATCH_GUI_URL}/operator-mixed.html` },
+        { id: "o7", label: "7", url: `${SCRATCH_GUI_URL}/operator-complete.html` },
+      ],
+      capstone: { id: "capstone-operator", url: null },
+    },
+    {
+      id: "clone",
+      title: "Clone - Object Instancing",
+      projectId: "scratch-clone",
+      materialLink: "https://canva.link/rybbgio94k2i4si",
+      levels: [
+        { id: "cl1", label: "1", url: `${SCRATCH_GUI_URL}/clone-basic.html` },
+        { id: "cl2", label: "2", url: `${SCRATCH_GUI_URL}/clone-lifecycle.html` },
+        { id: "cl3", label: "3", url: `${SCRATCH_GUI_URL}/clone-position.html` },
+        { id: "cl-quiz", label: "Q", url: null, type: "QUIZ" as const },
+        { id: "cl4", label: "4", url: `${SCRATCH_GUI_URL}/clone-spawn.html` },
+        { id: "cl5", label: "5", url: `${SCRATCH_GUI_URL}/clone-click.html` },
+        { id: "cl6", label: "6", url: `${SCRATCH_GUI_URL}/clone-broadcast.html` },
+        { id: "cl7", label: "7", url: `${SCRATCH_GUI_URL}/clone-complete.html` },
+      ],
+      capstone: { id: "capstone-clone", url: null },
     },
   ];
 
@@ -107,10 +197,10 @@ export async function seedTopics(
       name: "Scratch Fundamental",
       assessmentSetId: defaultAssessment.id,
       topics: {
-        create: scratchFundamentalUnits.map((unit, i) => ({
-          title: unit.title,
-          order: i,
-          materialLink: null,
+          create: scratchFundamentalUnits.map((unit, i) => ({
+            title: unit.title,
+            order: i,
+            materialLink: unit.materialLink,
           goals: `Pembelajaran ${unit.title} via Scratch GUI tutorial`,
           tools: "Scratch Editor",
         })),
@@ -183,11 +273,25 @@ export async function seedTopics(
               ],
             },
             {
-              question: "Blok {point in direction (0)} membuat sprite menghadap ke mana?",
+              question: "Manakah contoh Sequence yang benar saat mencuci tangan?",
               choices: [
-                { content: "Ke atas (arah 0 derajat)", isCorrect: true, feedback: "Benar! 0° = atas, 90° = kanan, 180° = bawah, -90°/270° = kiri." },
-                { content: "Ke kanan", isCorrect: false, feedback: "Arah kanan adalah 90°, bukan 0°." },
-                { content: "Ke kiri", isCorrect: false, feedback: "Arah kiri adalah -90° atau 270°." },
+                {
+                  content: `A.\n
+                          \nBilas tangan
+                          \nPakai sabun
+                          \nGosok tangan`,
+                  isCorrect: false, feedback: "Salah urutan.",
+                },
+                { content: `B.
+                        \nPakai sabun
+                        \nGosok tangan
+                        \nBilas tangan ✅`,
+                isCorrect: true, feedback: "Benar! Urutan logis: sabun → gosok → bilas.",
+                },
+                { content: `C.
+                            \nGosok tangan
+                            \nBilas tangan
+                            \nPakai sabun`, isCorrect: false, feedback: "Urutan tidak benar." },
               ],
             },
             {
@@ -435,6 +539,296 @@ export async function seedTopics(
       },
     });
     console.log("✓ Mock quiz seeded for cm-quiz");
+  }
+
+  // Seed Mock Quiz for e-quiz (Event Driven Programming)
+  const eQuizTask = await prisma.topicTask.findFirst({
+    where: { code: "e-quiz" },
+  });
+
+  if (eQuizTask) {
+    await prisma.quiz.create({
+      data: {
+        taskId: eQuizTask.id,
+        questions: {
+          create: [
+            {
+              question: "Manakah contoh Event di kehidupan sehari-hari?",
+              choices: [
+                { content: "Lampu menyala", isCorrect: false, feedback: "Itu adalah hasil/akibat, bukan event." },
+                { content: "Menekan saklar lampu", isCorrect: true, feedback: "Benar! Event adalah kejadian yang memicu sesuatu terjadi. Menekan saklar adalah event, lampu menyala adalah reaksinya." },
+                { content: "Cahaya lampu", isCorrect: false, feedback: "Cahaya adalah output, bukan event pemicu." },
+              ],
+            },
+            {
+              question: "Apa perbedaan blok {broadcast [v]} dengan {broadcast [v] and wait}?",
+              choices: [
+                { content: "{broadcast [v]} langsung lanjut ke blok berikutnya tanpa menunggu, sedangkan {broadcast [v] and wait} menunggu semua penerima selesai menjalankan script-nya", isCorrect: true, feedback: "Benar! Broadcast non-blocking — pengirim lanjut terus. Broadcast and wait blocking — pengirim menunggu penerima selesai." },
+                { content: "{broadcast [v]} hanya bisa dipakai di sprite, {broadcast [v] and wait} di stage", isCorrect: false, feedback: "Keduanya bisa dipakai di sprite maupun stage." },
+                { content: "Tidak ada perbedaan, keduanya sama saja", isCorrect: false, feedback: "Sangat berbeda! Coba project 6: broadcast langsung lanjut, broadcast and wait menunggu." },
+              ],
+            },
+            {
+              question: "Jika sprite ingin bereaksi saat tombol spasi ditekan, blok event apa yang dipakai?",
+              choices: [
+                { content: "{when [space v] key pressed}", isCorrect: true, feedback: "Benar! 'when key pressed' bisa diatur ke tombol apa pun, termasuk spasi." },
+                { content: "{when this sprite clicked}", isCorrect: false, feedback: "Itu event klik mouse, bukan keyboard." },
+                { content: "{when green flag clicked}", isCorrect: false, feedback: "Green flag adalah tombol start di Scratch, bukan tombol keyboard." },
+              ],
+            },
+            {
+              question: "Saat {broadcast [mulai v]} dijalankan, apa yang terjadi pada script {when I receive [mulai v]} di sprite lain?",
+              choices: [
+                { content: "Semua script dengan {when I receive [mulai v]} di sprite mana pun akan berjalan", isCorrect: true, feedback: "Benar! Broadcast menjangkau semua sprite. Semua yang menerima pesan yang sama akan bereaksi." },
+                { content: "Hanya satu script yang terpilih secara acak yang berjalan", isCorrect: false, feedback: "Tidak acak. Semua penerima dengan pesan yang cocok akan berjalan." },
+                { content: "Tidak ada yang terjadi karena broadcast hanya untuk sprite pengirim", isCorrect: false, feedback: "Broadcast bisa diterima sprite mana pun, termasuk sprite pengirim itu sendiri." },
+              ],
+            },
+            {
+              question: "Apa fungsi blok {when backdrop switches to [v]}?",
+              choices: [
+                { content: "Menjalankan script saat backdrop tertentu tampil di stage", isCorrect: true, feedback: "Benar! Event ini dipicu saat Scratch mengganti backdrop ke yang ditentukan." },
+                { content: "Mengganti costume sprite dengan backdrop", isCorrect: false, feedback: "Costume sprite diganti dengan 'next costume' atau 'switch costume to'." },
+                { content: "Memutar suara setiap kali backdrop berganti", isCorrect: false, feedback: "Tidak otomatis memutar suara. Itu harus ditambahkan sendiri di bawah hat block." },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    console.log("✓ Mock quiz seeded for e-quiz");
+  }
+
+  // Seed Mock Quiz for d-quiz (Debugging)
+  const dQuizTask = await prisma.topicTask.findFirst({
+    where: { code: "d-quiz" },
+  });
+
+  if (dQuizTask) {
+    await prisma.quiz.create({
+      data: {
+        taskId: dQuizTask.id,
+        questions: {
+          create: [
+            {
+              question: "Apa yang dimaksud dengan 'bug' dalam pemrograman?",
+              choices: [
+                { content: "Kesalahan pada kode yang menyebabkan program tidak berjalan sesuai harapan", isCorrect: true, feedback: "Benar! Bug adalah error/logic mistake yang bikin program salah." },
+                { content: "Fitur baru yang ditambahkan ke program", isCorrect: false, feedback: "Itu fitur, bukan bug." },
+                { content: "Cara mempercepat program", isCorrect: false, feedback: "Bug bikin program salah, bukan lebih cepat." },
+              ],
+            },
+            {
+              question: "Di Scratch, sprite tidak bergerak saat green flag diklik. Apa yang harus dicek pertama kali?",
+              choices: [
+                { content: "Apakah ada blok {when green flag clicked} di sprite tersebut", isCorrect: true, feedback: "Benar! Tanpa hat block 'when green flag clicked', script tidak akan pernah jalan." },
+                { content: "Ganti sprite dengan sprite lain", isCorrect: false, feedback: "Bukan sprite-nya yang salah, tapi kode atau trigger-nya." },
+                { content: "Hapus semua blok dan mulai lagi", isCorrect: false, feedback: "Terlalu ekstrem. Cek dulu trigger event-nya." },
+              ],
+            },
+            {
+              question: "Sebuah script menggunakan {broadcast [mulai v]} tetapi sprite lain tidak bereaksi. Apa kemungkinan penyebabnya?",
+              choices: [
+                { content: "Sprite lain menggunakan {when I receive [go v]} — pesan tidak cocok", isCorrect: true, feedback: "Benar! Broadcast 'mulai' hanya diterima oleh yang mendengar 'mulai'." },
+                { content: "Broadcast hanya bisa diterima oleh sprite yang sama", isCorrect: false, feedback: "Broadcast bisa diterima sprite mana pun, termasuk stage." },
+                { content: "Sprite penerima harus lebih besar dari pengirim", isCorrect: false, feedback: "Ukuran sprite tidak memengaruhi broadcast." },
+              ],
+            },
+            {
+              question: "Sprite bergerak terlalu cepat dalam {repeat (10)}. Bagaimana cara memperlambatnya?",
+              choices: [
+                { content: "Tambahkan {wait (0.5) secs} di dalam repeat", isCorrect: true, feedback: "Benar! Wait memberikan jeda antar iterasi sehingga gerakan terlihat." },
+                { content: "Ganti repeat (10) menjadi repeat (100)", isCorrect: false, feedback: "Itu memperbanyak, bukan memperlambat." },
+                { content: "Gunakan sprite yang berbeda", isCorrect: false, feedback: "Sprite tidak memengaruhi kecepatan eksekusi." },
+              ],
+            },
+            {
+              question: "Program berjalan terus tanpa henti meskipun pemain sudah menang. Blok apa yang kemungkinan kurang?",
+              choices: [
+                { content: "{stop [all v]} atau {stop [this script v]} saat kondisi menang tercapai", isCorrect: true, feedback: "Benar! Stop block menghentikan script yang berjalan." },
+                { content: "{wait (1) secs}", isCorrect: false, feedback: "Wait hanya menunda, tidak menghentikan program." },
+                { content: "{broadcast [v]}", isCorrect: false, feedback: "Broadcast tidak menghentikan apa pun." },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    console.log("✓ Mock quiz seeded for d-quiz");
+  }
+
+  // Seed Mock Quiz for cl-quiz (Clone - Object Instancing)
+  const clQuizTask = await prisma.topicTask.findFirst({
+    where: { code: "cl-quiz" },
+  });
+
+  if (clQuizTask) {
+    await prisma.quiz.create({
+      data: {
+        taskId: clQuizTask.id,
+        questions: {
+          create: [
+            {
+              question: "Manakah contoh Clone di kehidupan sehari-hari?",
+              choices: [
+                { content: "Fotokopi buku", isCorrect: true, feedback: "Benar! Clone adalah salinan identik dari objek asli, seperti fotokopi." },
+                { content: "Menghapus gambar", isCorrect: false, feedback: "Menghapus adalah kebalikan dari clone." },
+                { content: "Menggambar lingkaran", isCorrect: false, feedback: "Menggambar adalah kreasi baru, bukan salinan." },
+              ],
+            },
+            {
+              question: "Blok apa yang digunakan untuk membuat salinan sprite di Scratch?",
+              choices: [
+                { content: "{create clone of [myself v]}", isCorrect: true, feedback: "Benar! Blok ini membuat clone dari sprite yang dipilih." },
+                { content: "{broadcast [v]}", isCorrect: false, feedback: "Broadcast untuk mengirim pesan, bukan membuat salinan." },
+                { content: "{repeat (10)}", isCorrect: false, feedback: "Repeat untuk mengulang perintah, bukan membuat clone." },
+              ],
+            },
+            {
+              question: "Apa yang terjadi saat {delete this clone} dijalankan?",
+              choices: [
+                { content: "Clone langsung dihapus dari stage", isCorrect: true, feedback: "Benar! Clone menghapus dirinya sendiri dari stage." },
+                { content: "Sprite asli ikut terhapus", isCorrect: false, feedback: "'delete this clone' hanya menghapus clone, bukan sprite asli." },
+                { content: "Clone berhenti bergerak tapi tetap di stage", isCorrect: false, feedback: "Clone tidak hanya berhenti — ia dihapus sepenuhnya." },
+              ],
+            },
+            {
+              question: "Saat clone dibuat, script mana yang otomatis berjalan di clone tersebut?",
+              choices: [
+                { content: "{when I start as a clone}", isCorrect: true, feedback: "Benar! Hat block ini khusus untuk clone dan otomatis berjalan saat clone lahir." },
+                { content: "{when green flag clicked}", isCorrect: false, feedback: "'when green flag clicked' hanya berjalan di parent, tidak otomatis di clone." },
+                { content: "{when this sprite clicked}", isCorrect: false, feedback: "Itu butuh interaksi klik, tidak otomatis jalan saat clone dibuat." },
+              ],
+            },
+            {
+              question: "Dalam {repeat (10)} + {create clone}, berapa total clone yang dibuat?",
+              choices: [
+                { content: "10 clone", isCorrect: true, feedback: "Benar! Repeat 10 = clone dibuat 10 kali." },
+                { content: "1 clone", isCorrect: false, feedback: "Repeat mengulang 10 kali, jadi clone dibuat 10 kali." },
+                { content: "Clone dibuat terus tanpa henti", isCorrect: false, feedback: "Repeat (10) berhenti setelah 10 kali, bukan forever." },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    console.log("✓ Mock quiz seeded for cl-quiz");
+  }
+
+  // Seed Mock Quiz for o-quiz (Operator - Matematika & Logika)
+  const oQuizTask = await prisma.topicTask.findFirst({
+    where: { code: "o-quiz" },
+  });
+
+  if (oQuizTask) {
+    await prisma.quiz.create({
+      data: {
+        taskId: oQuizTask.id,
+        questions: {
+          create: [
+            {
+              question: "Manakah yang merupakan operator perhitungan?",
+              choices: [
+                { content: "+", isCorrect: true, feedback: "Benar! + adalah operator penjumlahan." },
+                { content: "Sprite", isCorrect: false, feedback: "Sprite adalah objek, bukan operator." },
+                { content: "Costume", isCorrect: false, feedback: "Costume adalah tampilan sprite, bukan operator." },
+              ],
+            },
+            {
+              question: "Blok operator apa yang menghasilkan nilai acak antara 1 sampai 10?",
+              choices: [
+                { content: "{pick random (1) to (10)}", isCorrect: true, feedback: "Benar! 'pick random' menghasilkan angka acak dalam rentang yang ditentukan." },
+                { content: "{() + ()}", isCorrect: false, feedback: "Penjumlahan menggabungkan dua nilai, bukan acak." },
+                { content: "{() > ()}", isCorrect: false, feedback: "Perbandingan menghasilkan true/false, bukan angka acak." },
+              ],
+            },
+            {
+              question: "Hasil dari blok {join [Halo] [Dunia]} adalah...",
+              choices: [
+                { content: "HaloDunia", isCorrect: true, feedback: "Benar! 'join' menggabungkan teks tanpa spasi: Halo + Dunia = HaloDunia." },
+                { content: "Halo Dunia", isCorrect: false, feedback: "'join' tidak menambahkan spasi otomatis." },
+                { content: "Halo + Dunia", isCorrect: false, feedback: "'join' menggabungkan teks, bukan menampilkan operatornya." },
+              ],
+            },
+            {
+              question: "Operator {() and ()} bernilai benar (true) saat...",
+              choices: [
+                { content: "Kedua kondisi bernilai benar", isCorrect: true, feedback: "Benar! 'and' hanya true jika semua kondisi true." },
+                { content: "Salah satu kondisi bernilai benar", isCorrect: false, feedback: "Itu 'or', bukan 'and'." },
+                { content: "Kedua kondisi bernilai salah", isCorrect: false, feedback: "Jika keduanya false, hasilnya false." },
+              ],
+            },
+            {
+              question: "Manakah yang menghasilkan nilai 2 dari operator {() mod ()}?",
+              choices: [
+                { content: "{10 mod 3}", isCorrect: false, feedback: "10 mod 3 = 1 (sisa bagi 10/3 = 3 sisa 1)." },
+                { content: "{11 mod 3}", isCorrect: true, feedback: "Benar! 11 mod 3 = 2 (11/3 = 3 sisa 2)." },
+                { content: "{12 mod 3}", isCorrect: false, feedback: "12 mod 3 = 0 (12 habis dibagi 3)." },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    console.log("✓ Mock quiz seeded for o-quiz");
+  }
+
+  // Seed Mock Quiz for v-quiz (Variable & List)
+  const vQuizTask = await prisma.topicTask.findFirst({
+    where: { code: "v-quiz" },
+  });
+
+  if (vQuizTask) {
+    await prisma.quiz.create({
+      data: {
+        taskId: vQuizTask.id,
+        questions: {
+          create: [
+            {
+              question: "Manakah contoh tempat menyimpan?",
+              choices: [
+                { content: "Dompet", isCorrect: true, feedback: "Benar! Dompet adalah tempat menyimpan uang, seperti variable adalah tempat menyimpan data." },
+                { content: "Sepeda", isCorrect: false, feedback: "Sepeda adalah alat transportasi, bukan tempat menyimpan." },
+                { content: "Bola", isCorrect: false, feedback: "Bola adalah mainan, bukan tempat menyimpan data." },
+              ],
+            },
+            {
+              question: "Blok apa yang digunakan untuk menyimpan nilai ke variable?",
+              choices: [
+                { content: "{set [v] to []}", isCorrect: true, feedback: "Benar! 'set variable to' menyimpan nilai ke dalam variable." },
+                { content: "{change [v] by []}", isCorrect: false, feedback: "'change by' mengubah nilai, bukan menyimpan nilai baru." },
+                { content: "{show variable [v]}", isCorrect: false, feedback: "'show variable' hanya menampilkan monitor, tidak menyimpan nilai." },
+              ],
+            },
+            {
+              question: "Apa fungsi blok {change [v] by []}?",
+              choices: [
+                { content: "Menambah atau mengurangi nilai variable", isCorrect: true, feedback: "Benar! 'change by' menambah (positif) atau mengurangi (negatif) nilai variable." },
+                { content: "Mengganti nama variable", isCorrect: false, feedback: "Nama variable tidak bisa diubah lewat blok." },
+                { content: "Menyembunyikan variable dari stage", isCorrect: false, feedback: "Itu 'hide variable', bukan 'change by'." },
+              ],
+            },
+            {
+              question: "Apa perbedaan variable dengan list?",
+              choices: [
+                { content: "List bisa menyimpan banyak item sekaligus, variable hanya satu nilai", isCorrect: true, feedback: "Benar! List adalah kumpulan data, variable adalah satu nilai tunggal." },
+                { content: "Variable bisa menyimpan banyak item, list hanya satu", isCorrect: false, feedback: "Kebalikannya. List untuk banyak data, variable untuk satu nilai." },
+                { content: "Tidak ada perbedaan, keduanya sama", isCorrect: false, feedback: "Sangat berbeda! List memiliki item, panjang, dan operasi tambah/hapus." },
+              ],
+            },
+            {
+              question: "Blok apa untuk menampilkan monitor variable di stage?",
+              choices: [
+                { content: "{show variable [v]}", isCorrect: true, feedback: "Benar! 'show variable' menampilkan monitor variable di stage." },
+                { content: "{set [v] to []}", isCorrect: false, feedback: "'set variable to' menyimpan nilai, bukan menampilkan." },
+                { content: "{hide variable [v]}", isCorrect: false, feedback: "Itu kebalikannya — 'hide variable' menyembunyikan monitor." },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    console.log("✓ Mock quiz seeded for v-quiz");
   }
 
   console.log(

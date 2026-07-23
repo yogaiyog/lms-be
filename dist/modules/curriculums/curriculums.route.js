@@ -8,7 +8,9 @@ const app_error_1 = require("../../utils/app-error");
 const curriculums_schema_1 = require("./curriculums.schema");
 exports.curriculumsRouter = (0, express_1.Router)();
 const commonInclude = {
-    topics: true,
+    topics: {
+        include: { tasks: { orderBy: { order: "asc" } } },
+    },
     assessmentSet: {
         include: { aspects: { orderBy: { order: "asc" } } },
     },

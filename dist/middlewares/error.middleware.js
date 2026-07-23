@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorMiddleware = errorMiddleware;
+const zod_1 = require("zod");
 const app_error_1 = require("../utils/app-error");
 const prisma_error_1 = require("../lib/prisma-error");
 function errorMiddleware(err, _req, res, _next) {
@@ -9,6 +10,15 @@ function errorMiddleware(err, _req, res, _next) {
             success: false,
             message: err.message,
             code: err.code,
+        });
+    }
+    if (err instanceof zod_1.ZodError) {
+        return res.status(400).json({
+            success: false,
+            message: err.errors
+                .map((e) => `${e.path.join(".")}: ${e.message}`)
+                .join("; "),
+            code: "VALIDATION_ERROR",
         });
     }
     if (err && typeof err === "object" && "code" in err) {
