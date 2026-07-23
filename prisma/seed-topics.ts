@@ -177,6 +177,40 @@ export async function seedTopics(
       ],
       capstone: { id: "capstone-clone", url: null },
     },
+    {
+      id: "sensing",
+      title: "Sensing - IPO (Input Process Output)",
+      projectId: "scratch-sensing",
+      materialLink: "https://canva.link/z8lrmibi1yq6rq9",
+      levels: [
+        { id: "s1", label: "1", url: `${SCRATCH_GUI_URL}/sensing-keyboard.html` },
+        { id: "s2", label: "2", url: `${SCRATCH_GUI_URL}/sensing-mouse.html` },
+        { id: "s3", label: "3", url: `${SCRATCH_GUI_URL}/sensing-touch.html` },
+        { id: "s-quiz", label: "Q", url: null, type: "QUIZ" as const },
+        { id: "s4", label: "4", url: `${SCRATCH_GUI_URL}/sensing-ask.html` },
+        { id: "s5", label: "5", url: `${SCRATCH_GUI_URL}/sensing-timer.html` },
+        { id: "s6", label: "6", url: `${SCRATCH_GUI_URL}/sensing-multi.html` },
+        { id: "s7", label: "7", url: `${SCRATCH_GUI_URL}/sensing-capstone.html` },
+      ],
+      capstone: { id: "capstone-sensing", url: null },
+    },
+    {
+      id: "algorithm",
+      title: "Algoritma - Computational Thinking",
+      projectId: "scratch-algorithm",
+      materialLink: "https://canva.link/qqxvrcidq7o9vmi",
+      levels: [
+        { id: "a1", label: "1", url: `${SCRATCH_GUI_URL}/algorithm-basic.html` },
+        { id: "a2", label: "2", url: `${SCRATCH_GUI_URL}/algorithm-flowchart.html` },
+        { id: "a3", label: "3", url: `${SCRATCH_GUI_URL}/algorithm-decompose.html` },
+        { id: "a-quiz", label: "Q", url: null, type: "QUIZ" as const },
+        { id: "a4", label: "4", url: `${SCRATCH_GUI_URL}/algorithm-pattern.html` },
+        { id: "a5", label: "5", url: `${SCRATCH_GUI_URL}/algorithm-branch.html` },
+        { id: "a6", label: "6", url: `${SCRATCH_GUI_URL}/algorithm-efficient.html` },
+        { id: "a7", label: "7", url: `${SCRATCH_GUI_URL}/algorithm-capstone.html` },
+      ],
+      capstone: { id: "capstone-algorithm", url: null },
+    },
   ];
 
   // Clean slate for roadmap-related tables (idempotent re-seed)
@@ -829,6 +863,122 @@ export async function seedTopics(
       },
     });
     console.log("✓ Mock quiz seeded for v-quiz");
+  }
+
+  // Seed Mock Quiz for s-quiz (Sensing - IPO)
+  const sQuizTask = await prisma.topicTask.findFirst({
+    where: { code: "s-quiz" },
+  });
+
+  if (sQuizTask) {
+    await prisma.quiz.create({
+      data: {
+        taskId: sQuizTask.id,
+        questions: {
+          create: [
+            {
+              question: "Dalam IPO, apa yang dilakukan pada tahap Process?",
+              choices: [
+                { content: "Menampilkan hasil", isCorrect: false, feedback: "Itu Output, bukan Process." },
+                { content: "Mengolah informasi dan mengambil keputusan", isCorrect: true, feedback: "Benar! Process adalah tahap mengolah input dan menentukan tindakan." },
+                { content: "Menerima input dari pengguna", isCorrect: false, feedback: "Itu Input, bukan Process." },
+              ],
+            },
+            {
+              question: "Saat pemain menekan tombol Spasi, karakter melompat. Bagian Process adalah...",
+              choices: [
+                { content: "Tombol Spasi ditekan", isCorrect: false, feedback: "Itu Input, bukan Process." },
+                { content: "Scratch mendeteksi tombol ditekan lalu menjalankan perintah", isCorrect: true, feedback: "Benar! Process adalah tahap di mana komputer memproses input dan memutuskan tindakan." },
+                { content: "Karakter melompat", isCorrect: false, feedback: "Itu Output, bukan Process." },
+              ],
+            },
+            {
+              question: "Blok apa yang membaca posisi mouse di Scratch?",
+              choices: [
+                { content: "{mouse x} / {mouse y}", isCorrect: true, feedback: "Benar! 'mouse x' dan 'mouse y' adalah reporter yang membaca posisi kursor mouse." },
+                { content: "{key [space v] pressed?}", isCorrect: false, feedback: "Itu untuk deteksi keyboard, bukan posisi mouse." },
+                { content: "{move (10) steps}", isCorrect: false, feedback: "Itu blok motion untuk menggerakkan sprite, bukan membaca input." },
+              ],
+            },
+            {
+              question: "Fungsi blok {touching [mouse-pointer v]} adalah...",
+              choices: [
+                { content: "Mendeteksi apakah sprite menyentuh mouse-pointer", isCorrect: true, feedback: "Benar! 'touching' mendeteksi collision antara sprite dengan objek yang dipilih." },
+                { content: "Mendeteksi warna tertentu di stage", isCorrect: false, feedback: "Itu 'touching color', bukan 'touching object'." },
+                { content: "Membaca input keyboard", isCorrect: false, feedback: "Input keyboard pakai 'key pressed', bukan 'touching'." },
+              ],
+            },
+            {
+              question: "Perbedaan {ask [] and wait} dengan {key [space v] pressed?} adalah...",
+              choices: [
+                { content: "{ask} menunggu input teks dari pengguna, {key pressed} mendeteksi tombol ditekan", isCorrect: true, feedback: "Benar! Ask untuk input teks (jawaban panjang), key pressed untuk deteksi tombol." },
+                { content: "Sama saja, keduanya membaca keyboard", isCorrect: false, feedback: "Ask membaca teks (string), key pressed hanya mendeteksi apakah tombol ditekan." },
+                { content: "{ask} hanya bisa dipakai sekali, {key pressed} berulang", isCorrect: false, feedback: "Keduanya bisa dipakai berulang — ask di dalam loop atau forever." },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    console.log("✓ Mock quiz seeded for s-quiz");
+  }
+
+  // Seed Mock Quiz for a-quiz (Algoritma - Computational Thinking)
+  const aQuizTask = await prisma.topicTask.findFirst({
+    where: { code: "a-quiz" },
+  });
+
+  if (aQuizTask) {
+    await prisma.quiz.create({
+      data: {
+        taskId: aQuizTask.id,
+        questions: {
+          create: [
+            {
+              question: "Apa tujuan algoritma?",
+              choices: [
+                { content: "Menggambar Sprite", isCorrect: false, feedback: "Sprite digambar dengan paint editor, bukan algoritma." },
+                { content: "Membuat rencana untuk menyelesaikan masalah", isCorrect: true, feedback: "Benar! Algoritma adalah urutan langkah logis untuk menyelesaikan masalah." },
+                { content: "Mengubah warna Stage", isCorrect: false, feedback: "Warna stage diubah dengan backdrop atau blok looks, bukan algoritma." },
+              ],
+            },
+            {
+              question: "Manakah yang benar tentang Algoritma dan Sequence?",
+              choices: [
+                { content: "Sequence membuat rencana, algoritma menjalankan program", isCorrect: false, feedback: "Terbalik. Algoritma adalah rencananya, sequence adalah eksekusinya." },
+                { content: "Algoritma adalah rencana, Sequence menjalankan langkah sesuai urutan", isCorrect: true, feedback: "Benar! Algoritma = rencana, Sequence = eksekusi langkah demi langkah." },
+                { content: "Algoritma dan Sequence adalah hal yang berbeda tanpa hubungan", isCorrect: false, feedback: "Keduanya terkait erat. Sequence adalah cara menjalankan algoritma." },
+              ],
+            },
+            {
+              question: "Manakah contoh Decomposition (memecah masalah)?",
+              choices: [
+                { content: "Memecah 'Buat kue' menjadi: siapkan bahan → campur → panggang → sajikan", isCorrect: true, feedback: "Benar! Decomposition memecah masalah besar jadi langkah-langkah kecil yang lebih mudah dikelola." },
+                { content: "Membuat kue langsung tanpa resep", isCorrect: false, feedback: "Tanpa resep = tanpa decomposition. Hasilnya tidak terstruktur." },
+                { content: "Mengulang langkah yang sama 10 kali", isCorrect: false, feedback: "Itu loop/repetition, bukan decomposition." },
+              ],
+            },
+            {
+              question: "Algoritma mana yang lebih efisien untuk mencari nomor telepon di buku telepon?",
+              choices: [
+                { content: "Buka halaman tengah, cari berdasarkan huruf (seperti binary search)", isCorrect: true, feedback: "Benar! Binary search jauh lebih efisien daripada linear search untuk data terurut." },
+                { content: "Baca dari halaman 1 sampai ketemu (linear search)", isCorrect: false, feedback: "Linear search bisa dipakai, tapi tidak efisien untuk buku telepon yang tebal." },
+                { content: "Acak halaman sampai ketemu", isCorrect: false, feedback: "Acak tidak menjamin ketemu dan sangat tidak efisien." },
+              ],
+            },
+            {
+              question: "Dalam flowchart, bentuk wajik (diamond) digunakan untuk...",
+              choices: [
+                { content: "Menunjukkan keputusan (decision)", isCorrect: true, feedback: "Benar! Wajik = decision/percabangan dalam flowchart." },
+                { content: "Menunjukkan mulai/selesai", isCorrect: false, feedback: "Mulai/selesai pakai oval/rounded rectangle." },
+                { content: "Menunjukkan proses/aksi", isCorrect: false, feedback: "Proses/aksi pakai persegi panjang." },
+              ],
+            },
+          ],
+        },
+      },
+    });
+    console.log("✓ Mock quiz seeded for a-quiz");
   }
 
   console.log(
