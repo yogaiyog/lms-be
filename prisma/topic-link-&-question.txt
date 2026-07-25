@@ -527,3 +527,66 @@ B. {broadcast [v]}
 C. {stop [all v]} ✅
 
 Jawaban: C
+
+------
+IPO (sensing)
+https://canva.link/z8lrmibi1yq6rq9
+
+Quiz 1
+
+Dalam IPO, apa yang dilakukan pada tahap Process?
+
+A. Menampilkan hasil
+
+B. Mengolah informasi dan mengambil keputusan. ✅
+
+C. Menerima input dari pengguna
+
+Jawaban: B
+
+Quiz 2
+
+Saat pemain menekan tombol Spasi, karakter melompat.
+
+Bagian Process adalah...
+
+A. Tombol Spasi ditekan
+
+B. Scratch mendeteksi tombol ditekan lalu menjalankan perintah. ✅
+
+C. Karakter melompat
+
+Jawaban: B
+
+
+
+
+------
+Algoritma
+https://canva.link/qqxvrcidq7o9vmi
+
+nonBlock3 quiz
+
+Quiz 1
+
+Apa tujuan algoritma?
+
+A. Menggambar Sprite
+
+B. Membuat rencana untuk menyelesaikan masalah. ✅
+
+C. Mengubah warna Stage
+
+Jawaban: B
+
+Quiz 2
+
+Manakah yang benar?
+
+A. Sequence membuat rencana, algoritma menjalankan program.
+
+B. Algoritma adalah rencana, Sequence menjalankan langkah sesuai urutan. ✅
+
+C. Algoritma dan Sequence adalah hal yang berbeda tanpa hubungan.
+
+Jawaban: B

@@ -429,25 +429,28 @@ model SavedReport {
 enum TaskType {
   SCRATCH
   QUIZ
+  PYTHON
 }
 
 model TopicTask {
-  id          String                @id @default(uuid())
-  topicId     String
-  topic       Topic                 @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  type        TaskType              @default(SCRATCH)
-  code        String                // "m1", "l1", "capstone-motion", ... = taskId from Scratch GUI
-  label       String                // "1", "2", ... "Capstone"
-  url         String?               // URL Scratch GUI per level
-  order       Int                   @default(0)
-  isCapstone  Boolean               @default(false)
-  createdAt   DateTime              @default(now())
+  id            String                @id @default(uuid())
+  topicId       String
+  topic         Topic                 @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  type          TaskType              @default(SCRATCH)
+  code          String                // "m1", "l1", "capstone-motion", ... = taskId from Scratch GUI
+  label         String                // "1", "2", ... "Capstone"
+  url           String?               // URL Scratch GUI per level
+  order         Int                   @default(0)
+  isCapstone    Boolean               @default(false)
+  instructions  String?               // markdown instructions (for PYTHON type)
+  defaultCode   String?               // default starter code (for PYTHON type)
+  createdAt     DateTime              @default(now())
 
-  quiz        Quiz?
+  quiz          Quiz?
+  progress      StudentTopicProgress[]
 
   @@unique([topicId, code])
   @@index([topicId])
-  progress    StudentTopicProgress[]
 }
 
 model Quiz {

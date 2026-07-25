@@ -5,10 +5,16 @@ import { AppError } from "../../utils/app-error";
 export const roadmapRouter = Router();
 
 // GET /scratch-fundamental — returns curriculum + topics + tasks (for roadmap-client)
+// Query params: ?curriculumId=... | ?name=... (default: "Scratch Fundamental"), ?studentId=...
 roadmapRouter.get("/scratch-fundamental", async (req, res, next) => {
   try {
+    const curriculumId = req.query.curriculumId as string | undefined;
+    const curriculumName = req.query.name as string | undefined;
+    const where = curriculumId
+      ? { id: curriculumId }
+      : { name: curriculumName ?? "Scratch Fundamental" };
     const curriculum = await prisma.curriculum.findFirst({
-      where: { name: "Scratch Fundamental" },
+      where,
       include: {
         topics: {
           orderBy: { order: "asc" },
@@ -22,7 +28,8 @@ roadmapRouter.get("/scratch-fundamental", async (req, res, next) => {
     });
 
     if (!curriculum) {
-      throw new AppError("Scratch Fundamental curriculum not found", 404, "CURRICULUM_NOT_FOUND");
+      const label = curriculumId ? `id "${curriculumId}"` : `name "${curriculumName ?? "Scratch Fundamental"}"`;
+      throw new AppError(`Curriculum ${label} not found`, 404, "CURRICULUM_NOT_FOUND");
     }
 
     // Optionally include student progress

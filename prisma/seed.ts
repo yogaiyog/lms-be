@@ -2,6 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { seedTopics } from "./seed-topics";
+import { seedPythonExplorer } from "./seed-topics-py";
 
 const prisma = new PrismaClient();
 
@@ -930,6 +931,7 @@ async function main() {
   console.log("✓ Student badges created");
 
   await seedTopics(prisma, defaultAssessment);
+  await seedPythonExplorer(prisma, defaultAssessment);
 
   console.log("\n--- Seed Summary ---");
   console.log("Admin:       admin@lms.com");
@@ -937,7 +939,7 @@ async function main() {
   console.log("Parents:     andi.parent@lms.com, maya.parent@lms.com");
   console.log("Students:    rafa.student@lms.com, luna.student@lms.com,");
   console.log("             ardhi.student@lms.com, nisa.student@lms.com, dito.student@lms.com");
-  console.log("Curriculums: Scratch Junior - Kelas 1-3 (12 topics), Design & Kreativitas - Kelas 1-3 (12 topics), Python Explorer - Kelas 4-6 (12 topics), Web Dev Warrior - Kelas 7-9 (12 topics)");
+  console.log("Curriculums: Scratch Junior - Kelas 1-3 (12 topics), Design & Kreativitas - Kelas 1-3 (12 topics), Python Explorer - 12 topics, Web Dev Warrior - Kelas 7-9 (12 topics)");
   console.log("Password:    password123 (all accounts)");
   console.log("--------------------\n");
 }
