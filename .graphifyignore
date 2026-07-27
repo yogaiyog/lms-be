@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+
+# Database (dev.db.backup tidak ke-cover *.db di .gitignore)
+prisma/dev.db.backup
+prisma/dev.db
+*.db-journal
+
+# Secrets
+.env
+.env*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Graphify output
+graphify-out/
+
+# OS
+.DS_Store

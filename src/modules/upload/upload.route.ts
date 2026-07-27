@@ -12,6 +12,7 @@ const ENTITY_TYPES = [
   "certificate",
   "announcement",
   "general",
+  "quiz",
 ] as const;
 
 const storage = multer.memoryStorage();

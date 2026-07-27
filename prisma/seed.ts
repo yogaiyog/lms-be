@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { seedTopics } from "./seed-topics";
 import { seedPythonExplorer } from "./seed-topics-py";
+import { seedCodeExplorer } from "./seed-topics-ce";
 
 const prisma = new PrismaClient();
 
@@ -932,6 +933,7 @@ async function main() {
 
   await seedTopics(prisma, defaultAssessment);
   await seedPythonExplorer(prisma, defaultAssessment);
+  await seedCodeExplorer(prisma, defaultAssessment);
 
   console.log("\n--- Seed Summary ---");
   console.log("Admin:       admin@lms.com");

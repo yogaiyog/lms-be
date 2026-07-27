@@ -1,3 +1,97 @@
+<!-- BEGIN:graphify-rules -->
+
+# Graphify — Wajib Pakai Sebelum Baca Kode (Hemat Token)
+
+Sebelum membaca file untuk memahami kode, cek graph dulu:
+
+```bash
+if [ -f graphify-out/graph.json ]; then
+    graphify query "<pertanyaan tentang kode>"
+fi
+```
+
+## Cara pakai
+
+```bash
+# Query arsitektur (BFS — broad context)
+graphify query "bagaimana alur authentication?"
+graphify query "siapa aja yang import AppError?"
+
+# Trace path spesifik (DFS)
+graphify query "dari route ke service" --dfs
+
+# Cari jalur antar konsep
+graphify path "CertificateService" "ReportPdfService"
+
+# Penjelasan node tertentu
+graphify explain "createCrudRouter"
+```
+
+## Efek hemat token
+
+Ganti `graphify query` ini:
+- ❌ Baca 20 file `.route.ts` satu per satu → **ribuan token**
+- ✅ `graphify query "siapa import createCrudRouter?"` → **puluhan token**
+
+## Save query ke graph (memory) — biar agent berikutnya makin pintar
+
+Setiap query yang menghasilkan insight arsitektur, **wajib di-save**:
+
+```bash
+# Template
+graphify query "pertanyaan" 2>&1
+
+$(cat graphify-out/.graphify_python) -m graphify save-result \
+  --question "Pertanyaan dalam Bahasa Indonesia" \
+  --answer "Jawaban dalam Bahasa Indonesia (jelas, struktural, sebut file path)" \
+  --type query \
+  --outcome useful \
+  --nodes Node1 Node2 Node3
+
+# Lalu refresh
+$(cat graphify-out/.graphify_python) -m graphify reflect --if-stale
+```
+
+**Kriteria `--outcome`:**
+| Outcome | Kapan pakai | Efek ke graph |
+|---|---|---|
+| `useful` | Jawaban akurat, node tepat, insight arsitektur | Jadi *preferred source* — agent lain mulai dari sini |
+| `dead_end` | Query gak nemu jawaban relevan | Agent skip query mirip ini di masa depan |
+| `corrected` | Jawaban sebelumnya salah | Timpa dengan `--correction "jawaban benar"` |
+
+**Aturan cara query biar hasilnya useful untuk memory:**
+
+1. **Query spesifik, bukan random** — jangan tanya `"apa aja yang ada"`, tanya `"bagaimana alur auth?"` atau `"siapa import AppError?"`
+2. **Jawaban harus struktural** — sebut nama file, community, edge type. Jangan cuma "AppError itu error class"
+3. **`--nodes` diisi node yang benar-benar relevan** — bukan semua node yang muncul
+4. **Kalau ragu, skip save** — lebih baik gak di-save daripada di-save dengan `useful` tapi jawaban ngawur
+
+**Contoh dari sesi ini yang sudah di-save:**
+```
+"Kenapa AppError muncul di hampir semua module?"
+"Bagaimana peran crud-router.ts, prisma.ts, routes/index.ts, academic.route.ts, auth.service.ts?"
+```
+
+## Update graph jika kode berubah
+
+```bash
+cd /Users/yoga/Developer/Personal/Scratch/scratch-gui/backend
+graphify extract --update
+graphify export html
+```
+
+## Urutan kerja
+
+1. **Cek graph dulu** — `graphify query` sebelum baca file
+2. Planning
+3. Implementasi
+4. **Update graph** — `graphify extract --update` (jika ada perubahan kode)
+5. **Save query useful** — `graphify query → save-result --outcome useful`
+6. TypeScript check
+7. Selesai
+
+<!-- END:graphify-rules -->
+
 <!-- BEGIN:prisma-migration-rules -->
 
 # Prisma — Wajib Migration untuk Setiap Perubahan Skema

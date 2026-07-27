@@ -466,7 +466,8 @@ model QuizQuestion {
   quizId      String
   quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   question    String   @db.Text
-  choices     Json     // [{ content: "blocks3...", isCorrect: boolean, feedback: "..." }]
+  imageUrl    String?  // optional image for the question
+  choices     Json     // [{ content: "...", isCorrect: boolean, feedback: "...", imageUrl?: string }]
   createdAt   DateTime @default(now())
 }
 

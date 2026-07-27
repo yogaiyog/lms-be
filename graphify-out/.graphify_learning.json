@@ -1,0 +1,102 @@
+{
+  "generated_at": "2026-07-27T06:59:45.646205+00:00",
+  "nodes": {
+    "src_lib_crud_router": {
+      "code_fingerprint": "6c4f52cb16b53597165a22907702baa33ec2c9f6684d44ff1e1e06fa8789f94c",
+      "label": "crud-router.ts",
+      "last": "2026-07-27T06:59:42.747019+00:00",
+      "provenance": [
+        {
+          "date": "2026-07-27T06:59:42.747019+00:00",
+          "outcome": "useful",
+          "q": "Apa peran crud-router.ts sebagai god node?"
+        }
+      ],
+      "score": 0.999999225,
+      "source_file": "src/lib/crud-router.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_lib_prisma": {
+      "code_fingerprint": "0b0f87bfa7d551b3d4e0099e09fba1e5b01d446daaab7c1d29d462f83abb8912",
+      "label": "prisma.ts",
+      "last": "2026-07-27T06:59:42.679542+00:00",
+      "provenance": [
+        {
+          "date": "2026-07-27T06:59:42.679542+00:00",
+          "outcome": "useful",
+          "q": "Apa peran prisma.ts sebagai god node?"
+        }
+      ],
+      "score": 0.999999207,
+      "source_file": "src/lib/prisma.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_modules_academic_academic_route": {
+      "code_fingerprint": "3072d7dee2a8e82618989b572747c02ee81a3fadd451ccaec7b377191e050740",
+      "label": "academic.route.ts",
+      "last": "2026-07-27T06:59:42.543708+00:00",
+      "provenance": [
+        {
+          "date": "2026-07-27T06:59:42.543708+00:00",
+          "outcome": "useful",
+          "q": "Apa peran academic.route.ts sebagai god node?"
+        }
+      ],
+      "score": 0.99999917,
+      "source_file": "src/modules/academic/academic.route.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_modules_auth_auth_service": {
+      "code_fingerprint": "d8fc57f2d74957fa01a5adc81e7ef932e88fc775b617ea5cca088e98ebde5645",
+      "label": "auth.service.ts",
+      "last": "2026-07-27T06:59:42.611206+00:00",
+      "provenance": [
+        {
+          "date": "2026-07-27T06:59:42.611206+00:00",
+          "outcome": "useful",
+          "q": "Apa peran auth.service.ts sebagai god node?"
+        }
+      ],
+      "score": 0.999999188,
+      "source_file": "src/modules/auth/auth.service.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_routes_index": {
+      "code_fingerprint": "eeec4c5832adf15fada018c6435392dc3710e9609738e0a218bfda3bf1909031",
+      "label": "routes/index.ts",
+      "last": "2026-07-27T06:59:42.813602+00:00",
+      "provenance": [
+        {
+          "date": "2026-07-27T06:59:42.813602+00:00",
+          "outcome": "useful",
+          "q": "Apa peran routes/index.ts sebagai god node?"
+        }
+      ],
+      "score": 0.999999243,
+      "source_file": "src/routes/index.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_utils_app_error_apperror": {
+      "code_fingerprint": "8c38fdcaf2e0127d41a45278cbfb8a0c81163aae37f6280363228a60102ca8d4",
+      "label": "AppError",
+      "last": "2026-07-27T06:58:33.095936+00:00",
+      "provenance": [
+        {
+          "date": "2026-07-27T06:58:33.095936+00:00",
+          "outcome": "useful",
+          "q": "Kenapa AppError muncul di hampir semua module?"
+        }
+      ],
+      "score": 0.999980599,
+      "source_file": "src/utils/app-error.ts",
+      "status": "tentative",
+      "uses": 1
+    }
+  },
+  "version": 1
+}

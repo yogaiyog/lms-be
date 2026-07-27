@@ -11,6 +11,7 @@ export const curriculumsRouter = Router();
 
 const commonInclude = {
   topics: {
+    orderBy: { order: "asc" as const },
     include: { tasks: { orderBy: { order: "asc" as const } } },
   },
   assessmentSet: {
