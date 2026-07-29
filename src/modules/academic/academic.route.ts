@@ -18,6 +18,7 @@ import { categoriesRouter } from "../categories/categories.route";
 import { studentTopicProgressRouter } from "../student-topic-progress/student-topic-progress.route";
 import { roadmapRouter } from "../roadmap/roadmap.route";
 import { quizRouter } from "../quiz/quiz.route";
+import { topicTaskRouter } from "../topic-task/topic-task.route";
 
 export const academicRouter = Router();
 
@@ -40,3 +41,4 @@ academicRouter.use("/categories", categoriesRouter);
 academicRouter.use("/student-topic-progress", studentTopicProgressRouter);
 academicRouter.use("/roadmap", roadmapRouter);
 academicRouter.use("/quiz", quizRouter);
+academicRouter.use("/topic-tasks", topicTaskRouter);

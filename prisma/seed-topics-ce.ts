@@ -937,8 +937,9 @@ async function uploadSampleProjects(prisma: PrismaClient): Promise<void> {
 export async function seedCodeExplorer(
   prisma: PrismaClient,
   defaultAssessment: { id: string },
+  categoryIds?: { id: string }[],
 ) {
-  const name = "code-explorer";
+  const name = "Code-Explorer";
 
   await prisma.studentTopicProgress.deleteMany({
     where: { topicTask: { topic: { curriculum: { name } } } },
@@ -949,6 +950,9 @@ export async function seedCodeExplorer(
     data: {
       name,
       assessmentSetId: defaultAssessment.id,
+      ...(categoryIds?.length ? {
+        categories: { create: categoryIds.map((cat) => ({ categoryId: cat.id })) },
+      } : {}),
       topics: {
         create: codeExplorerUnits.map((unit, i) => ({
           title: unit.title,
@@ -1021,6 +1025,27 @@ export async function seedCodeExplorer(
   }
 
   await uploadSampleProjects(prisma);
+
+  const sampleTopicMap: Record<string, number> = {
+    "ce-sample-4": 3,
+    "ce-sample-5": 4,
+    "ce-sample-7": 6,
+    "ce-sample-8": 7,
+    "ce-sample-9": 8,
+    "ce-sample-11": 10,
+  };
+
+  for (const [entityId, topicIdx] of Object.entries(sampleTopicMap)) {
+    const image = await prisma.image.findFirst({
+      where: { entityType: "general", entityId },
+    });
+    if (image && curriculum.topics[topicIdx]) {
+      await prisma.topic.update({
+        where: { id: curriculum.topics[topicIdx].id },
+        data: { exampleProjectLink: image.url },
+      });
+    }
+  }
 
   const totalTasks = codeExplorerUnits.reduce(
     (sum, u) => sum + u.levels.length + 2,

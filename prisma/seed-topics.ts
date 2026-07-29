@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 export async function seedTopics(
   prisma: PrismaClient,
   defaultAssessment: { id: string },
+  categoryIds?: { id: string }[],
 ) {
   const SCRATCH_GUI_URL =
     process.env.SCRATCH_GUI_URL ?? "http://localhost:8601";
@@ -215,9 +216,8 @@ export async function seedTopics(
 
   // Clean slate for roadmap-related tables (idempotent re-seed)
   await prisma.studentTopicProgress.deleteMany();
-  // Cascade: deleting curriculum triggers Topic cascade → TopicTask cascade
   const existingSF = await prisma.curriculum.findMany({
-    where: { name: "Scratch Fundamental" },
+    where: { name: "Scratch-Explorer" },
     select: { id: true },
   });
   if (existingSF.length > 0) {
@@ -228,8 +228,11 @@ export async function seedTopics(
 
   const scratchFundamental = await prisma.curriculum.create({
     data: {
-      name: "Scratch Fundamental",
+      name: "Scratch-Explorer",
       assessmentSetId: defaultAssessment.id,
+      ...(categoryIds?.length ? {
+        categories: { create: categoryIds.map((cat) => ({ categoryId: cat.id })) },
+      } : {}),
       topics: {
           create: scratchFundamentalUnits.map((unit, i) => ({
             title: unit.title,
@@ -982,63 +985,6 @@ export async function seedTopics(
   }
 
   console.log(
-    `✓ Scratch Fundamental curriculum created (${scratchFundamentalUnits.length} units, ${scratchFundamentalUnits.length * 9} tasks)`,
+    `✓ Scratch-Explorer curriculum created (${scratchFundamentalUnits.length} units, ${scratchFundamentalUnits.length * 9} tasks)`,
   );
-
-  // === Test Python Curriculum ===
-  const PYTHON_EDITOR_URL =
-    process.env.PYTHON_EDITOR_URL ?? "http://localhost:3000";
-
-  await prisma.studentTopicProgress.deleteMany({
-    where: { topicTask: { topic: { curriculum: { name: "test-python" } } } },
-  });
-  await prisma.curriculum.deleteMany({ where: { name: "test-python" } });
-
-  const testPython = await prisma.curriculum.create({
-    data: {
-      name: "test-python",
-      assessmentSetId: defaultAssessment.id,
-      topics: {
-        create: [
-          {
-            title: "test-topic-python",
-            order: 0,
-            goals: "Belajar print di Python",
-            tools: "Python Editor",
-          },
-        ],
-      },
-    },
-    include: { topics: true },
-  });
-
-  await prisma.topicTask.create({
-    data: {
-      topicId: testPython.topics[0].id,
-      code: "p1",
-      label: "1",
-      url: `${PYTHON_EDITOR_URL}/project-editor`,
-      order: 0,
-      isCapstone: false,
-      type: "PYTHON",
-      instructions: `## Selamat datang di Python!
-
-Ketik kode Python di bawah ini untuk mencetak teks:
-
-### Contoh
-
-print("Halo, dunia!")
-print("Aku sedang belajar Python!")
-
-### Tugas
-
-1. Jalankan kode di atas dengan klik **Run**
-2. Ubah teks dalam tanda kutip menjadi nama kamu
-3. Jalankan lagi dan lihat hasilnya`,
-      defaultCode: `print("Halo, dunia!")
-print("Aku sedang belajar Python!")`,
-    },
-  });
-
-  console.log("✓ Test Python curriculum seeded (test-python → test-topic-python → p1)");
 }

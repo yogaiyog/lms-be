@@ -2040,16 +2040,20 @@ Gabungkan seluruh modul untuk membuat **Aplikasi Kasir Warung Pintar** lengkap!
 export async function seedPythonExplorer(
   prisma: PrismaClient,
   defaultAssessment: { id: string },
+  categoryIds?: { id: string }[],
 ) {
   await prisma.studentTopicProgress.deleteMany({
-    where: { topicTask: { topic: { curriculum: { name: "python-explorer" } } } },
+    where: { topicTask: { topic: { curriculum: { name: "Python-Explorer" } } } },
   });
-  await prisma.curriculum.deleteMany({ where: { name: "python-explorer" } });
+  await prisma.curriculum.deleteMany({ where: { name: "Python-Explorer" } });
 
   const curriculum = await prisma.curriculum.create({
     data: {
-      name: "python-explorer",
+      name: "Python-Explorer",
       assessmentSetId: defaultAssessment.id,
+      ...(categoryIds?.length ? {
+        categories: { create: categoryIds.map((cat) => ({ categoryId: cat.id })) },
+      } : {}),
       topics: {
         create: pythonExplorerUnits.map((unit, i) => ({
           title: unit.title,
