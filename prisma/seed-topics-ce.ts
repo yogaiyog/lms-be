@@ -865,13 +865,17 @@ async function getOrUploadImage(
   mimeType: string,
   entityType: string,
   entityId: string,
-): Promise<string> {
+): Promise<string | null> {
   const existing = await prisma.image.findFirst({
     where: { entityType, entityId },
   });
   if (existing) return existing.url;
 
   const resolvedPath = path.resolve(__dirname, filePath);
+  if (!fs.existsSync(resolvedPath)) {
+    console.warn(`  ⚠ Image file not found: ${resolvedPath}, skipping`);
+    return null;
+  }
   const buffer = fs.readFileSync(resolvedPath);
   const url = await uploadFile(buffer, filename, mimeType);
 
@@ -891,9 +895,11 @@ async function resolveQuizImages(
       if (!q.imageUrl || !q.imageUrl.startsWith("___CE6_DIR_")) return q;
 
       const num = q.imageUrl.replace("___CE6_DIR_", "").replace("___", "");
-      const filePath = `../UploadSeed/quiz image/topics-6-code-exploler/${num}.jpg`;
+      const filePath = `../uploadSeed/quiz image/topics-6-code-exploler/${num}.jpg`;
       const entityId = `ce6-dir-${num}`;
       const url = await getOrUploadImage(prisma, filePath, `ce6-dir-${num}.jpg`, "image/jpeg", "quiz", entityId);
+
+      if (!url) return { ...q, imageUrl: undefined };
 
       return { ...q, imageUrl: url };
     }),
