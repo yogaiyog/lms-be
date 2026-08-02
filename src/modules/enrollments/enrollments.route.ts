@@ -6,7 +6,7 @@ import { enrollmentCreateSchema, enrollmentUpdateSchema } from "./enrollments.sc
 import { mapPrismaError } from "../../lib/prisma-error";
 import { AppError } from "../../utils/app-error";
 
-const include = { student: true, class: true, curriculum: true };
+const include = { student: true, class: true, curriculum: { include: { topics: true } } };
 
 const baseRouter = createCrudRouter({
   delegate: prisma.enrollment,
@@ -112,7 +112,7 @@ router.get("/student/:studentId", async (req, res, next) => {
     const { studentId } = req.params;
     const enrollments = await prisma.enrollment.findMany({
       where: { studentId } as any,
-      include: { ...include, curriculum: true },
+      include: { ...include },
     });
     return res.json({ success: true, data: enrollments });
   } catch (error) {
@@ -150,7 +150,7 @@ router.patch("/:id", async (req, res, next) => {
 
     const item = await prisma.enrollment.update({
       where: { id: req.params.id },
-      data: { ...payload, classId: payload.classId ?? null },
+      data: payload,
       include,
     });
 

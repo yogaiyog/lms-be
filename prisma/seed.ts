@@ -4,6 +4,8 @@ import bcrypt from "bcryptjs";
 import { seedTopics } from "./seed-topics";
 import { seedPythonExplorer } from "./seed-topics-py";
 import { seedCodeExplorer } from "./seed-topics-ce";
+import { seedTrialClass } from "./seed-trial-topics";
+import { seedTrialPython } from "./seed-trial-topics-py";
 
 const prisma = new PrismaClient();
 
@@ -452,6 +454,8 @@ async function main() {
   await seedTopics(prisma, defaultAssessment, [kelas2, kelas3, kelas4, kelas5, kelas6]);
   await seedPythonExplorer(prisma, defaultAssessment, [kelas5, kelas6, kelas7, kelas8, kelas9]);
   await seedCodeExplorer(prisma, defaultAssessment, [kelas1, kelas2, kelas3]);
+  await seedTrialClass(prisma, defaultAssessment, [kelas1, kelas2]);
+  await seedTrialPython(prisma, defaultAssessment, [kelas6, kelas7, kelas8, kelas9]);
 
   // === ENROLLMENTS ===
   // Dito (student5) - unassigned enrollment for Python-Explorer
@@ -476,7 +480,7 @@ async function main() {
   console.log("Parents:     andi.parent@lms.com, maya.parent@lms.com");
   console.log("Students:    rafa.student@lms.com, luna.student@lms.com,");
   console.log("             ardhi.student@lms.com, nisa.student@lms.com, dito.student@lms.com");
-  console.log("Curriculums: Code-Explorer (Kelas 1-3), Scratch-Explorer (Kelas 2-6), Python-Explorer (Kelas 5-9)");
+  console.log("Curriculums: Code-Explorer (Kelas 1-3), Scratch-Explorer (Kelas 2-6), Python-Explorer (Kelas 5-9), Trial Class K-2 (Kelas 1-2), Trial Python 6-9 (Kelas 6-9)");
   console.log("Password:    password123 (all accounts)");
   console.log("--------------------\n");
 }

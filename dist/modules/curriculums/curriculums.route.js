@@ -9,6 +9,7 @@ const curriculums_schema_1 = require("./curriculums.schema");
 exports.curriculumsRouter = (0, express_1.Router)();
 const commonInclude = {
     topics: {
+        orderBy: { order: "asc" },
         include: { tasks: { orderBy: { order: "asc" } } },
     },
     assessmentSet: {

@@ -119,10 +119,57 @@ model Enrollment {
   joinedAt           DateTime     @default(now())
   totalMeetPurchased Int          @default(0)
   totalMeetLeft      Int          @default(0)
-  verified           Boolean      @default(false)
+  invoices           Invoice[]
   meetUsages         MeetUsage[]
 
   @@unique([studentId, classId])
+}
+
+model Invoice {
+  id            String          @id @default(uuid())
+  enrollmentId  String
+  enrollment    Enrollment      @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  number        String          @unique
+  description   String?
+  meetCount     Int             @default(0)
+  subtotal         Decimal         @db.Decimal(10, 2)
+  registrationFee  Decimal?        @db.Decimal(10, 2)
+  taxPercent       Decimal?        @db.Decimal(5, 2)
+  taxAmount     Decimal?        @db.Decimal(10, 2)
+  total         Decimal         @db.Decimal(10, 2)
+  status        String          @default("DRAFT")
+  dueDate       DateTime?
+  paidAt        DateTime?
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  payments      Payment[]
+
+  @@index([enrollmentId])
+  @@index([status])
+}
+
+model Payment {
+  id            String    @id @default(uuid())
+  invoiceId     String
+  invoice       Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount        Decimal   @db.Decimal(10, 2)
+  paymentMethod String?
+  paymentType   String?
+  bank          String?
+  vaNumber      String?
+  qrString      String?
+  deeplinkUrl   String?
+  midtransRaw   Json?
+  status        String    @default("PENDING")
+  transactionId String?
+  gateway       String?
+  paidAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([invoiceId])
+  @@index([transactionId])
 }
 
 model MeetUsage {
@@ -479,6 +526,12 @@ model QuizAttempt {
   quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   score       Int
   createdAt   DateTime @default(now())
+}
+
+model InvoiceSequence {
+  id    String @id @default(uuid())
+  year  Int    @unique
+  last  Int    @default(0)
 }
 
 model StudentTopicProgress {

@@ -14,5 +14,4 @@ exports.enrollmentUpdateSchema = zod_1.z.object({
     classId: zod_1.z.string().uuid().nullable().optional(),
     totalMeetPurchased: zod_1.z.number().int().min(0).optional(),
     totalMeetLeft: zod_1.z.number().int().min(0).optional(),
-    verified: zod_1.z.boolean().optional(),
 }).refine((value) => Object.keys(value).length > 0, "At least one field must be provided");

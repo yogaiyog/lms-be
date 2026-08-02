@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Role } from "../../types/enums";
 import { authService } from "./auth.service";
+import { trialService } from "./trial.service";
 import {
   loginSchema,
   logoutSchema,
@@ -12,6 +13,7 @@ import {
   resetPasswordSchema,
   verifyEmailSchema,
 } from "./auth.schemas";
+import { trialRegisterSchema } from "./trial.schema";
 import { authenticate, requireRole } from "./auth.middleware";
 import { prisma } from "../../lib/prisma";
 
@@ -75,6 +77,21 @@ authRouter.post(
     try {
       const payload = studentRegisterSchema.parse(req.body);
       const result = await authService.registerStudent(payload, requestMeta(req));
+      return res.status(201).json({ success: true, data: result });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
+authRouter.post(
+  "/register/trial",
+  authenticate,
+  requireRole(Role.ADMIN),
+  async (req, res, next) => {
+    try {
+      const payload = trialRegisterSchema.parse(req.body);
+      const result = await trialService.registerTrial(payload);
       return res.status(201).json({ success: true, data: result });
     } catch (error) {
       return next(error);

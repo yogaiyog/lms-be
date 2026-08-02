@@ -4,7 +4,9 @@ exports.authRouter = void 0;
 const express_1 = require("express");
 const enums_1 = require("../../types/enums");
 const auth_service_1 = require("./auth.service");
+const trial_service_1 = require("./trial.service");
 const auth_schemas_1 = require("./auth.schemas");
+const trial_schema_1 = require("./trial.schema");
 const auth_middleware_1 = require("./auth.middleware");
 const prisma_1 = require("../../lib/prisma");
 exports.authRouter = (0, express_1.Router)();
@@ -50,6 +52,16 @@ exports.authRouter.post("/register/student", auth_middleware_1.authenticate, (0,
     try {
         const payload = auth_schemas_1.studentRegisterSchema.parse(req.body);
         const result = await auth_service_1.authService.registerStudent(payload, requestMeta(req));
+        return res.status(201).json({ success: true, data: result });
+    }
+    catch (error) {
+        return next(error);
+    }
+});
+exports.authRouter.post("/register/trial", auth_middleware_1.authenticate, (0, auth_middleware_1.requireRole)(enums_1.Role.ADMIN), async (req, res, next) => {
+    try {
+        const payload = trial_schema_1.trialRegisterSchema.parse(req.body);
+        const result = await trial_service_1.trialService.registerTrial(payload);
         return res.status(201).json({ success: true, data: result });
     }
     catch (error) {

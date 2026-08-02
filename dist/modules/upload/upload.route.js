@@ -17,6 +17,7 @@ const ENTITY_TYPES = [
     "certificate",
     "announcement",
     "general",
+    "quiz",
 ];
 const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({

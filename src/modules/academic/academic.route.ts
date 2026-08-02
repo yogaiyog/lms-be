@@ -19,6 +19,9 @@ import { studentTopicProgressRouter } from "../student-topic-progress/student-to
 import { roadmapRouter } from "../roadmap/roadmap.route";
 import { quizRouter } from "../quiz/quiz.route";
 import { topicTaskRouter } from "../topic-task/topic-task.route";
+import { invoicesRouter } from "../invoices/invoices.route";
+import { paymentsRouter } from "../payments/payments.route";
+import { eventsRouter } from "./events.route";
 
 export const academicRouter = Router();
 
@@ -42,3 +45,6 @@ academicRouter.use("/student-topic-progress", studentTopicProgressRouter);
 academicRouter.use("/roadmap", roadmapRouter);
 academicRouter.use("/quiz", quizRouter);
 academicRouter.use("/topic-tasks", topicTaskRouter);
+academicRouter.use("/invoices", invoicesRouter);
+academicRouter.use("/payments", paymentsRouter);
+academicRouter.use("/events", eventsRouter);

@@ -55,4 +55,33 @@ export const emailService = {
       `,
     });
   },
+
+  async sendInvoiceEmail(
+    to: string,
+    pdfBuffer: Buffer,
+    fileName: string,
+    info: { studentName: string; invoiceNumber: string; total: number; status: string },
+  ) {
+    const { studentName, invoiceNumber, total, status } = info;
+    const totalLabel = "Rp " + total.toLocaleString("id-ID");
+    await transporter.sendMail({
+      from: `"${APP_NAME}" <${env.SMTP_USERNAME}>`,
+      to,
+      subject: `Invoice ${invoiceNumber} - ${APP_NAME}`,
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:0 auto;">
+          <h2 style="color:#2563eb;">Invoice ${invoiceNumber}</h2>
+          <p>Halo, invoice berikut untuk <strong>${studentName}</strong>:</p>
+          <p style="font-size:14px;line-height:1.8;">
+            Nomor: <strong>${invoiceNumber}</strong><br/>
+            Jumlah: <strong style="font-size:18px;">${totalLabel}</strong><br/>
+            Status: <strong>${status}</strong>
+          </p>
+          <p>PDF invoice terlampir pada email ini. Silakan selesaikan pembayaran sesuai petunjuk yang tertera.</p>
+          <p style="color:#64748b;font-size:13px;">— ${APP_NAME}</p>
+        </div>
+      `,
+      attachments: [{ filename: fileName, content: pdfBuffer }],
+    });
+  },
 };

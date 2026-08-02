@@ -30,6 +30,15 @@ const envSchema = z.object({
   SMTP_ENCRYPTION: z.enum(["TLS", "SSL", "NONE"]).default("TLS"),
   SMTP_USERNAME: z.string().min(1),
   SMTP_PASSWORD: z.string().min(1),
+
+  MIDTRANS_CLIENT_KEY: z.string().default(""),
+  MIDTRANS_SERVER_KEY: z.string().default(""),
+  MIDTRANS_MERCHANT_ID: z.string().default(""),
+  MIDTRANS_IS_PRODUCTION: z
+    .string()
+    .default("false")
+    .transform((v) => v === "true"),
+  PUBLIC_BASE_URL: z.string().default("http://localhost:4000"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

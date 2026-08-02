@@ -8,7 +8,7 @@ const crud_router_1 = require("../../lib/crud-router");
 const enrollments_schema_1 = require("./enrollments.schema");
 const prisma_error_1 = require("../../lib/prisma-error");
 const app_error_1 = require("../../utils/app-error");
-const include = { student: true, class: true, curriculum: true };
+const include = { student: true, class: true, curriculum: { include: { topics: true } } };
 const baseRouter = (0, crud_router_1.createCrudRouter)({
     delegate: prisma_1.prisma.enrollment,
     createSchema: enrollments_schema_1.enrollmentCreateSchema,
@@ -104,7 +104,7 @@ router.get("/student/:studentId", async (req, res, next) => {
         const { studentId } = req.params;
         const enrollments = await prisma_1.prisma.enrollment.findMany({
             where: { studentId },
-            include: { ...include, curriculum: true },
+            include: { ...include },
         });
         return res.json({ success: true, data: enrollments });
     }
@@ -141,7 +141,7 @@ router.patch("/:id", async (req, res, next) => {
         }
         const item = await prisma_1.prisma.enrollment.update({
             where: { id: req.params.id },
-            data: { ...payload, classId: payload.classId ?? null },
+            data: payload,
             include,
         });
         return res.json({ success: true, data: item });
