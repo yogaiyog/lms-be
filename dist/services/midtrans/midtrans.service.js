@@ -18,6 +18,31 @@ const SNAP_API_BASE = env_1.env.MIDTRANS_IS_PRODUCTION
 const CORE_API_BASE = env_1.env.MIDTRANS_IS_PRODUCTION
     ? "https://api.midtrans.com"
     : "https://api.sandbox.midtrans.com";
+const TRANSIENT_ERROR_RE = /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNRESET|ETIMEDOUT|ECONNREFUSED|UND_ERR_/;
+function isTransientNetworkError(error) {
+    if (!(error instanceof Error))
+        return false;
+    const code = error.code ?? "";
+    return TRANSIENT_ERROR_RE.test(`${error.message} ${code}`);
+}
+// Midtrans endpoints sit behind a WAF with a slow/flaky CNAME chain. A cold DNS
+// lookup can time out even though the endpoint is healthy; retrying warms the OS
+// resolver and turns a transient blip into a successful call.
+async function midtransFetch(url, init, attempts = 3, backoffMs = 500) {
+    let lastError;
+    for (let i = 0; i < attempts; i += 1) {
+        try {
+            return await fetch(url, { ...init, signal: AbortSignal.timeout(15000) });
+        }
+        catch (error) {
+            lastError = error;
+            if (!isTransientNetworkError(error) || i === attempts - 1)
+                throw error;
+            await new Promise((resolve) => setTimeout(resolve, backoffMs * (i + 1)));
+        }
+    }
+    throw lastError;
+}
 function verifyNotificationSignature(params) {
     const hash = node_crypto_1.default
         .createHash("sha512")
@@ -88,7 +113,7 @@ async function createChargeTransaction(params) {
     else if (params.method === "shopeepay") {
         body.shopeepay = { callback_url: params.callbackUrl ?? params.notificationUrl };
     }
-    const res = await fetch(`${CORE_API_BASE}/v2/charge`, {
+    const res = await midtransFetch(`${CORE_API_BASE}/v2/charge`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -120,7 +145,7 @@ async function createChargeTransaction(params) {
 }
 async function cancelTransaction(orderId) {
     try {
-        const res = await fetch(`${CORE_API_BASE}/v2/${orderId}/cancel`, {
+        const res = await midtransFetch(`${CORE_API_BASE}/v2/${orderId}/cancel`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -142,7 +167,7 @@ async function cancelTransaction(orderId) {
 }
 async function inquireTransactionStatus(orderId) {
     try {
-        const res = await fetch(`${CORE_API_BASE}/v2/${orderId}/status`, {
+        const res = await midtransFetch(`${CORE_API_BASE}/v2/${orderId}/status`, {
             method: "GET",
             headers: {
                 Accept: "application/json",

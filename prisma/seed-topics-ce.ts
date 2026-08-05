@@ -984,6 +984,7 @@ export async function seedCodeExplorer(
         order: j,
         isCapstone: false,
         type: "SCRATCH" as const,
+        autoComplete: true,
       })),
       {
         topicId: topicRow.id,
@@ -1002,6 +1003,7 @@ export async function seedCodeExplorer(
         order: unit.levels.length + 1,
         isCapstone: true,
         type: "SCRATCH" as const,
+        autoComplete: true,
       },
     ];
 

@@ -489,6 +489,7 @@ model TopicTask {
   url           String?               // URL Scratch GUI per level
   order         Int                   @default(0)
   isCapstone    Boolean               @default(false)
+  autoComplete  Boolean               @default(false) @map("auto_complete")
   instructions  String?               // markdown instructions (for PYTHON type)
   defaultCode   String?               // default starter code (for PYTHON type)
   createdAt     DateTime              @default(now())

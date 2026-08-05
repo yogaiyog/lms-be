@@ -8,6 +8,7 @@ export const topicTaskCreateSchema = z.object({
   url: z.string().optional().nullable(),
   order: z.number().int().min(0).optional().default(0),
   isCapstone: z.boolean().optional().default(false),
+  autoComplete: z.boolean().optional().default(false),
   instructions: z.string().optional().nullable(),
   defaultCode: z.string().optional().nullable(),
 });

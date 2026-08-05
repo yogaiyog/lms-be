@@ -30,28 +30,6 @@ async function cancelPendingPayments(tx, invoiceId) {
         data: { status: "CANCELLED" },
     });
 }
-function isTransientNetworkError(error) {
-    if (!(error instanceof Error))
-        return false;
-    const code = error.code ?? "";
-    const msg = `${error.message} ${code}`;
-    return /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNRESET|ETIMEDOUT|ECONNREFUSED|UND_ERR_/.test(msg);
-}
-async function retryCharge(fn, attempts = 2, delayMs = 700) {
-    let lastError;
-    for (let i = 0; i < attempts; i += 1) {
-        try {
-            return await fn();
-        }
-        catch (error) {
-            lastError = error;
-            if (!isTransientNetworkError(error) || i === attempts - 1)
-                throw error;
-            await new Promise((resolve) => setTimeout(resolve, delayMs));
-        }
-    }
-    throw lastError;
-}
 // POST — custom: after create, update invoice status (atomic)
 router.post("/", async (req, res, next) => {
     try {
@@ -148,7 +126,7 @@ router.post("/midtrans/charge", auth_middleware_1.authenticate, (0, auth_middlew
         await Promise.allSettled(pendingMidtrans.map((p) => (p.transactionId ? (0, midtrans_service_1.cancelTransaction)(p.transactionId) : Promise.resolve(false))));
         const notificationUrl = `${env_1.env.PUBLIC_BASE_URL}/api/v1/academic/payments/midtrans/notification`;
         try {
-            const charge = await retryCharge(() => (0, midtrans_service_1.createChargeTransaction)({
+            const charge = await (0, midtrans_service_1.createChargeTransaction)({
                 orderId,
                 grossAmount: amount,
                 method: payload.method,
@@ -168,7 +146,7 @@ router.post("/midtrans/charge", auth_middleware_1.authenticate, (0, auth_middlew
                 ],
                 notificationUrl,
                 callbackUrl: notificationUrl,
-            }));
+            });
             const updated = await prisma_1.prisma.payment.update({
                 where: { id: paymentId },
                 data: {
