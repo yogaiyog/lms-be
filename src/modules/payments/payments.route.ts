@@ -41,27 +41,6 @@ async function cancelPendingPayments(tx: Prisma.TransactionClient, invoiceId: st
   });
 }
 
-function isTransientNetworkError(error: unknown): boolean {
-  if (!(error instanceof Error)) return false;
-  const code = (error as { code?: string }).code ?? "";
-  const msg = `${error.message} ${code}`;
-  return /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNRESET|ETIMEDOUT|ECONNREFUSED|UND_ERR_/.test(msg);
-}
-
-async function retryCharge<T>(fn: () => Promise<T>, attempts = 2, delayMs = 700): Promise<T> {
-  let lastError: unknown;
-  for (let i = 0; i < attempts; i += 1) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-      if (!isTransientNetworkError(error) || i === attempts - 1) throw error;
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-    }
-  }
-  throw lastError;
-}
-
 // POST — custom: after create, update invoice status (atomic)
 router.post("/", async (req, res, next) => {
   try {
@@ -173,8 +152,7 @@ router.post("/midtrans/charge", authenticate, requireRole(Role.ADMIN), async (re
     const notificationUrl = `${env.PUBLIC_BASE_URL}/api/v1/academic/payments/midtrans/notification`;
 
     try {
-      const charge = await retryCharge(() =>
-        createChargeTransaction({
+      const charge = await createChargeTransaction({
           orderId,
           grossAmount: amount,
           method: payload.method,
@@ -194,8 +172,7 @@ router.post("/midtrans/charge", authenticate, requireRole(Role.ADMIN), async (re
           ],
           notificationUrl,
           callbackUrl: notificationUrl,
-        }),
-      );
+        });
 
       const updated = await prisma.payment.update({
         where: { id: paymentId },

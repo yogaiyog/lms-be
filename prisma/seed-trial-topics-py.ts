@@ -26,7 +26,98 @@ export async function seedTrialPython(
       type: "PYTHON" as const,
       url: `${PYTHON_EDITOR_URL}/project-editor`,
       isCapstone: false,
-      instructions: `## Activity 1: Bikin Garis dengan Turtle
+      instructions: `## Activity 1: Kenalan dengan print()
+
+**print()** adalah perintah pertama yang kita pelajari di Python. Fungsinya menampilkan teks ke layar.
+
+**Cara pakai:**
+1. Ketik \`print("teks kamu")\` untuk menampilkan teks
+2. Teks harus diapit tanda kutip \`"\`
+3. Tekan Run/play untuk menjalankan
+
+Coba tulis program yang menampilkan kata **"Halo, aku Python!"** di layar!
+
+\`\`\`text
+Output yang diharapkan:
+Halo, aku Python!
+\`\`\``,
+      defaultCode: `# print() menampilkan teks ke layar
+print("Halo dunia!")`,
+    },
+    {
+      code: "trial-py-2",
+      label: "2",
+      type: "PYTHON" as const,
+      url: `${PYTHON_EDITOR_URL}/project-editor`,
+      isCapstone: false,
+      instructions: `## Activity 2: print() dengan Variabel
+
+Kita bisa menyimpan teks ke **variabel**, lalu menampilkannya dengan \`print()\`.
+
+Contoh:
+\`\`\`python
+nama = "Budi"
+print("Halo", nama)
+print("Selamat datang", nama, "di kelas Python!")
+\`\`\`
+
+print() bisa menampilkan **beberapa nilai sekaligus** dengan memisahkannya pakai koma \`,\`.
+
+Buat program yang menyimpan namamu di variabel \`nama\`, lalu menampilkannya **sebanyak 3 kali** (pakai \`print()\` sebanyak 3 baris)!
+
+\`\`\`text
+Output yang diharapkan:
+Halo <nama-mu>!
+Senang berkenalan, <nama-mu>!
+Sampai jumpa, <nama-mu>!
+\`\`\``,
+      defaultCode: `# Simpan nama ke variabel
+nama = "Budi"
+
+# Tampilkan nama beberapa kali
+print("Halo", nama)
+print("Senang berkenalan,", nama)
+print("Sampai jumpa,", nama)`,
+    },
+    {
+      code: "trial-py-3",
+      label: "3",
+      type: "PYTHON" as const,
+      url: `${PYTHON_EDITOR_URL}/project-editor`,
+      isCapstone: false,
+      instructions: `## Activity 3: print() dengan Loop for
+
+**Loop \`for\`** membuat perintah diulang otomatis. Cocok untuk menampilkan teks berkali-kali tanpa menulis ulang!
+
+Contoh:
+\`\`\`python
+for i in range(5):
+    print("Halo!")
+\`\`\`
+
+\`range(5)\` berarti diulang 5 kali. Perintah di dalam loop harus **menjorok (indentasi)** 4 spasi.
+
+Buat program yang menampilkan **"Halo Dunia!" sebanyak 5 kali** menggunakan loop \`for\`!
+
+\`\`\`text
+Output yang diharapkan:
+Halo Dunia!
+Halo Dunia!
+Halo Dunia!
+Halo Dunia!
+Halo Dunia!
+\`\`\``,
+      defaultCode: `# Loop for mengulang perintah 5 kali
+for i in range(5):
+    print("Halo Dunia!")`,
+    },
+    {
+      code: "trial-py-4",
+      label: "4",
+      type: "PYTHON" as const,
+      url: `${PYTHON_EDITOR_URL}/project-editor`,
+      isCapstone: false,
+      instructions: `## Activity 4: Bikin Garis dengan Turtle
 
 Python punya modul **turtle** untuk menggambar! Seperti kura-kura yang berjalan sambil membawa pulpen.
 
@@ -45,18 +136,18 @@ Output yang diharapkan: satu garis lurus horizontal sepanjang 200 pixel
 
 t = turtle.Turtle()
 
-# Gambar garis lurus 200 pixel ke depan
-t.forward(200)
+# Gambar garis lurus 100 pixel ke depan
+t.forward(100)
 
 turtle.done()`,
     },
     {
-      code: "trial-py-2",
-      label: "2",
+      code: "trial-py-5",
+      label: "5",
       type: "PYTHON" as const,
       url: `${PYTHON_EDITOR_URL}/project-editor`,
       isCapstone: false,
-      instructions: `## Activity 2: Bikin Kotak dengan Turtle
+      instructions: `## Activity 5: Bikin Kotak dengan Turtle
 
 Untuk menggambar **persegi/kotak**, kura-kura harus:
 1. Maju (\`forward\`)
@@ -77,10 +168,7 @@ t = turtle.Turtle()
 # Atur warna pulpen jadi biru
 t.color("blue")
 
-# Gambar kotak: ulangi 4 kali (maju 150, belok kanan 90)
-for i in range(4):
-    t.forward(150)
-    t.right(90)
+\\tulis kode disini
 
 turtle.done()`,
     },
@@ -156,7 +244,7 @@ turtle.done()`,
         create: {
           title: "Python Turtle Trial",
           order: 0,
-          goals: "Pengenalan Python dengan turtle graphics — menggambar garis, kotak, dan nama",
+          goals: "Pengenalan Python — print(), variabel, loop for, dan turtle graphics untuk menggambar garis, kotak, dan nama",
           tools: "Python Turtle Editor",
         },
       },
@@ -262,5 +350,5 @@ turtle.done()`,
     console.log("✓ Mock quiz seeded for trial-py-quiz");
   }
 
-  console.log("✓ Trial Python 6-9 curriculum seeded (4 tasks, 1 quiz)");
+  console.log("✓ Trial Python 6-9 curriculum seeded (7 tasks, 1 quiz)");
 }
