@@ -10,6 +10,7 @@ exports.topicTaskCreateSchema = zod_1.z.object({
     url: zod_1.z.string().optional().nullable(),
     order: zod_1.z.number().int().min(0).optional().default(0),
     isCapstone: zod_1.z.boolean().optional().default(false),
+    autoComplete: zod_1.z.boolean().optional().default(false),
     instructions: zod_1.z.string().optional().nullable(),
     defaultCode: zod_1.z.string().optional().nullable(),
 });

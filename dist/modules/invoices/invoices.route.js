@@ -207,8 +207,51 @@ router.post("/:id/send-email", auth_middleware_1.authenticate, (0, auth_middlewa
         });
     }
 });
+const INVOICE_STATUSES = ["DRAFT", "UNPAID", "PAID", "PARTIAL", "REFUNDED", "CANCELLED"];
+const INVOICE_SORT_KEYS = ["number", "student", "curriculum", "meetCount", "total", "status", "createdAt"];
+// GET / — server-side pagination, search, status filter, and sort
+router.get("/", async (req, res, next) => {
+    try {
+        const takeRaw = Number(req.query.take);
+        const skipRaw = Number(req.query.skip);
+        const take = Number.isFinite(takeRaw) ? Math.min(Math.max(Math.trunc(takeRaw), 1), 100) : 20;
+        const skip = Number.isFinite(skipRaw) ? Math.max(Math.trunc(skipRaw), 0) : 0;
+        const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+        const status = typeof req.query.status === "string" ? req.query.status : "";
+        const sortByRaw = typeof req.query.sortBy === "string" ? req.query.sortBy : "createdAt";
+        const sortDir = req.query.sortDir === "asc" ? "asc" : "desc";
+        const where = {};
+        if (status && INVOICE_STATUSES.includes(status)) {
+            where.status = status;
+        }
+        if (search) {
+            where.OR = [
+                { number: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
+                { enrollment: { student: { fullName: { contains: search, mode: "insensitive" } } } },
+                { enrollment: { curriculum: { name: { contains: search, mode: "insensitive" } } } },
+            ];
+        }
+        const sortKey = INVOICE_SORT_KEYS.includes(sortByRaw) ? sortByRaw : "createdAt";
+        const orderBy = sortKey === "student"
+            ? { enrollment: { student: { fullName: sortDir } } }
+            : sortKey === "curriculum"
+                ? { enrollment: { curriculum: { name: sortDir } } }
+                : { [sortKey]: sortDir };
+        const data = await prisma_1.prisma.invoice.findMany({ where, include, orderBy, take, skip });
+        const total = await prisma_1.prisma.invoice.count({ where });
+        return res.json({ success: true, data, meta: { take, skip, count: data.length, total } });
+    }
+    catch (error) {
+        const appError = (0, prisma_error_1.mapPrismaError)(error);
+        return res.status(appError.statusCode).json({
+            success: false,
+            message: appError.message,
+            code: appError.code,
+        });
+    }
+});
 // Delegate remaining CRUD (read)
-router.get("/", (req, res, next) => baseRouter(req, res, next));
 router.get("/:id", (req, res, next) => baseRouter(req, res, next));
 // DELETE — custom: cegah hapus invoice yang sudah dibayar (admin only)
 router.delete("/:id", auth_middleware_1.authenticate, (0, auth_middleware_1.requireRole)(enums_1.Role.ADMIN), async (req, res, next) => {

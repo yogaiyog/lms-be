@@ -22,6 +22,7 @@ import { topicTaskRouter } from "../topic-task/topic-task.route";
 import { invoicesRouter } from "../invoices/invoices.route";
 import { paymentsRouter } from "../payments/payments.route";
 import { eventsRouter } from "./events.route";
+import { expensesRouter } from "../expenses/expenses.route";
 
 export const academicRouter = Router();
 
@@ -47,4 +48,5 @@ academicRouter.use("/quiz", quizRouter);
 academicRouter.use("/topic-tasks", topicTaskRouter);
 academicRouter.use("/invoices", invoicesRouter);
 academicRouter.use("/payments", paymentsRouter);
+academicRouter.use("/expenses", expensesRouter);
 academicRouter.use("/events", eventsRouter);

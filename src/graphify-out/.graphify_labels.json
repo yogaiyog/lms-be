@@ -1,0 +1,20 @@
+{
+  "0": "academic.route.ts",
+  "1": "auth.route.ts",
+  "2": "routes/index.ts",
+  "3": "crud-router.ts",
+  "4": "CertificateService",
+  "5": "auth.service.ts",
+  "6": "auth.middleware.ts",
+  "7": "payments.route.ts",
+  "8": "invoice-pdf.service.ts",
+  "9": "invoices.route.ts",
+  "10": "openapi.ts",
+  "11": "badges.route.ts",
+  "12": "upload.route.ts",
+  "13": "env.ts",
+  "14": "certificates.route.ts",
+  "15": "QRService",
+  "16": "upload.schema.ts",
+  "17": "README.md"
+}

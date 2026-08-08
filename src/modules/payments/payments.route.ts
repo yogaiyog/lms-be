@@ -390,6 +390,56 @@ router.post("/:id/check-status", async (req, res) => {
   }
 });
 
+// GET /income — settled payments (income) with month range + pagination + sum
+router.get("/income", async (req, res, next) => {
+  try {
+    const takeRaw = Number(req.query.take);
+    const skipRaw = Number(req.query.skip);
+    const take = Number.isFinite(takeRaw) ? Math.min(Math.max(Math.trunc(takeRaw), 1), 100) : 20;
+    const skip = Number.isFinite(skipRaw) ? Math.max(Math.trunc(skipRaw), 0) : 0;
+
+    const status = typeof req.query.status === "string" && req.query.status ? req.query.status : "SETTLEMENT";
+    const fromRaw = typeof req.query.from === "string" ? req.query.from : "";
+    const toRaw = typeof req.query.to === "string" ? req.query.to : "";
+
+    const where: Prisma.PaymentWhereInput = { status };
+    if (fromRaw || toRaw) {
+      const paidAt: Prisma.DateTimeFilter = {};
+      if (fromRaw) {
+        const from = new Date(fromRaw);
+        if (!Number.isNaN(from.getTime())) paidAt.gte = from;
+      }
+      if (toRaw) {
+        const to = new Date(toRaw);
+        if (!Number.isNaN(to.getTime())) paidAt.lte = to;
+      }
+      where.paidAt = paidAt;
+    }
+
+    const data = await prisma.payment.findMany({
+      where,
+      include,
+      orderBy: { paidAt: "desc" },
+      take,
+      skip,
+    });
+    const agg = await prisma.payment.aggregate({ where, _sum: { amount: true }, _count: true });
+
+    return res.json({
+      success: true,
+      data,
+      meta: { take, skip, count: data.length, total: agg._count, sum: agg._sum.amount },
+    });
+  } catch (error) {
+    const appError = mapPrismaError(error);
+    return res.status(appError.statusCode).json({
+      success: false,
+      message: appError.message,
+      code: appError.code,
+    });
+  }
+});
+
 // Delegate remaining CRUD
 router.get("/", (req, res, next) => baseRouter(req, res, next));
 router.get("/:id", (req, res, next) => baseRouter(req, res, next));

@@ -1,21 +1,26 @@
 {
-  "generated_at": "2026-08-02T10:09:15.897860+00:00",
+  "generated_at": "2026-08-08T04:12:59.466290+00:00",
   "nodes": {
     "src_config_env": {
-      "code_fingerprint": "7dd65a99a13cd9f38e2e2232b1dec41b3f68bc18d1704473a4f185da440458aa",
+      "code_fingerprint": "b6a11389c2d4bc551a672e88a743a598e2b59830c7e787259397d2a49820b95e",
       "label": "env.ts",
-      "last": "2026-08-02T10:09:01.412351+00:00",
+      "last": "2026-08-08T04:12:59.392314+00:00",
       "provenance": [
+        {
+          "date": "2026-08-08T04:12:59.392314+00:00",
+          "outcome": "useful",
+          "q": "Bagaimana alur seed pengeluaran (outcome) dan relasinya dengan seed-income?"
+        },
         {
           "date": "2026-08-02T10:09:01.412351+00:00",
           "outcome": "useful",
           "q": "Bagaimana fix build/seed/env/webhook backend di VPS?"
         }
       ],
-      "score": 0.999996126,
+      "score": 1.875537853,
       "source_file": "src/config/env.ts",
-      "status": "tentative",
-      "uses": 1
+      "status": "preferred",
+      "uses": 2
     },
     "src_lib_crud_router": {
       "code_fingerprint": "6c4f52cb16b53597165a22907702baa33ec2c9f6684d44ff1e1e06fa8789f94c",
@@ -28,7 +33,7 @@
           "q": "Apa peran crud-router.ts sebagai god node?"
         }
       ],
-      "score": 0.867906907,
+      "score": 0.759888311,
       "source_file": "src/lib/crud-router.ts",
       "status": "tentative",
       "uses": 1
@@ -44,13 +49,13 @@
           "q": "Apa peran prisma.ts sebagai god node?"
         }
       ],
-      "score": 0.867906891,
+      "score": 0.759888297,
       "source_file": "src/lib/prisma.ts",
       "status": "tentative",
       "uses": 1
     },
     "src_modules_academic_academic_route": {
-      "code_fingerprint": "c549d5b19e5d2419ecba941a3e70215528253897be75e2c8ac830e5a245d3963",
+      "code_fingerprint": "bc285c1a4f087c7873732334817bc5b3473d39e3d6e4037117e24f1fae7a3584",
       "label": "academic.route.ts",
       "last": "2026-07-27T06:59:42.543708+00:00",
       "provenance": [
@@ -60,7 +65,7 @@
           "q": "Apa peran academic.route.ts sebagai god node?"
         }
       ],
-      "score": 0.86790686,
+      "score": 0.759888269,
       "source_file": "src/modules/academic/academic.route.ts",
       "status": "tentative",
       "uses": 1
@@ -76,7 +81,7 @@
           "q": "Apa peran auth.service.ts sebagai god node?"
         }
       ],
-      "score": 0.867906875,
+      "score": 0.759888283,
       "source_file": "src/modules/auth/auth.service.ts",
       "status": "tentative",
       "uses": 1
@@ -97,13 +102,13 @@
           "q": "Bagaimana alur lengkap pembayaran Midtrans di backend?"
         }
       ],
-      "score": 1.904092222,
+      "score": 1.667111312,
       "source_file": "src/modules/invoices/invoices.service.ts",
       "status": "preferred",
       "uses": 2
     },
     "src_modules_payments_payments_route": {
-      "code_fingerprint": "ae6492bdd7477c3734f673cfa13421bd46bcf07c503e674cd971555085f89c5c",
+      "code_fingerprint": "0fb610ee724c49b5a6ce25dfddb7013f3ae4208e06476e6e7584e5bf8ede8e7b",
       "label": "payments.route.ts",
       "last": "2026-07-31T07:06:29.210838+00:00",
       "provenance": [
@@ -113,7 +118,7 @@
           "q": "Bagaimana alur lengkap pembayaran Midtrans di backend?"
         }
       ],
-      "score": 0.952045453,
+      "score": 0.83355508,
       "source_file": "src/modules/payments/payments.route.ts",
       "status": "tentative",
       "uses": 1
@@ -129,7 +134,7 @@
           "q": "Apa peran routes/index.ts sebagai god node?"
         }
       ],
-      "score": 0.867906922,
+      "score": 0.759888324,
       "source_file": "src/routes/index.ts",
       "status": "tentative",
       "uses": 1
@@ -145,13 +150,13 @@
           "q": "Bagaimana alur download PDF invoice dan kirim email di billing admin?"
         }
       ],
-      "score": 0.953803362,
+      "score": 0.835094202,
       "source_file": "src/services/invoice-pdf/invoice-pdf.service.ts",
       "status": "tentative",
       "uses": 1
     },
     "src_services_midtrans_midtrans_service": {
-      "code_fingerprint": "345988549db32ff0598fed67364b932ff95565ef864e2900989e3fa0f7494c1e",
+      "code_fingerprint": "858409bb21ff603cde168ba11c0387b214ba6e823eaee14bd2342242b32a4f23",
       "label": "midtrans.service.ts",
       "last": "2026-07-31T07:06:29.210838+00:00",
       "provenance": [
@@ -161,7 +166,7 @@
           "q": "Bagaimana alur lengkap pembayaran Midtrans di backend?"
         }
       ],
-      "score": 0.952045453,
+      "score": 0.83355508,
       "source_file": "src/services/midtrans/midtrans.service.ts",
       "status": "tentative",
       "uses": 1
@@ -177,7 +182,7 @@
           "q": "Kenapa AppError muncul di hampir semua module?"
         }
       ],
-      "score": 0.867890741,
+      "score": 0.759874157,
       "source_file": "src/utils/app-error.ts",
       "status": "tentative",
       "uses": 1
