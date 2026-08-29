@@ -13,6 +13,7 @@ interface PythonLevel {
 interface PythonUnit {
   id: string;
   title: string;
+  materialLink?: string | null;
   goals: string;
   tools: string;
   levels: PythonLevel[];
@@ -36,6 +37,7 @@ const pythonExplorerUnits: PythonUnit[] = [
   {
     id: "pe-intro",
     title: "Perkenalan Python & Hello World",
+    materialLink: "https://docs.google.com/presentation/d/1hF8ukp0p2aEI3VJj70dhqVqnlWlzvL8eqy_RLDeAlbs/edit?usp=sharing",
     goals: "Belajar fungsi print(), komentar (#), dan mengambil input dasar dengan Python",
     tools: "Python Editor",
     levels: [
@@ -216,6 +218,7 @@ print("==================================")
   {
     id: "pv-variable",
     title: "Variabel & Tipe Data",
+    materialLink: "https://docs.google.com/presentation/d/1FXjLXF-YdGLkobcNWHDasMLOMxyNwmqF_0Axc4t7QD8/edit?usp=sharing",
     goals: "Belajar variabel, tipe data (str, int, float), type casting, dan input dari user",
     tools: "Python Editor",
     levels: [
@@ -431,6 +434,7 @@ print("========================================")`,
   {
     id: "po-operator",
     title: "Kalkulator & Manipulasi Teks",
+    materialLink: "https://docs.google.com/presentation/d/191855CCcwTIWnKCA_EsIV5ofqUpEAhHNvR5ljGhFVSk/edit?usp=sharing",
     goals: "Belajar operator aritmatika lengkap (+, -, *, /, //, %, **) dan formatting teks dengan f-string",
     tools: "Python Editor",
     levels: [
@@ -676,6 +680,7 @@ print("Terima kasih telah berbelanja!")`,
   {
     id: "pd-decision",
     title: "Pengambil Keputusan (If-Else)",
+    materialLink: "https://docs.google.com/presentation/d/1FVhC0-ZJtobOTb072iSOyY6XWumZbrtCB_EDvXiCA44/edit?usp=sharing",
     goals: "Belajar tipe data boolean, operator komparasi (>, <, ==, !=, >=, <=), dan struktur if-else",
     tools: "Python Editor",
     levels: [
@@ -838,6 +843,7 @@ Username atau Password salah.
   {
     id: "p5-decision2",
     title: "Percabangan Multi-Kondisi (elif, and, or, not)",
+    materialLink: "https://docs.google.com/presentation/d/1Azqr01xef71F0pbtAh-UjOG12TDrSeNFuwhlP35P-H0/edit?usp=sharing",
     goals: "Belajar percabangan multi-kondisi dengan elif dan operator logika (and, or, not)",
     tools: "Python Editor",
     levels: [
@@ -999,6 +1005,7 @@ Alur Cerita:
   {
     id: "p6-while",
     title: "Perulangan while (Looping)",
+    materialLink: "https://docs.google.com/presentation/d/162IVoMJCLVaL1_bspcncENuvh3SHiuReEoyM4lbLdwA/edit?usp=sharing",
     goals: "Belajar perulangan while, increment/decrement, break, dan menghindari infinite loop",
     tools: "Python Editor",
     levels: [
@@ -1141,6 +1148,7 @@ Buatlah game interaktif Tebak Angka Rahasia! Program harus:
   {
     id: "p7-for",
     title: "Perulangan for & range()",
+    materialLink: "https://docs.google.com/presentation/d/1_aCKCf9nRaPJH6AuNiJmCPJW8faO8a0Up8qd9xTRh70/edit?usp=sharing",
     goals: "Belajar perulangan for, fungsi range() dengan 1, 2, dan 3 parameter, serta iterasi string",
     tools: "Python Editor",
     levels: [
@@ -1293,6 +1301,7 @@ Contoh output jika pengguna memasukkan angka \`7\`:
   {
     id: "p8-list",
     title: "Menyimpan Banyak Data (List)",
+    materialLink: "https://docs.google.com/presentation/d/1yz2SMA2Ptf2vGXgxzCRJtFT9k6ehy21ZaKWfwj1hbb8/edit?usp=sharing",
     goals: "Belajar struktur data list, indexing, manipulasi list (append, remove, len), dan menampilkan list dengan loop",
     tools: "Python Editor",
     levels: [
@@ -1440,6 +1449,7 @@ Buatlah program **Aplikasi To-Do List (Daftar Tugas)** interaktif! Program harus
   {
     id: "p9-dict",
     title: "Data Berpasangan (Dictionary)",
+    materialLink: "https://docs.google.com/presentation/d/1E30IG4VEkgoet0H4iDrFRAPGwX0d38IupwnxTYdSQRI/edit?usp=sharing",
     goals: "Belajar struktur data dictionary, key-value, menambah/mengubah/menghapus data, dan mengakses data dengan key",
     tools: "Python Editor",
     levels: [
@@ -1588,6 +1598,7 @@ Buatlah program **Buku Kontak Telepon Digital** interaktif! Program harus:
   {
     id: "p10-function",
     title: "Membuat Fungsi (Function)",
+    materialLink: "https://docs.google.com/presentation/d/1nXR-AlrlSp9sCuqKCfmUUsJs9_FAiAhEMKwymYYsS38/edit?usp=sharing",
     goals: "Belajar membuat fungsi dengan def, parameter, return, dan reusability kode",
     tools: "Python Editor",
     levels: [
@@ -1729,6 +1740,7 @@ Buatlah program **Kalkulator Berbasis Fungsi**! Program harus:
   {
     id: "p11-string",
     title: "Bekerja dengan Teks (String Manipulation)",
+    materialLink: "https://docs.google.com/presentation/d/1M9OY9klZKlar2gqAcSqHeHlvAimwXlUhQBfFWoVpCYw/edit?usp=sharing",
     goals: "Belajar manipulasi string: kapitalisasi, strip, slicing, replace, split/join, dan pengecekan kata",
     tools: "Python Editor",
     levels: [
@@ -1877,6 +1889,7 @@ Buatlah program **Rapi Nama & Sensor Komentar Otomatis**! Program harus:
   {
     id: "p12-cashier",
     title: "Mini Project - Aplikasi Kasir Toko",
+    materialLink: null,
     goals: "Proyek integrasi: List, Dictionary, Function, String Manipulation, Loops, dan Conditionals dalam aplikasi kasir CLI",
     tools: "Python Editor",
     levels: [
@@ -2058,6 +2071,7 @@ export async function seedPythonExplorer(
         create: pythonExplorerUnits.map((unit, i) => ({
           title: unit.title,
           order: i,
+          materialLink: unit.materialLink,
           goals: unit.goals,
           tools: unit.tools,
         })),
