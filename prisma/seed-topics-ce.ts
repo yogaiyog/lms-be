@@ -14,6 +14,7 @@ interface CodeUnit {
   title: string;
   goals: string;
   tools: string;
+  materialLink: string | null;
   levels: CodeLevel[];
   quiz: {
     code: string;
@@ -33,6 +34,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Digital Citizenship & Algoritma",
     goals: "Belajar algoritma, urutan langkah, dan cara bersikap baik di dunia digital",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/fc8zlah8tjyfj00",
     levels: [
       {
         code: "ce1a",
@@ -103,6 +105,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Debugging & Bijak Digital",
     goals: "Belajar menemukan dan memperbaiki kesalahan, serta menggunakan perangkat digital dengan bijak",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/3ksn5eo03tjbl7m",
     levels: [
       {
         code: "ce2a",
@@ -173,6 +176,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Event & Bersikap Baik",
     goals: "Belajar event dalam pemrograman dan pentingnya bersikap baik kepada orang lain",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/efclkck17cdmlq6",
     levels: [
       {
         code: "ce3a",
@@ -243,6 +247,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Perulangan & Bersikap Sopan",
     goals: "Belajar konsep perulangan (loop) dan pentingnya bersikap sopan di dunia digital",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/7tfaffe2wp6p3ev",
     levels: [
       {
         code: "ce4a",
@@ -313,6 +318,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Puzzle Perulangan & Hidup Sehat",
     goals: "Belajar perulangan lebih kompleks dan menjaga kesehatan saat menggunakan teknologi",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/mfnjn8ap8eo6lts",
     levels: [
       {
         code: "ce5a",
@@ -383,6 +389,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Minecraft Adventure",
     goals: "Belajar arah mata angin, navigasi, dan urutan langkah menggunakan Minecraft",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/lclf0uy85ogn0x8",
     levels: [
       {
         code: "ce6a",
@@ -451,6 +458,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Dance Party & Event",
     goals: "Belajar event-driven programming melalui Dance Party dan Sports",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/v0yqt6azp0bca18",
     levels: [
       {
         code: "ce7a",
@@ -521,6 +529,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Mengetik 10 Jari",
     goals: "Belajar dasar-dasar mengetik dengan posisi jari yang benar dan mengenal tombol keyboard",
     tools: "Browser, edclub, code.org",
+    materialLink: "https://canva.link/s5zgilny8t6rome",
     levels: [
       {
         code: "ce8a",
@@ -591,6 +600,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Problem Solving dengan Algoritma",
     goals: "Belajar cara memecahkan masalah dengan langkah-langkah algoritma yang sistematis",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/yn6fnf59navxa9e",
     levels: [
       {
         code: "ce9a",
@@ -661,6 +671,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Fungsi dengan Music",
     goals: "Belajar konsep fungsi melalui musik dan coding",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/3vqipk892mrd2y0",
     levels: [
       {
         code: "ce10a",
@@ -726,6 +737,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Ekosistem Laut",
     goals: "Belajar tentang keseimbangan ekosistem laut dan dampak perubahan populasi makhluk hidup",
     tools: "Browser, code.org",
+    materialLink: "https://canva.link/6139biq7yn6i3hu",
     levels: [
       {
         code: "ce11a",
@@ -791,6 +803,7 @@ const codeExplorerUnits: CodeUnit[] = [
     title: "Machine Learning",
     goals: "Belajar dasar-dasar machine learning, cara kerja AI, dan etika penggunaannya",
     tools: "Browser, code.org, Teachable Machine",
+    materialLink: "https://canva.link/2tsrpugtzo7h7s6",
     levels: [
       {
         code: "ce12a",
@@ -956,6 +969,9 @@ export async function seedCodeExplorer(
     data: {
       name,
       assessmentSetId: defaultAssessment.id,
+      priceBatch810: null,
+      priceBatch35: null,
+      pricePrivate: 125000,
       ...(categoryIds?.length ? {
         categories: { create: categoryIds.map((cat) => ({ categoryId: cat.id })) },
       } : {}),
@@ -963,6 +979,7 @@ export async function seedCodeExplorer(
         create: codeExplorerUnits.map((unit, i) => ({
           title: unit.title,
           order: i,
+          materialLink: unit.materialLink ?? null,
           goals: unit.goals,
           tools: unit.tools,
         })),

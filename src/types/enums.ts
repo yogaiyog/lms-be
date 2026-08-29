@@ -28,7 +28,8 @@ export const DayOfWeek = {
 export type DayOfWeek = (typeof DayOfWeek)[keyof typeof DayOfWeek];
 
 export const ClassType = {
-  BATCH: "BATCH",
+  BATCH810: "BATCH810",
+  BATCH35: "BATCH35",
   PRIVATE: "PRIVATE",
   MAKEUP: "MAKEUP",
   TRIAL: "TRIAL",

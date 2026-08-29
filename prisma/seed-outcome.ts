@@ -177,8 +177,8 @@ async function extendIncomeClass(input: { className: string; pricePerMeeting: nu
       data: {
         invoiceId: invoice.id,
         amount: subtotal,
-        paymentMethod: cls.type === "BATCH" ? "QRIS" : "TRANSFER - BCA",
-        paymentType: cls.type === "BATCH" ? "qris" : "bank_transfer",
+        paymentMethod: cls.type === "PRIVATE" ? "TRANSFER - BCA" : "QRIS",
+        paymentType: cls.type === "PRIVATE" ? "bank_transfer" : "qris",
         status: "SETTLEMENT",
         paidAt: new Date(),
         gateway: "manual",

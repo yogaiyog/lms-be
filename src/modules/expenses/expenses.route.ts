@@ -2,15 +2,15 @@ import { Router } from "express";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { mapPrismaError } from "../../lib/prisma-error";
-import { env } from "../../config/env";
 
 export const expensesRouter = Router();
 
-const TUTOR_COST: Record<string, number> = {
-  TRIAL: env.TUTOR_COST_TRIAL,
-  BATCH: env.TUTOR_COST_BATCH,
-  PRIVATE: env.TUTOR_COST_PRIVATE,
-  MAKEUP: env.TUTOR_COST_MAKEUP,
+const DEFAULT_TUTOR_COST: Record<string, number> = {
+  TRIAL: 12000,
+  BATCH810: 20000,
+  BATCH35: 20000,
+  PRIVATE: 30000,
+  MAKEUP: 20000,
 };
 
 const include = {
@@ -47,17 +47,25 @@ expensesRouter.get("/", async (req, res, next) => {
       where.date = date;
     }
 
-    // Aggregation over all matching rows (id + class type) → accurate total/sum/byType
+    // Fetch tutor costs from database
+    const tutorCosts = await prisma.tutorCost.findMany();
+    const tutorCostMap: Record<string, number> = { ...DEFAULT_TUTOR_COST };
+    for (const tc of tutorCosts) {
+      tutorCostMap[tc.classType] = Number(tc.cost);
+    }
+
+    // Aggregation over all matching rows (id + class type + class tutorCost) → accurate total/sum/byType
     const all = await prisma.attendance.findMany({
       where,
-      select: { schedule: { select: { class: { select: { type: true } } } } },
+      select: { schedule: { select: { class: { select: { type: true, tutorCost: true } } } } },
     });
 
     const byType: Record<string, { count: number; sum: number }> = {};
     let sum = 0;
     for (const row of all) {
-      const type = row.schedule.class.type;
-      const cost = TUTOR_COST[type] ?? 0;
+      const cls = row.schedule.class;
+      const type = cls.type;
+      const cost = cls.tutorCost != null ? Number(cls.tutorCost) : (tutorCostMap[type] ?? 0);
       sum += cost;
       if (!byType[type]) byType[type] = { count: 0, sum: 0 };
       byType[type].count += 1;
@@ -73,10 +81,14 @@ expensesRouter.get("/", async (req, res, next) => {
       skip,
     });
 
-    const rows = data.map((att) => ({
-      ...att,
-      cost: TUTOR_COST[att.schedule.class.type] ?? 0,
-    }));
+    const rows = data.map((att) => {
+      const cls = att.schedule.class;
+      const cost = cls.tutorCost != null ? Number(cls.tutorCost) : (tutorCostMap[cls.type] ?? 0);
+      return {
+        ...att,
+        cost,
+      };
+    });
 
     return res.json({
       success: true,

@@ -3,7 +3,8 @@ import { z } from "zod";
 
 export const classCreateSchema = z.object({
   name: z.string().min(1),
-  type: z.nativeEnum(ClassType).optional().default("BATCH"),
+  type: z.nativeEnum(ClassType).optional().default("BATCH810"),
+  tutorCost: z.number().nonnegative().optional().nullable(),
   category: z.nativeEnum(Category).optional(),
   categoryId: z.string().uuid().optional().nullable(),
   tutorIds: z.array(z.string().uuid()).min(1),
@@ -17,6 +18,7 @@ export const classCreateSchema = z.object({
 export const classUpdateSchema = z.object({
   name: z.string().min(1).optional(),
   type: z.nativeEnum(ClassType).optional(),
+  tutorCost: z.number().nonnegative().optional().nullable(),
   category: z.nativeEnum(Category).optional(),
   categoryId: z.string().uuid().optional().nullable(),
   tutorIds: z.array(z.string().uuid()).min(1).optional(),

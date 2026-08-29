@@ -153,7 +153,7 @@ async function nextInvoiceNumbers(count: number): Promise<string[]> {
 
 type SeedClassInput = {
   name: string;
-  type: "BATCH" | "PRIVATE";
+  type: "BATCH810" | "BATCH35" | "PRIVATE";
   tutorId: string;
   curriculumId: string;
   categoryId: string;
@@ -283,8 +283,8 @@ async function seedClass(input: SeedClassInput) {
       data: {
         invoiceId: invoice.id,
         amount: subtotal,
-        paymentMethod: type === "BATCH" ? "QRIS" : "TRANSFER - BCA",
-        paymentType: type === "BATCH" ? "qris" : "bank_transfer",
+        paymentMethod: type === "PRIVATE" ? "TRANSFER - BCA" : "QRIS",
+        paymentType: type === "PRIVATE" ? "bank_transfer" : "qris",
         status: "SETTLEMENT",
         paidAt: new Date(),
         gateway: "manual",
@@ -357,7 +357,7 @@ async function main() {
 
   const batch = await seedClass({
     name: BATCH_NAME,
-    type: "BATCH",
+    type: "BATCH810",
     tutorId: budi.id,
     curriculumId: curriculum.id,
     categoryId: category.id,

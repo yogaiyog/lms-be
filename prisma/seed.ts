@@ -3,8 +3,10 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { seedTopics } from "./seed-topics";
 import { seedBatchScratchExplorer } from "./seed-topics-batch-scratch";
+import { seedBatchScratchExplorer2 } from "./seed-topics-batch-scratch-2";
 import { seedPythonExplorer } from "./seed-topics-py";
 import { seedCodeExplorer } from "./seed-topics-ce";
+import { seedBatchCodeExplorer } from "./seed-topics-batch-ce";
 import { seedTrialClass } from "./seed-trial-topics";
 import { seedTrialPython } from "./seed-trial-topics-py";
 
@@ -31,6 +33,7 @@ async function main() {
   await prisma.curriculum.deleteMany();
   await prisma.category.deleteMany();
   await prisma.assessmentSet.deleteMany();
+  await prisma.tutorCost.deleteMany();
   await prisma.class.deleteMany();
   await prisma.studentProfile.deleteMany();
   await prisma.tutorProfile.deleteMany();
@@ -454,8 +457,10 @@ async function main() {
 
   await seedTopics(prisma, defaultAssessment, [kelas2, kelas3, kelas4, kelas5, kelas6]);
   await seedBatchScratchExplorer(prisma, defaultAssessment, [kelas2, kelas3, kelas4, kelas5, kelas6]);
+  await seedBatchScratchExplorer2(prisma, defaultAssessment, [kelas2, kelas3, kelas4, kelas5, kelas6]);
   await seedPythonExplorer(prisma, defaultAssessment, [kelas5, kelas6, kelas7, kelas8, kelas9]);
   await seedCodeExplorer(prisma, defaultAssessment, [kelas1, kelas2, kelas3]);
+  await seedBatchCodeExplorer(prisma, defaultAssessment, [kelas1, kelas2, kelas3]);
   await seedTrialClass(prisma, defaultAssessment, [kelas1, kelas2]);
   await seedTrialPython(prisma, defaultAssessment, [kelas6, kelas7, kelas8, kelas9]);
 
@@ -476,13 +481,25 @@ async function main() {
     console.log("✓ Enrollment created (Dito → Python-Explorer)");
   }
 
+  // === TUTOR COSTS ===
+  await prisma.tutorCost.createMany({
+    data: [
+      { classType: "TRIAL", cost: 12000, description: "Biaya tutor untuk kelas Trial" },
+      { classType: "BATCH810", cost: 20000, description: "Biaya tutor untuk kelas Batch 8-10 siswa" },
+      { classType: "BATCH35", cost: 20000, description: "Biaya tutor untuk kelas Batch 3-5 siswa" },
+      { classType: "PRIVATE", cost: 30000, description: "Biaya tutor untuk kelas Private" },
+      { classType: "MAKEUP", cost: 20000, description: "Biaya tutor untuk kelas Make Up" },
+    ],
+  });
+  console.log("✓ Tutor costs created");
+
   console.log("\n--- Seed Summary ---");
   console.log("Admin:       admin@lms.com");
   console.log("Tutors:      budi.tutor@lms.com, sari.tutor@lms.com");
   console.log("Parents:     andi.parent@lms.com, maya.parent@lms.com");
   console.log("Students:    rafa.student@lms.com, luna.student@lms.com,");
   console.log("             ardhi.student@lms.com, nisa.student@lms.com, dito.student@lms.com");
-  console.log("Curriculums: Code-Explorer (Kelas 1-3), Scratch-Explorer (Kelas 2-6), Batch-Scratch-Explorer (Kelas 2-6), Python-Explorer (Kelas 5-9), Trial Class K-2 (Kelas 1-2), Trial Python 6-9 (Kelas 6-9)");
+  console.log("Curriculums: Code-Explorer (Kelas 1-3), Batch-Code-Explorer (Kelas 1-3), Scratch-Explorer (Kelas 2-6), Batch-Scratch-Explorer (Kelas 2-6), Batch-Scratch-Explorer-2 (Kelas 2-6), Python-Explorer (Kelas 5-9), Trial Class K-2 (Kelas 1-2), Trial Python 6-9 (Kelas 6-9)");
   console.log("Password:    password123 (all accounts)");
   console.log("--------------------\n");
 }

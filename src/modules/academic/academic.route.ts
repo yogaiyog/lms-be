@@ -23,6 +23,7 @@ import { invoicesRouter } from "../invoices/invoices.route";
 import { paymentsRouter } from "../payments/payments.route";
 import { eventsRouter } from "./events.route";
 import { expensesRouter } from "../expenses/expenses.route";
+import { tutorCostsRouter } from "../tutor-costs/tutor-costs.route";
 
 export const academicRouter = Router();
 
@@ -49,4 +50,5 @@ academicRouter.use("/topic-tasks", topicTaskRouter);
 academicRouter.use("/invoices", invoicesRouter);
 academicRouter.use("/payments", paymentsRouter);
 academicRouter.use("/expenses", expensesRouter);
+academicRouter.use("/tutor-costs", tutorCostsRouter);
 academicRouter.use("/events", eventsRouter);

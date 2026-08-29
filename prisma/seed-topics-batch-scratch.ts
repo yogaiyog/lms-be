@@ -438,27 +438,46 @@ export async function seedBatchScratchExplorer(
   });
   await prisma.curriculum.deleteMany({ where: { name } });
 
-  const learningTopics = batchScratchUnits.map((unit, i) => ({
-    title: unit.title,
-    order: i,
-    materialLink: unit.materialLink,
-    goals: `Pembelajaran ${unit.title} via Scratch GUI tutorial`,
-    tools: "Scratch Editor",
-  }));
+  const allTopics: {
+    title: string;
+    order: number;
+    materialLink: string | null;
+    goals: string;
+    tools: string;
+    exampleProjectLink?: string;
+  }[] = [];
 
-  const capstoneTopics = batchScratchCapstones.map((cap, i) => ({
-    title: cap.title,
-    order: batchScratchUnits.length + i,
-    materialLink: null,
-    goals: `Proyek akhir: ${cap.title}`,
-    tools: "Scratch Editor",
-    exampleProjectLink: cap.url,
-  }));
+  for (let i = 0; i < batchScratchUnits.length; i++) {
+    const unit = batchScratchUnits[i];
+    const cap = batchScratchCapstones[i];
+
+    allTopics.push({
+      title: unit.title,
+      order: i * 2,
+      materialLink: unit.materialLink,
+      goals: `Pembelajaran ${unit.title} via Scratch GUI tutorial`,
+      tools: "Scratch Editor",
+    });
+
+    if (cap) {
+      allTopics.push({
+        title: cap.title,
+        order: i * 2 + 1,
+        materialLink: null,
+        goals: `Proyek akhir: ${cap.title}`,
+        tools: "Scratch Editor",
+        exampleProjectLink: cap.url,
+      });
+    }
+  }
 
   const curriculum = await prisma.curriculum.create({
     data: {
       name,
       assessmentSetId: defaultAssessment.id,
+      priceBatch810: 49750,
+      priceBatch35: 62250,
+      pricePrivate: null,
       ...(categoryIds?.length
         ? {
             categories: {
@@ -467,7 +486,7 @@ export async function seedBatchScratchExplorer(
           }
         : {}),
       topics: {
-        create: [...learningTopics, ...capstoneTopics],
+        create: allTopics,
       },
     },
     include: { topics: true },

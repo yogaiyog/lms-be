@@ -230,6 +230,9 @@ export async function seedTopics(
     data: {
       name: "Scratch-Explorer",
       assessmentSetId: defaultAssessment.id,
+      priceBatch810: null,
+      priceBatch35: null,
+      pricePrivate: 125000,
       ...(categoryIds?.length ? {
         categories: { create: categoryIds.map((cat) => ({ categoryId: cat.id })) },
       } : {}),

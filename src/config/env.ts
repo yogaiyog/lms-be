@@ -39,11 +39,6 @@ const envSchema = z.object({
     .default("false")
     .transform((v) => v === "true"),
   PUBLIC_BASE_URL: z.string().default("http://localhost:4000"),
-
-  TUTOR_COST_TRIAL: z.coerce.number().int().positive().default(12000),
-  TUTOR_COST_BATCH: z.coerce.number().int().positive().default(20000),
-  TUTOR_COST_PRIVATE: z.coerce.number().int().positive().default(30000),
-  TUTOR_COST_MAKEUP: z.coerce.number().int().positive().default(20000),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

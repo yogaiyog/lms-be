@@ -88,7 +88,8 @@ model StudentProfile {
 model Class {
   id               String         @id @default(uuid())
   name             String
-  type             String         @default("BATCH") // BATCH | PRIVATE | MAKEUP | TRIAL
+  type             String         @default("BATCH810") // BATCH810 | BATCH35 | PRIVATE | MAKEUP | TRIAL
+  tutorCost        Decimal?       @db.Decimal(10, 2)
   categoryId       String?
   category         Category?      @relation(fields: [categoryId], references: [id])
   tutors           TutorProfile[] @relation("ClassTutors")
@@ -249,6 +250,11 @@ model Curriculum {
   name            String
   assessmentSetId String?
   assessmentSet   AssessmentSet?      @relation(fields: [assessmentSetId], references: [id])
+  priceBatch810   Decimal?            @db.Decimal(10, 2)
+  priceBatch35    Decimal?            @db.Decimal(10, 2)
+  pricePrivate    Decimal?            @db.Decimal(10, 2)
+  priceTrial      Decimal?            @db.Decimal(10, 2)
+  priceMakeup     Decimal?            @db.Decimal(10, 2)
   categories      CurriculumCategory[]
   topics          Topic[]
   classes         Class[]
@@ -551,3 +557,13 @@ model StudentTopicProgress {
   @@unique([studentId, topicTaskId])
   @@index([studentId])
 }
+
+model TutorCost {
+  id          String   @id @default(uuid())
+  classType   String   @unique // TRIAL | BATCH810 | BATCH35 | PRIVATE | MAKEUP
+  cost        Decimal  @db.Decimal(10, 2)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+

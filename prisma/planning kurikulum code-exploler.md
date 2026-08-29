@@ -86,3 +86,17 @@ contoh project : https://pictoblox.ai/p/xAbu6YJGRnu6xGtW6JNb
 project : https://pictoblox.ai/
 
 
+
+
+1.https://canva.link/fc8zlah8tjyfj00
+2.https://canva.link/3ksn5eo03tjbl7m
+3.https://canva.link/efclkck17cdmlq6
+4.https://canva.link/7tfaffe2wp6p3ev
+5.https://canva.link/mfnjn8ap8eo6lts
+6.https://canva.link/lclf0uy85ogn0x8
+7.https://canva.link/v0yqt6azp0bca18
+8.https://canva.link/s5zgilny8t6rome
+9.https://canva.link/yn6fnf59navxa9e
+10.https://canva.link/3vqipk892mrd2y0
+11.https://canva.link/6139biq7yn6i3hu
+12.https://canva.link/2tsrpugtzo7h7s6
