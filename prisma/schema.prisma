@@ -320,6 +320,8 @@ model Topic {
   imageUrl           String?
   materialLink       String?
   exampleProjectLink String?
+  videoYoutubeUrl    String?
+  videoUploadUrl     String?
   goals              String?
   tools              String?
   order              Int         @default(0)

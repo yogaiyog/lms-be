@@ -147,3 +147,47 @@ uploadRouter.post(
     }
   },
 );
+
+const videoUpload = multer({
+  storage,
+  limits: { fileSize: 200 * 1024 * 1024 }, // 200MB limit for video files
+  fileFilter: (_req, file, cb) => {
+    const allowed = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/quicktime",
+      "video/x-matroska",
+    ];
+    if (!allowed.includes(file.mimetype)) {
+      return cb(new AppError("Format file video tidak didukung. Gunakan MP4, WebM, QuickTime, atau OGG", 400));
+    }
+    cb(null, true);
+  },
+});
+
+uploadRouter.post(
+  "/video",
+  authenticate,
+  videoUpload.single("file"),
+  async (req, res, next) => {
+    try {
+      const file = req.file;
+      if (!file) throw new AppError("File video wajib diunggah", 400);
+
+      const url = await uploadFile(file.buffer, file.originalname, file.mimetype);
+
+      res.json({
+        success: true,
+        data: {
+          url,
+          filename: file.originalname,
+          mimeType: file.mimetype,
+          size: file.size,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
