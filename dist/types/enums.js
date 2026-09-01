@@ -22,7 +22,8 @@ exports.DayOfWeek = {
     SUNDAY: "SUNDAY",
 };
 exports.ClassType = {
-    BATCH: "BATCH",
+    BATCH810: "BATCH810",
+    BATCH35: "BATCH35",
     PRIVATE: "PRIVATE",
     MAKEUP: "MAKEUP",
     TRIAL: "TRIAL",

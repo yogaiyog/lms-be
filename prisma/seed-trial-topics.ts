@@ -10,9 +10,10 @@ export async function seedTrialClass(
 
   const trialTasks = [
     { code: "trial-1", label: "1", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-tutorial.html` },
-    { code: "trial-2", label: "2", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-turn.html` },
-    { code: "trial-3", label: "3", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-move-turn.html` },
-    { code: "trial-4", label: "4", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/control-repeat.html` },
+    { code: "trial-2", label: "2", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-tutorial-2.html` },
+    { code: "trial-3", label: "3", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-tutorial-3.html` },
+    { code: "trial-4", label: "4", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-move-turn.html` },
+    { code: "trial-5", label: "5", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-tutorial-4.html` },
     { code: "trial-quiz", label: "Quiz", type: "QUIZ" as const, url: null },
     { code: "trial-capstone", label: "Capstone", type: "SCRATCH" as const, url: "https://scratch.mit.edu/projects/editor/", isCapstone: true },
   ];
@@ -79,74 +80,80 @@ export async function seedTrialClass(
           create: [
             {
               question:
-                "Blok {move (10) steps} membuat sprite bergerak sejauh 10 langkah ke arah mana?",
+                "Jika kita memasukkan blok gerakan ke dalam blok {forever}, apa yang akan terjadi pada sprite?",
               choices: [
                 {
-                  content: "Ke arah hadap sprite saat itu",
+                  content:
+                    "Sprite akan bergerak terus-menerus tanpa berhenti sampai tombol stop ditekan",
                   isCorrect: true,
                   feedback:
-                    "Benar! Move steps menggerakkan sprite maju sesuai arah hadapnya (direction).",
+                    "Benar! Blok forever akan mengulang perintah di dalamnya selamanya sampai program dihentikan.",
                 },
                 {
                   content:
-                    "Ke kanan layar (sumbu X positif) tanpa peduli arah hadap",
+                    "Sprite hanya bergerak satu kali lalu langsung berhenti",
                   isCorrect: false,
                   feedback:
-                    "Move tidak selalu ke kanan. Coba putar sprite dulu dengan turn, lalu move — sprite akan bergerak ke arah yang berbeda.",
+                    "Bukan satu kali. Blok forever membuat aksi diulang terus-menerus tanpa henti.",
                 },
                 {
-                  content: "Ke kiri layar (sumbu X negatif)",
+                  content: "Sprite akan langsung menghilang dari panggung",
                   isCorrect: false,
                   feedback:
-                    "Move bergerak sesuai arah hadap, bukan selalu ke kiri.",
+                    "Forever tidak menyembunyikan sprite, melainkan mengulang instruksi gerakan di dalamnya.",
                 },
               ],
             },
             {
               question:
-                "Blok {repeat (10)} akan menjalankan isi di dalamnya sebanyak berapa kali?",
+                "Apa fungsi dari blok {if on edge, bounce} saat sprite sedang bergerak?",
               choices: [
                 {
-                  content: "10 kali",
+                  content:
+                    "Membuat sprite memantul kembali ke dalam panggung saat menyentuh tepi layar",
                   isCorrect: true,
                   feedback:
-                    "Benar! Repeat (10) mengulang sebanyak 10 kali.",
+                    "Tepat sekali! Blok if on edge bounce mencegah sprite keluar atau tembus dari layar panggung.",
                 },
                 {
-                  content: "9 kali",
+                  content:
+                    "Membuat sprite berhenti total ketika sampai di tepi layar",
                   isCorrect: false,
                   feedback:
-                    "Hampir, tetapi repeat (10) menghitung dari 1 sampai 10, jadi 10 kali.",
+                    "Bukan berhenti, melainkan memantul (bounce) dan berbalik arah kembali ke layar.",
                 },
                 {
-                  content: "Terus-menerus sampai dihentikan",
+                  content: "Mengubah warna sprite saat menabrak dinding",
                   isCorrect: false,
-                  feedback: "Itu 'forever', bukan 'repeat'.",
+                  feedback:
+                    "Blok ini hanya mengatur arah pantulan sprite, bukan mengganti warna kostum.",
                 },
               ],
             },
             {
-              question: "Apa itu coding di Scratch?",
+              question:
+                "Bagaimana cara membuat arah sprite selalu mengikuti posisi kursor mouse pemain?",
               choices: [
                 {
                   content:
-                    "Instruksi yang kita susun dari blok-blok warna-warni supaya sprite bisa bergerak, berbicara, atau bermain",
+                    "Menggunakan blok {point towards (mouse-pointer)} di dalam loop {forever}",
                   isCorrect: true,
                   feedback:
-                    "Benar! Coding itu kayak memberi perintah ke sprite. Kamu tukang perintah, sprite pelaksana tugasnya!",
-                },
-                {
-                  content: "Menggambar sprite dan background di canvas",
-                  isCorrect: false,
-                  feedback:
-                    "Menggambar itu bagian dari desain, bukan coding. Coding itu blok-blok yang dikasih ke sprite.",
+                    "Keren! Dengan point towards mouse-pointer di dalam forever, arah sprite akan terus memperbarui diri mengikuti mouse.",
                 },
                 {
                   content:
-                    "Menekan tombol hijau (green flag) berkali-kali",
+                    "Menggunakan blok {when space key pressed}",
                   isCorrect: false,
                   feedback:
-                    "Green flag cuma untuk menjalankan program. Coding-nya sendiri adalah blok-blok yang sudah disusun.",
+                    "Blok tersebut hanya bereaksi ketika tombol spasi di keyboard ditekan, bukan mengikuti mouse.",
+                },
+                {
+                  content:
+                    "Mengubah ukuran sprite menjadi 200%",
+                  isCorrect: false,
+                  feedback:
+                    "Mengubah ukuran hanya membuat sprite lebih besar, bukan mengarahkan sprite ke mouse.",
                 },
               ],
             },

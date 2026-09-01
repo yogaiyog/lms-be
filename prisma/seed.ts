@@ -7,8 +7,10 @@ import { seedBatchScratchExplorer2 } from "./seed-topics-batch-scratch-2";
 import { seedPythonExplorer } from "./seed-topics-py";
 import { seedCodeExplorer } from "./seed-topics-ce";
 import { seedBatchCodeExplorer } from "./seed-topics-batch-ce";
+import { seedBatchCodeExplorer2 } from "./seed-topics-batch-ce-2";
 import { seedTrialClass } from "./seed-trial-topics";
 import { seedTrialPython } from "./seed-trial-topics-py";
+import { seedTrialCodeExplorer } from "./seed-trial-topic-ce";
 
 const prisma = new PrismaClient();
 
@@ -461,8 +463,10 @@ async function main() {
   await seedPythonExplorer(prisma, defaultAssessment, [kelas5, kelas6, kelas7, kelas8, kelas9]);
   await seedCodeExplorer(prisma, defaultAssessment, [kelas1, kelas2, kelas3]);
   await seedBatchCodeExplorer(prisma, defaultAssessment, [kelas1, kelas2, kelas3]);
+  await seedBatchCodeExplorer2(prisma, defaultAssessment, [kelas1, kelas2, kelas3]);
   await seedTrialClass(prisma, defaultAssessment, [kelas1, kelas2]);
   await seedTrialPython(prisma, defaultAssessment, [kelas6, kelas7, kelas8, kelas9]);
+  await seedTrialCodeExplorer(prisma, defaultAssessment, [kelas1, kelas2, kelas3]);
 
   // === ENROLLMENTS ===
   // Dito (student5) - unassigned enrollment for Python-Explorer
@@ -499,7 +503,7 @@ async function main() {
   console.log("Parents:     andi.parent@lms.com, maya.parent@lms.com");
   console.log("Students:    rafa.student@lms.com, luna.student@lms.com,");
   console.log("             ardhi.student@lms.com, nisa.student@lms.com, dito.student@lms.com");
-  console.log("Curriculums: Code-Explorer (Kelas 1-3), Batch-Code-Explorer (Kelas 1-3), Scratch-Explorer (Kelas 2-6), Batch-Scratch-Explorer (Kelas 2-6), Batch-Scratch-Explorer-2 (Kelas 2-6), Python-Explorer (Kelas 5-9), Trial Class K-2 (Kelas 1-2), Trial Python 6-9 (Kelas 6-9)");
+  console.log("Curriculums: Code-Explorer (Kelas 1-3), Batch-Code-Explorer (Kelas 1-3), Scratch-Explorer (Kelas 2-6), Batch-Scratch-Explorer (Kelas 2-6), Batch-Scratch-Explorer-2 (Kelas 2-6), Python-Explorer (Kelas 5-9), Trial Class K-2 (Kelas 1-2), Trial Python 6-9 (Kelas 6-9), Trial Code Explorer K-3 (Kelas 1-3)");
   console.log("Password:    password123 (all accounts)");
   console.log("--------------------\n");
 }

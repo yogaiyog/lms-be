@@ -39,10 +39,6 @@ const envSchema = zod_1.z.object({
         .default("false")
         .transform((v) => v === "true"),
     PUBLIC_BASE_URL: zod_1.z.string().default("http://localhost:4000"),
-    TUTOR_COST_TRIAL: zod_1.z.coerce.number().int().positive().default(12000),
-    TUTOR_COST_BATCH: zod_1.z.coerce.number().int().positive().default(20000),
-    TUTOR_COST_PRIVATE: zod_1.z.coerce.number().int().positive().default(30000),
-    TUTOR_COST_MAKEUP: zod_1.z.coerce.number().int().positive().default(20000),
 });
 const parsedEnv = envSchema.safeParse(process.env);
 if (!parsedEnv.success) {
