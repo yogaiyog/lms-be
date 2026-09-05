@@ -39,6 +39,7 @@ const envSchema = z.object({
     .default("false")
     .transform((v) => v === "true"),
   PUBLIC_BASE_URL: z.string().default("http://localhost:4000"),
+  MIN_TUTOR_SLOTS: z.coerce.number().int().nonnegative().default(10),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

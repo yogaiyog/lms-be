@@ -1,6 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/app-error";
+import { env } from "../../config/env";
 
 export const tutorSlotsRouter = Router();
 
@@ -66,6 +67,7 @@ tutorSlotsRouter.get("/:tutorId", async (req: Request, res: Response, next: Next
         slots: result,
         dayoffs: Array.from(dayoffs),
         restrictWeekdayMorning: RESTRICT_WEEKDAY_MORNING,
+        minSlots: env.MIN_TUTOR_SLOTS,
       },
     });
   } catch (error) {
@@ -118,10 +120,12 @@ tutorSlotsRouter.patch("/:tutorId/toggle", async (req: Request, res: Response, n
       );
       if (hasClass) throw new AppError("Slot terisi kelas, tidak bisa dinonaktifkan", 400);
 
-      // Min 21 (hitung non-dayoff)
+      // Min slots (hitung non-dayoff)
       const allSlots = await prisma.tutorSlot.findMany({ where: { tutorId } });
       const nonDayoff = allSlots.filter((s) => !dayoffs.has(DAY_NAMES.indexOf(s.dayOfWeek)));
-      if (nonDayoff.length <= 21) throw new AppError("Minimal 21 slot aktif diperlukan", 400);
+      if (nonDayoff.length <= env.MIN_TUTOR_SLOTS) {
+        throw new AppError(`Minimal ${env.MIN_TUTOR_SLOTS} slot aktif diperlukan`, 400);
+      }
 
       await prisma.tutorSlot.delete({ where: { id: existing.id } });
     } else {

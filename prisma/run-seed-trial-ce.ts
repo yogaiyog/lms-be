@@ -1,46 +1,69 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
-export async function seedTrialCodeExplorer(
-  prisma: PrismaClient,
-  defaultAssessment: { id: string },
-  categoryIds?: { id: string }[],
-) {
-  const trialTasks = [
-    {
-      code: "trial-ce-1",
-      label: "1",
-      type: "SCRATCH" as const,
-      url: "https://studio.code.org/courses/pre-express-2025/units/1/lessons/1/levels/1?section_id=6590433&viewAs=Instructor",
-      isCapstone: false,
-      autoComplete: true,
-    },
-    {
-      code: "trial-ce-2",
-      label: "2",
-      type: "SCRATCH" as const,
-      url: "https://studio.code.org/courses/pre-express-2025/units/1/lessons/2/levels/2?section_id=6590433&viewAs=Instructor",
-      isCapstone: false,
-      autoComplete: true,
-    },
-    {
-      code: "trial-ce-quiz",
-      label: "Quiz",
-      type: "QUIZ" as const,
-      url: null,
-      isCapstone: false,
-    },
-  ];
+const prisma = new PrismaClient();
 
-  const existing = await prisma.curriculum.findMany({
-    where: { name: "Trial Code Explorer K-3" },
-    include: { topics: { select: { id: true } } },
+const trialTasks = [
+  {
+    code: "trial-ce-1",
+    label: "1",
+    type: "SCRATCH" as const,
+    url: "https://studio.code.org/courses/pre-express-2025/units/1/lessons/1/levels/1?section_id=6590433&viewAs=Instructor",
+    isCapstone: false,
+    autoComplete: true,
+  },
+  {
+    code: "trial-ce-2",
+    label: "2",
+    type: "SCRATCH" as const,
+    url: "https://studio.code.org/courses/pre-express-2025/units/1/lessons/2/levels/2?section_id=6590433&viewAs=Instructor",
+    isCapstone: false,
+    autoComplete: true,
+  },
+  {
+    code: "trial-ce-quiz",
+    label: "Quiz",
+    type: "QUIZ" as const,
+    url: null,
+    isCapstone: false,
+  },
+];
+
+async function main() {
+  console.log("🚀 Seeding Trial Code Explorer K-3 (Safe Mode - preserving existing data)...");
+
+  // 1. Ambil default assessment yang sudah ada di DB
+  const defaultAssessment = await prisma.assessmentSet.findFirst();
+  if (!defaultAssessment) {
+    throw new Error("AssessmentSet tidak ditemukan di database.");
+  }
+
+  // 2. Ambil kategori Kelas 1, Kelas 2, Kelas 3 jika ada
+  const categories = await prisma.category.findMany({
+    where: { name: { in: ["Kelas 1", "Kelas 2", "Kelas 3"] } },
+    select: { id: true },
   });
-  for (const curr of existing) {
+
+  const CURRICULUM_NAME = "Trial Code Explorer K-3";
+
+  // 3. Bersihkan HANYA kurikulum Trial Code Explorer K-3 sebelumnya jika ada
+  const existingCurriculums = await prisma.curriculum.findMany({
+    where: { name: CURRICULUM_NAME },
+    include: {
+      topics: {
+        select: { id: true },
+      },
+    },
+  });
+
+  for (const curr of existingCurriculums) {
     const topicIds = curr.topics.map((t) => t.id);
     if (topicIds.length > 0) {
+      // Hapus progress siswa KHUSUS topik trial ini
       await prisma.studentTopicProgress.deleteMany({
         where: { topicId: { in: topicIds } },
       });
+      // Hapus task (akan cascade ke quiz, questions, attempts)
       await prisma.topicTask.deleteMany({
         where: { topicId: { in: topicIds } },
       });
@@ -56,14 +79,15 @@ export async function seedTrialCodeExplorer(
     });
   }
 
+  // 4. Buat Kurikulum baru
   const curriculum = await prisma.curriculum.create({
     data: {
-      name: "Trial Code Explorer K-3",
+      name: CURRICULUM_NAME,
       assessmentSetId: defaultAssessment.id,
-      ...(categoryIds?.length
+      ...(categories.length
         ? {
             categories: {
-              create: categoryIds.map((cat) => ({ categoryId: cat.id })),
+              create: categories.map((cat) => ({ categoryId: cat.id })),
             },
           }
         : {}),
@@ -92,7 +116,7 @@ export async function seedTrialCodeExplorer(
       order: i,
       type: task.type,
       isCapstone: task.isCapstone ?? false,
-      autoComplete: (task as { autoComplete?: boolean }).autoComplete ?? false,
+      autoComplete: task.autoComplete ?? false,
     })),
   });
 
@@ -173,5 +197,15 @@ export async function seedTrialCodeExplorer(
     console.log("✓ Mock quiz seeded for trial-ce-quiz");
   }
 
-  console.log(`✓ Trial Code Explorer K-3 curriculum seeded (${trialTasks.length} tasks, 1 quiz)`);
+  console.log(`✓ Sukses: "${CURRICULUM_NAME}" berhasil di-seed (${trialTasks.length} tasks, 1 quiz). Data existing lainnya tetap aman.`);
 }
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

@@ -39,6 +39,7 @@ const envSchema = zod_1.z.object({
         .default("false")
         .transform((v) => v === "true"),
     PUBLIC_BASE_URL: zod_1.z.string().default("http://localhost:4000"),
+    MIN_TUTOR_SLOTS: zod_1.z.coerce.number().int().nonnegative().default(10),
 });
 const parsedEnv = envSchema.safeParse(process.env);
 if (!parsedEnv.success) {
