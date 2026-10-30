@@ -65,23 +65,26 @@ jobs:
           $SSH "$TARGET" "tar -C $REMOTE_DIR -xzf -" < release.tgz
 
       - name: Install, migrate, reload
+        timeout-minutes: 8
         env:
           TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
         run: |
-          ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes "$TARGET" "bash -se" <<'REMOTE'
+          ssh -T -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o ServerAliveInterval=15 "$TARGET" "bash -se" <<'REMOTE' 2>&1
           set -euo pipefail
           cd /srv/lms-be
           test -f .env || { echo "ERROR: /srv/lms-be/.env belum ada"; exit 1; }
-          npm ci --no-audit --no-fund
-          npx prisma generate
-          npx prisma migrate deploy
-          pm2 startOrReload ecosystem.config.js --update-env
-          pm2 save
+          echo "== npm ci";                 npm ci --no-audit --no-fund < /dev/null
+          echo "== prisma generate";        npx prisma generate < /dev/null
+          echo "== prisma migrate deploy";  npx prisma migrate deploy < /dev/null
+          echo "== pm2 startOrReload";      pm2 startOrReload ecosystem.config.js --update-env < /dev/null > /dev/null 2>&1
+          echo "== pm2 save";               pm2 save < /dev/null > /dev/null 2>&1
+          echo "== selesai"
           REMOTE
 
       - name: Health check
         env:
           TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
         run: |
-          ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes "$TARGET" \
+          ssh -T -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes "$TARGET" \
             'for i in $(seq 1 15); do curl -fsS http://127.0.0.1:4000/api/v1/health && exit 0; sleep 2; done; pm2 logs lms-backend --lines 40 --nostream; exit 1'
