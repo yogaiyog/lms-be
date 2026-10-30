@@ -50,3 +50,6 @@ Thumbs.db
 # Database
 *.db
 *.db-journal
+
+# Hasil build (dibuat oleh `npm run build` / CI)
+dist/
