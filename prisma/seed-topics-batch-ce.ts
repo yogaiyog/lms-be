@@ -510,14 +510,19 @@ async function getOrUploadImage(
     console.warn(`  ⚠ Image file not found: ${resolvedPath}, skipping`);
     return null;
   }
-  const buffer = fs.readFileSync(resolvedPath);
-  const url = await uploadFile(buffer, filename, mimeType);
+  try {
+    const buffer = fs.readFileSync(resolvedPath);
+    const url = await uploadFile(buffer, filename, mimeType);
 
-  await prisma.image.create({
-    data: { url, filename, mimeType, size: buffer.length, entityType, entityId },
-  });
+    await prisma.image.create({
+      data: { url, filename, mimeType, size: buffer.length, entityType, entityId },
+    });
 
-  return url;
+    return url;
+  } catch (err) {
+    console.warn(`  ⚠ MinIO upload skipped for ${filename}: ${(err as Error).message}`);
+    return null;
+  }
 }
 
 async function resolveQuizImages(
