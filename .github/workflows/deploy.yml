@@ -1,0 +1,87 @@
+name: Deploy backend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Satu deploy pada satu waktu; deploy baru menunggu yang berjalan, tidak membatalkannya.
+concurrency:
+  group: deploy-backend
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  REMOTE_DIR: /srv/lms-be
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+
+      - name: Package release
+        run: |
+          tar -czf release.tgz \
+            dist prisma templates package.json package-lock.json ecosystem.config.js
+
+      - name: Prepare SSH
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Upload to VPS
+        env:
+          TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+        run: |
+          SSH="ssh -i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes"
+          # .env, node_modules, dan generated/ tetap di server; hanya kode yang diganti.
+          $SSH "$TARGET" "mkdir -p $REMOTE_DIR/generated/certificates && cd $REMOTE_DIR && rm -rf dist prisma templates"
+          $SSH "$TARGET" "tar -C $REMOTE_DIR -xzf -" < release.tgz
+
+      - name: Install, migrate, reload
+        env:
+          TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+        run: |
+          ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes "$TARGET" "bash -se" <<'REMOTE'
+          set -euo pipefail
+          cd /srv/lms-be
+          test -f .env || { echo "ERROR: /srv/lms-be/.env belum ada"; exit 1; }
+          npm ci --no-audit --no-fund
+          npx prisma generate
+          npx prisma migrate deploy
+          pm2 startOrReload ecosystem.config.js --update-env
+          pm2 save
+          REMOTE
+
+      - name: Health check
+        env:
+          TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+        run: |
+          ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes "$TARGET" \
+            'for i in $(seq 1 15); do curl -fsS http://127.0.0.1:4000/api/v1/health && exit 0; sleep 2; done; pm2 logs lms-backend --lines 40 --nostream; exit 1'
