@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 const PYTHON_EDITOR_URL =
-  process.env.PYTHON_EDITOR_URL ?? "http://localhost:3000";
+  process.env.PYTHON_EDITOR_URL ?? "https://belajar.juaraku.web.id";
 
 interface PythonLevel {
   code: string;
