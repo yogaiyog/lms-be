@@ -6,7 +6,7 @@ export async function seedTopics(
   categoryIds?: { id: string }[],
 ) {
   const SCRATCH_GUI_URL =
-    process.env.SCRATCH_GUI_URL ?? "http://localhost:8601";
+    process.env.SCRATCH_GUI_URL ?? "https://scratch.juaraku.web.id";
   const scratchFundamentalUnits = [
     {
       id: "motion",
@@ -23,7 +23,7 @@ export async function seedTopics(
         { id: "m7", label: "7", url: `${SCRATCH_GUI_URL}/motion-complete.html`, type: "SCRATCH" as const },
         { id: "m-quiz", label: "Q", url: null, type: "QUIZ" as const },
       ],
-      capstone: { id: "capstone-motion", url: "https://juaraku-neon.vercel.app/catch-the-bus" },
+      capstone: { id: "capstone-motion", url: "https://belajar.juaraku.web.id/catch-the-bus" },
     },
     {
       id: "looks",
@@ -40,7 +40,7 @@ export async function seedTopics(
         { id: "l7", label: "7", url: `${SCRATCH_GUI_URL}/looks-sound-complete.html` },
         { id: "l-quiz", label: "Q", url: null, type: "QUIZ" as const },
       ],
-      capstone: { id: "capstone-looks", url: "https://juaraku-neon.vercel.app/space-talk" },
+      capstone: { id: "capstone-looks", url: "https://belajar.juaraku.web.id/space-talk" },
     },
     {
       id: "event",
@@ -57,7 +57,7 @@ export async function seedTopics(
         { id: "e7", label: "7", url: `${SCRATCH_GUI_URL}/event-complete.html` },
         { id: "e-quiz", label: "Q", url: null, type: "QUIZ" as const },
       ],
-      capstone: { id: "capstone-event", url: "https://juaraku-neon.vercel.app/broadcasting-spells" },
+      capstone: { id: "capstone-event", url: "https://belajar.juaraku.web.id/broadcasting-spells" },
     },
     {
       id: "variable",
@@ -91,7 +91,7 @@ export async function seedTopics(
         { id: "c7", label: "7", url: `${SCRATCH_GUI_URL}/control-complete.html` },
         { id: "c-quiz", label: "Q", url: null, type: "QUIZ" as const },
       ],
-      capstone: { id: "capstone-control", url: "https://juaraku-neon.vercel.app/find-the-bug" },
+      capstone: { id: "capstone-control", url: "https://belajar.juaraku.web.id/find-the-bug" },
     },
     {
       id: "debug",
@@ -108,7 +108,7 @@ export async function seedTopics(
         { id: "d7", label: "7", url: `${SCRATCH_GUI_URL}/debug-complete.html` },
         { id: "d-quiz", label: "Q", url: null, type: "QUIZ" as const },
       ],
-      capstone: { id: "capstone-debug", url: "https://juaraku-neon.vercel.app/next-customer-please" },
+      capstone: { id: "capstone-debug", url: "https://belajar.juaraku.web.id/next-customer-please" },
     },
     {
       id: "control-conditional",
@@ -125,7 +125,7 @@ export async function seedTopics(
         { id: "cc7", label: "7", url: `${SCRATCH_GUI_URL}/control-conditional-complete.html` },
         { id: "cc-quiz", label: "Q", url: null, type: "QUIZ" as const },
       ],
-      capstone: { id: "capstone-control-conditional", url: "https://juaraku-neon.vercel.app/silly-eyes" },
+      capstone: { id: "capstone-control-conditional", url: "https://belajar.juaraku.web.id/silly-eyes" },
     },
     {
       id: "control-mix",
@@ -142,7 +142,7 @@ export async function seedTopics(
         { id: "cm7", label: "7", url: `${SCRATCH_GUI_URL}/control-mixcomplete.html` },
         { id: "cm-quiz", label: "Q", url: null, type: "QUIZ" as const },
       ],
-      capstone: { id: "capstone-control-mix", url: "https://juaraku-neon.vercel.app/grow-a-dragonfly" },
+      capstone: { id: "capstone-control-mix", url: "https://belajar.juaraku.web.id/grow-a-dragonfly" },
     },
     {
       id: "operator",

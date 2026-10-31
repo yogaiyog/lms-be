@@ -31,7 +31,7 @@ interface BatchScratchCapstone {
 }
 
 const SCRATCH_GUI_URL =
-  process.env.SCRATCH_GUI_URL ?? "http://localhost:8601";
+  process.env.SCRATCH_GUI_URL ?? "https://scratch.juaraku.web.id";
 
 const FALLBACK_EDITOR = "https://scratch.mit.edu/projects/editor/";
 
@@ -418,12 +418,12 @@ const batchScratchUnits: BatchScratchUnit[] = [
 ];
 
 const batchScratchCapstones: BatchScratchCapstone[] = [
-  { id: "motion", title: "Motion Capstone", url: "https://juaraku-neon.vercel.app/catch-the-bus" },
-  { id: "looks", title: "Looks Capstone", url: "https://juaraku-neon.vercel.app/space-talk" },
-  { id: "event", title: "Event Capstone", url: "https://juaraku-neon.vercel.app/broadcasting-spells" },
+  { id: "motion", title: "Motion Capstone", url: "https://belajar.juaraku.web.id/catch-the-bus" },
+  { id: "looks", title: "Looks Capstone", url: "https://belajar.juaraku.web.id/space-talk" },
+  { id: "event", title: "Event Capstone", url: "https://belajar.juaraku.web.id/broadcasting-spells" },
   { id: "variable", title: "Variable Capstone", url: FALLBACK_EDITOR },
-  { id: "control", title: "Control Capstone", url: "https://juaraku-neon.vercel.app/find-the-bug" },
-  { id: "debug", title: "Debugging Capstone", url: "https://juaraku-neon.vercel.app/next-customer-please" },
+  { id: "control", title: "Control Capstone", url: "https://belajar.juaraku.web.id/find-the-bug" },
+  { id: "debug", title: "Debugging Capstone", url: "https://belajar.juaraku.web.id/next-customer-please" },
 ];
 
 export async function seedBatchScratchExplorer(

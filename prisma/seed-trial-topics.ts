@@ -6,7 +6,7 @@ export async function seedTrialClass(
   categoryIds?: { id: string }[],
 ) {
   const SCRATCH_GUI_URL =
-    process.env.SCRATCH_GUI_URL ?? "http://localhost:8601";
+    process.env.SCRATCH_GUI_URL ?? "https://scratch.juaraku.web.id";
 
   const trialTasks = [
     { code: "trial-1", label: "1", type: "SCRATCH" as const, url: `${SCRATCH_GUI_URL}/motion-tutorial.html` },

@@ -31,7 +31,7 @@ interface BatchScratchCapstone {
 }
 
 const SCRATCH_GUI_URL =
-  process.env.SCRATCH_GUI_URL ?? "http://localhost:8601";
+  process.env.SCRATCH_GUI_URL ?? "https://scratch.juaraku.web.id";
 
 const FALLBACK_EDITOR = "https://scratch.mit.edu/projects/editor/";
 
@@ -399,8 +399,8 @@ const batchScratch2Units: BatchScratchUnit[] = [
 ];
 
 const batchScratch2Capstones: BatchScratchCapstone[] = [
-  { id: "control-conditional", title: "Control Conditional Capstone", url: "https://juaraku-neon.vercel.app/silly-eyes" },
-  { id: "control-mix", title: "Control Mix Capstone", url: "https://juaraku-neon.vercel.app/grow-a-dragonfly" },
+  { id: "control-conditional", title: "Control Conditional Capstone", url: "https://belajar.juaraku.web.id/silly-eyes" },
+  { id: "control-mix", title: "Control Mix Capstone", url: "https://belajar.juaraku.web.id/grow-a-dragonfly" },
   { id: "operator", title: "Operator Capstone", url: FALLBACK_EDITOR },
   { id: "clone", title: "Clone Capstone", url: FALLBACK_EDITOR },
   { id: "sensing", title: "Sensing Capstone", url: FALLBACK_EDITOR },
