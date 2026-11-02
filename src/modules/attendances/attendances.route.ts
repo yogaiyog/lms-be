@@ -6,6 +6,13 @@ export const attendancesRouter = createCrudRouter({
   delegate: prisma.attendance,
   createSchema: attendanceCreateSchema,
   updateSchema: attendanceUpdateSchema,
+  listWhere: (req) => {
+    const where: Record<string, unknown> = {};
+    if (typeof req.query.studentId === "string") where.studentId = req.query.studentId;
+    if (typeof req.query.scheduleId === "string") where.scheduleId = req.query.scheduleId;
+    return where;
+  },
+  orderBy: { date: "desc" },
   include: {
     schedule: true,
     student: true,

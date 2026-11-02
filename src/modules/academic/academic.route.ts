@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { requireRole, requireRoleForWrites } from "../auth/auth.middleware";
 import { Role } from "../../types/enums";
+import { prisma } from "../../lib/prisma";
+import { scopeToOwnStudents } from "../../lib/student-access";
 
 const adminWrites = requireRoleForWrites(Role.ADMIN);
 const adminOnly = requireRole(Role.ADMIN);
@@ -33,9 +35,25 @@ import { tutorCostsRouter } from "../tutor-costs/tutor-costs.route";
 export const academicRouter = Router();
 
 academicRouter.use("/classes", adminWrites, classesRouter);
-academicRouter.use("/enrollments", enrollmentsRouter);
+academicRouter.use(
+  "/enrollments",
+  scopeToOwnStudents({
+    findStudentIdById: async (id) =>
+      (await prisma.enrollment.findUnique({ where: { id }, select: { studentId: true } }))?.studentId,
+    // Parent mendaftarkan anaknya ke kurikulum.
+    writes: [{ method: "POST", path: /^\/?$/, studentId: (req) => req.body?.studentId }],
+  }),
+  enrollmentsRouter,
+);
 academicRouter.use("/schedules", schedulesRouter);
-academicRouter.use("/attendances", attendancesRouter);
+academicRouter.use(
+  "/attendances",
+  scopeToOwnStudents({
+    findStudentIdById: async (id) =>
+      (await prisma.attendance.findUnique({ where: { id }, select: { studentId: true } }))?.studentId,
+  }),
+  attendancesRouter,
+);
 academicRouter.use("/announcements", announcementsRouter);
 academicRouter.use("/curriculums", adminWrites, curriculumsRouter);
 academicRouter.use("/topics", adminWrites, topicsRouter);
@@ -45,8 +63,17 @@ academicRouter.use("/assessment-aspects", adminWrites, assessmentAspectsRouter);
 academicRouter.use("/attendance-assessments", attendanceAssessmentsRouter);
 academicRouter.use("/attendance-assessment-scores", attendanceAssessmentScoresRouter);
 academicRouter.use("/reports", reportsRouter);
-academicRouter.use("/saved-reports", savedReportsRouter);
-academicRouter.use("/certificates", certificatesRouter);
+academicRouter.use("/saved-reports", scopeToOwnStudents(), savedReportsRouter);
+academicRouter.use(
+  "/certificates",
+  scopeToOwnStudents({
+    findStudentIdById: async (id) =>
+      (await prisma.certificate.findUnique({ where: { id }, select: { studentId: true } }))?.studentId,
+    // Pratinjau PDF sertifikat (data dikirim klien, tidak menyimpan apa pun).
+    writes: [{ method: "POST", path: /^\/generate-pdf\/?$/, studentId: () => null }],
+  }),
+  certificatesRouter,
+);
 academicRouter.use("/categories", adminWrites, categoriesRouter);
 academicRouter.use("/student-topic-progress", studentTopicProgressRouter);
 academicRouter.use("/roadmap", roadmapRouter);

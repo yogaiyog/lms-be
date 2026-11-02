@@ -1,6 +1,8 @@
 import { Router, type NextFunction, type Request, type Response } from "express";
 import { authenticate, requireRole, requireRoleForWrites } from "../modules/auth/auth.middleware";
 import { Role } from "../types/enums";
+import { prisma } from "../lib/prisma";
+import { scopeToOwnStudents } from "../lib/student-access";
 import { authRouter } from "../modules/auth/auth.route";
 import { usersRouter } from "../modules/users/users.route";
 import { parentProfilesRouter } from "../modules/parent-profiles/parent-profiles.route";
@@ -53,4 +55,11 @@ apiRouter.use("/academic", academicRouter);
 apiRouter.use("/gamification", gamificationRouter);
 apiRouter.use("/request-class", requireRoleForWrites(Role.ADMIN), requestClassRouter);
 apiRouter.use("/upload", uploadRouter);
-apiRouter.use("/galleries", galleriesRouter);
+apiRouter.use(
+  "/galleries",
+  scopeToOwnStudents({
+    findStudentIdById: async (id) =>
+      (await prisma.gallery.findUnique({ where: { id }, select: { studentId: true } }))?.studentId,
+  }),
+  galleriesRouter,
+);

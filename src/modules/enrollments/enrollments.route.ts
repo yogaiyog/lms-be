@@ -13,6 +13,12 @@ const baseRouter = createCrudRouter({
   createSchema: enrollmentCreateSchema,
   updateSchema: enrollmentUpdateSchema,
   include,
+  listWhere: (req) => {
+    const where: Record<string, unknown> = {};
+    if (typeof req.query.classId === "string") where.classId = req.query.classId;
+    if (typeof req.query.studentId === "string") where.studentId = req.query.studentId;
+    return where;
+  },
 });
 
 const router = Router();

@@ -44,6 +44,27 @@ export async function uploadFile(
   return `${publicUrl}/${env.MINIO_BUCKET}/${key}`;
 }
 
+/**
+ * Upload dari file di disk (stream) — untuk file besar seperti video,
+ * supaya tidak perlu menampung seluruh isi file di memori.
+ */
+export async function uploadFileFromPath(
+  filePath: string,
+  filename: string,
+  mimeType: string,
+): Promise<string> {
+  const mc = getClient();
+  await ensureBucket();
+
+  const ext = filename.split(".").pop() || "bin";
+  const key = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+  await mc.fPutObject(env.MINIO_BUCKET, key, filePath, { "Content-Type": mimeType });
+
+  const publicUrl = env.MINIO_PUBLIC_URL || `${env.MINIO_ENDPOINT}:${env.MINIO_PORT}`;
+  return `${publicUrl}/${env.MINIO_BUCKET}/${key}`;
+}
+
 export async function deleteFile(url: string): Promise<void> {
   const mc = getClient();
   const key = url.split("/").pop();

@@ -5,6 +5,7 @@ import { AppError } from "../utils/app-error";
 
 type PrismaDelegate = {
   findMany: (args?: any) => Promise<any[]>;
+  count: (args?: any) => Promise<number>;
   findUnique: (args: any) => Promise<any | null>;
   create: (args: any) => Promise<any>;
   update: (args: any) => Promise<any>;
@@ -21,14 +22,22 @@ type CreateCrudRouterOptions = {
   afterCreate?: (payload: any, item: any, req: Request) => Promise<void>;
 };
 
-function parsePagination(req: Request) {
-  const take = req.query.take ? Number(req.query.take) : undefined;
-  const skip = req.query.skip ? Number(req.query.skip) : undefined;
+/**
+ * Batas atas saat klien TIDAK mengirim `take`.
+ * Dashboard memanggil list() tanpa pagination dan mengharapkan semua data;
+ * dulu default-nya 20 sehingga daftar siswa/parent/tutor terpotong diam-diam.
+ */
+export const UNPAGINATED_MAX = 1000;
 
-  return {
-    take: Number.isFinite(take) ? Math.min(Math.max(take ?? 20, 1), 100) : 20,
-    skip: Number.isFinite(skip) && skip ? Math.max(skip, 0) : 0,
-  };
+function parsePagination(req: Request) {
+  const takeRaw = req.query.take !== undefined ? Number(req.query.take) : undefined;
+  const skipRaw = req.query.skip !== undefined ? Number(req.query.skip) : undefined;
+  const skip = Number.isFinite(skipRaw) && skipRaw ? Math.max(Math.trunc(skipRaw), 0) : 0;
+
+  if (takeRaw === undefined || !Number.isFinite(takeRaw)) {
+    return { take: UNPAGINATED_MAX, skip, paginated: false };
+  }
+  return { take: Math.min(Math.max(Math.trunc(takeRaw), 1), 100), skip, paginated: true };
 }
 
 function handleError(
@@ -63,20 +72,31 @@ export function createCrudRouter({
 
   router.get("/", async (req, res, next) => {
     try {
-      const { take, skip } = parsePagination(req);
+      const { take, skip, paginated } = parsePagination(req);
+      const where = listWhere?.(req);
 
-      const data = await delegate.findMany({
-        where: listWhere?.(req),
-        include,
-        take,
-        skip,
-        ...(orderBy ? { orderBy } : {}),
-      });
+      const [data, total] = await Promise.all([
+        delegate.findMany({
+          where,
+          include,
+          take,
+          skip,
+          ...(orderBy ? { orderBy } : {}),
+        }),
+        delegate.count({ where }),
+      ]);
+
+      if (!paginated && total > data.length + skip) {
+        console.warn(
+          `[crud] ${req.baseUrl}: ${total} baris, hanya ${data.length} dikirim (batas ${UNPAGINATED_MAX}). ` +
+            "Pakai ?take=&skip= di klien.",
+        );
+      }
 
       return res.json({
         success: true,
         data,
-        meta: { take, skip, count: data.length },
+        meta: { take, skip, count: data.length, total },
       });
     } catch (error) {
       return handleError(error, req, res, next);

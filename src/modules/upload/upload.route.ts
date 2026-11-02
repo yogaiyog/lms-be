@@ -1,7 +1,10 @@
 import { Router } from "express";
 import multer from "multer";
-import { authenticate } from "../auth/auth.middleware";
-import { uploadFile } from "../../services/minio";
+import os from "node:os";
+import { unlink } from "node:fs/promises";
+import { authenticate, requireRole } from "../auth/auth.middleware";
+import { Role } from "../../types/enums";
+import { uploadFile, uploadFileFromPath } from "../../services/minio";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/app-error";
 
@@ -148,8 +151,9 @@ uploadRouter.post(
   },
 );
 
+// Video ditulis ke disk sementara (bukan memori): VPS hanya punya RAM 1,7 GB.
 const videoUpload = multer({
-  storage,
+  storage: multer.diskStorage({ destination: os.tmpdir() }),
   limits: { fileSize: 200 * 1024 * 1024 }, // 200MB limit for video files
   fileFilter: (_req, file, cb) => {
     const allowed = [
@@ -169,13 +173,14 @@ const videoUpload = multer({
 uploadRouter.post(
   "/video",
   authenticate,
+  requireRole(Role.ADMIN),
   videoUpload.single("file"),
   async (req, res, next) => {
+    const file = req.file;
     try {
-      const file = req.file;
       if (!file) throw new AppError("File video wajib diunggah", 400);
 
-      const url = await uploadFile(file.buffer, file.originalname, file.mimetype);
+      const url = await uploadFileFromPath(file.path, file.originalname, file.mimetype);
 
       res.json({
         success: true,
@@ -188,6 +193,8 @@ uploadRouter.post(
       });
     } catch (err) {
       next(err);
+    } finally {
+      if (file?.path) await unlink(file.path).catch(() => {});
     }
   },
 );
