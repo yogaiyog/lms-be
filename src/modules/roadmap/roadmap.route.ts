@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/app-error";
+import { canAccessStudent } from "../../lib/student-access";
 
 export const roadmapRouter = Router();
 
@@ -36,6 +37,9 @@ roadmapRouter.get("/scratch-fundamental", async (req, res, next) => {
     let progress: any[] = [];
     const studentId = req.query.studentId as string | undefined;
     if (studentId) {
+      if (!(await canAccessStudent(req.auth, studentId))) {
+        throw new AppError("Tidak boleh mengakses siswa ini", 403, "FORBIDDEN");
+      }
       progress = await prisma.studentTopicProgress.findMany({
         where: { studentId },
         include: { topicTask: { select: { code: true } } },

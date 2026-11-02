@@ -30,7 +30,19 @@ expensesRouter.get("/", async (req, res, next) => {
 
     const fromRaw = typeof req.query.from === "string" ? req.query.from : "";
     const toRaw = typeof req.query.to === "string" ? req.query.to : "";
-    const tutorId = typeof req.query.tutorId === "string" ? req.query.tutorId.trim() : "";
+    let tutorId = typeof req.query.tutorId === "string" ? req.query.tutorId.trim() : "";
+
+    // Tutor hanya boleh melihat honor miliknya sendiri, apa pun tutorId di query.
+    if (req.auth?.role === "TUTOR") {
+      const own = await prisma.tutorProfile.findUnique({
+        where: { userId: req.auth.userId },
+        select: { id: true },
+      });
+      if (!own) {
+        return res.status(403).json({ success: false, message: "Profil tutor tidak ditemukan" });
+      }
+      tutorId = own.id;
+    }
 
     const where: Prisma.AttendanceWhereInput = { status: { not: "RESCHEDULE" } };
     if (tutorId) where.teachedBy = tutorId;

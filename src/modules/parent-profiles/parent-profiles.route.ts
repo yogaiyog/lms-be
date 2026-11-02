@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../../lib/prisma";
+import { safeUserInclude } from "../../lib/safe-user";
 import { createCrudRouter } from "../../lib/crud-router";
 import { AppError } from "../../utils/app-error";
 import {
@@ -17,7 +18,7 @@ const crudRouter = createCrudRouter({
     isActive: req.query.showArchived === "true" ? undefined : true,
   }),
   include: {
-    user: true,
+    user: safeUserInclude,
     students: true,
   },
 });

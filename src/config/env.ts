@@ -40,6 +40,18 @@ const envSchema = z.object({
     .transform((v) => v === "true"),
   PUBLIC_BASE_URL: z.string().default("http://localhost:4000"),
   MIN_TUTOR_SLOTS: z.coerce.number().int().nonnegative().default(10),
+
+  // Jumlah reverse proxy di depan app (nginx = 1). Dipakai untuk req.ip (rate limit).
+  // Jangan `true`: itu mempercayai X-Forwarded-For dari klien → rate limit bisa di-bypass.
+  TRUST_PROXY: z.coerce.number().int().nonnegative().default(1),
+
+  // Wajibkan progress token pada POST student-topic-progress dari scratch-gui / editor Python.
+  // Set "true" setelah scratch-gui & juaraku versi baru ter-deploy.
+  PROGRESS_TOKEN_REQUIRED: z
+    .string()
+    .default("false")
+    .transform((v) => v === "true"),
+  PROGRESS_TOKEN_TTL_HOURS: z.coerce.number().int().positive().default(6),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

@@ -53,3 +53,10 @@ Thumbs.db
 
 # Hasil build (dibuat oleh `npm run build` / CI)
 dist/
+
+# Backup database lokal (bisa berisi data user & hash password)
+prisma/*.db.backup*
+
+# Sertifikat/QR hasil generate runtime (berisi nama siswa)
+generated/certificates/*
+!generated/certificates/.gitkeep

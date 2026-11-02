@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { safeUserInclude } from "../../lib/safe-user";
 import { createCrudRouter } from "../../lib/crud-router";
 import { requestClassCreateSchema, requestClassUpdateSchema } from "./request-class.schema";
 
@@ -15,11 +16,11 @@ export const requestClassRouter = createCrudRouter({
   },
   include: {
     student: {
-      include: { user: true },
+      include: { user: safeUserInclude },
     },
     parent: true,
     prevClass: true,
-    preferredTutor: { include: { user: true } },
+    preferredTutor: { include: { user: safeUserInclude } },
     approvedClass: true,
   },
 });

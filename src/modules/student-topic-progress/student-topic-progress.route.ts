@@ -1,6 +1,14 @@
-import { Router } from "express";
+import { Router, type Request } from "express";
+import jwt from "jsonwebtoken";
+import { z } from "zod";
+import { env } from "../../config/env";
 import { prisma } from "../../lib/prisma";
+import { canAccessStudent } from "../../lib/student-access";
+import { signProgressToken, verifyProgressToken } from "../../lib/progress-token";
 import { AppError } from "../../utils/app-error";
+import { requireRole } from "../auth/auth.middleware";
+import type { JwtAccessPayload } from "../auth/auth.types";
+import { Role } from "../../types/enums";
 import {
   studentTopicProgressUpsertSchema,
   studentTopicProgressUpdateSchema,
@@ -13,6 +21,69 @@ const include = {
   topicTask: { include: { topic: { select: { id: true, title: true } } } },
 };
 
+/**
+ * Siapa yang memanggil POST / ?
+ * POST / tidak melewati middleware `authenticate` global (lihat routes/index.ts) karena
+ * scratch-gui & editor Python memanggilnya tanpa access token. Maka cek di sini:
+ *  1. Bearer access token (dashboard LMS)  → user harus berhak atas studentId.
+ *  2. progressToken (body / X-Progress-Token) → studentId & task diambil dari token.
+ *  3. Tanpa keduanya → ditolak bila PROGRESS_TOKEN_REQUIRED, selain itu diizinkan (masa transisi).
+ */
+type ProgressCaller =
+  | { kind: "user"; auth: NonNullable<Request["auth"]> }
+  | { kind: "progress-token"; studentId: string; taskCode: string }
+  | { kind: "anonymous" };
+
+function resolveProgressCaller(req: Request): ProgressCaller {
+  const header = req.header("authorization");
+  if (header?.startsWith("Bearer ")) {
+    try {
+      const payload = jwt.verify(header.slice(7).trim(), env.JWT_ACCESS_SECRET) as JwtAccessPayload;
+      return { kind: "user", auth: { userId: payload.sub, email: payload.email, role: payload.role } };
+    } catch {
+      throw new AppError("Token akses tidak valid", 401, "UNAUTHORIZED");
+    }
+  }
+
+  const rawProgressToken =
+    req.header("x-progress-token") ??
+    (typeof req.body?.progressToken === "string" ? req.body.progressToken : undefined);
+  if (rawProgressToken) {
+    const decoded = verifyProgressToken(rawProgressToken);
+    if (!decoded) {
+      throw new AppError("Sesi belajar kedaluwarsa — buka ulang dari dashboard", 401, "PROGRESS_TOKEN_INVALID");
+    }
+    return { kind: "progress-token", studentId: decoded.sid, taskCode: decoded.task };
+  }
+
+  if (env.PROGRESS_TOKEN_REQUIRED) {
+    throw new AppError("Progress token tidak ditemukan", 401, "PROGRESS_TOKEN_REQUIRED");
+  }
+  return { kind: "anonymous" };
+}
+
+const launchTokenSchema = z.object({
+  studentId: z.string().min(1),
+  taskCode: z.string().min(1),
+});
+
+// POST /launch-token — dashboard minta token sebelum membuka scratch-gui / editor Python.
+studentTopicProgressRouter.post("/launch-token", async (req, res, next) => {
+  try {
+    const { studentId, taskCode } = launchTokenSchema.parse(req.body);
+    if (!(await canAccessStudent(req.auth, studentId))) {
+      throw new AppError("Tidak boleh mengakses siswa ini", 403, "FORBIDDEN");
+    }
+    const task = await prisma.topicTask.findFirst({ where: { code: taskCode }, select: { id: true } });
+    if (!task) {
+      throw new AppError(`TopicTask with code "${taskCode}" not found`, 404, "TOPIC_TASK_NOT_FOUND");
+    }
+    return res.json({ success: true, data: signProgressToken({ sid: studentId, task: taskCode }) });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /?studentId=X — list progress for a student, optionally filtered by topicId
 studentTopicProgressRouter.get("/", async (req, res, next) => {
   try {
@@ -21,6 +92,9 @@ studentTopicProgressRouter.get("/", async (req, res, next) => {
 
     if (!studentId) {
       throw new AppError("studentId query param is required", 400, "BAD_REQUEST");
+    }
+    if (!(await canAccessStudent(req.auth, studentId))) {
+      throw new AppError("Tidak boleh mengakses siswa ini", 403, "FORBIDDEN");
     }
 
     const items = await prisma.studentTopicProgress.findMany({
@@ -45,7 +119,9 @@ studentTopicProgressRouter.get("/:id", async (req, res, next) => {
       where: { id: req.params.id },
       include,
     });
-    if (!item) throw new AppError("Record not found", 404);
+    if (!item || !(await canAccessStudent(req.auth, item.studentId))) {
+      throw new AppError("Record not found", 404);
+    }
     return res.json({ success: true, data: item });
   } catch (error) {
     next(error);
@@ -55,7 +131,34 @@ studentTopicProgressRouter.get("/:id", async (req, res, next) => {
 // POST / — upsert progress by (studentId, topicTaskId|topicTaskCode)
 studentTopicProgressRouter.post("/", async (req, res, next) => {
   try {
+    const caller = resolveProgressCaller(req);
     const payload = studentTopicProgressUpsertSchema.parse(req.body);
+
+    if (caller.kind === "progress-token") {
+      // Token hanya berlaku untuk siswa & task yang tertulis di dalamnya.
+      if (payload.studentId !== caller.studentId) {
+        throw new AppError("Progress token bukan untuk siswa ini", 403, "FORBIDDEN");
+      }
+      if (payload.topicTaskCode && payload.topicTaskCode !== caller.taskCode) {
+        throw new AppError("Progress token bukan untuk task ini", 403, "FORBIDDEN");
+      }
+      if (!payload.topicTaskCode) payload.topicTaskCode = caller.taskCode;
+      if (payload.topicTaskId) {
+        const t = await prisma.topicTask.findUnique({ where: { id: payload.topicTaskId }, select: { code: true } });
+        if (t?.code !== caller.taskCode) {
+          throw new AppError("Progress token bukan untuk task ini", 403, "FORBIDDEN");
+        }
+      }
+    } else if (caller.kind === "user") {
+      if (!(await canAccessStudent(caller.auth, payload.studentId))) {
+        throw new AppError("Tidak boleh mengakses siswa ini", 403, "FORBIDDEN");
+      }
+    } else {
+      console.warn(
+        `[progress] POST tanpa token (studentId=${payload.studentId}, task=${payload.topicTaskCode ?? payload.topicTaskId}). ` +
+          "Set PROGRESS_TOKEN_REQUIRED=true setelah scratch-gui & editor Python versi baru ter-deploy.",
+      );
+    }
 
     let topicTaskId: string | undefined = payload.topicTaskId;
     if (!topicTaskId && payload.topicTaskCode) {
@@ -122,8 +225,8 @@ studentTopicProgressRouter.post("/", async (req, res, next) => {
   }
 });
 
-// PATCH /:id — update status/metadata only
-studentTopicProgressRouter.patch("/:id", async (req, res, next) => {
+// PATCH /:id — update status/metadata only (tidak dipakai dashboard; khusus admin/tutor)
+studentTopicProgressRouter.patch("/:id", requireRole(Role.ADMIN, Role.TUTOR), async (req, res, next) => {
   try {
     const payload = studentTopicProgressUpdateSchema.parse(req.body);
     const metadata =
@@ -133,7 +236,7 @@ studentTopicProgressRouter.patch("/:id", async (req, res, next) => {
           ? payload.metadata
           : JSON.stringify(payload.metadata);
     const item = await prisma.studentTopicProgress.update({
-      where: { id: req.params.id },
+      where: { id: String(req.params.id) },
       data: {
         ...(payload.status ? { status: payload.status } : {}),
         ...(metadata !== undefined ? { metadata } : {}),
@@ -148,10 +251,10 @@ studentTopicProgressRouter.patch("/:id", async (req, res, next) => {
 });
 
 // DELETE /:id
-studentTopicProgressRouter.delete("/:id", async (req, res, next) => {
+studentTopicProgressRouter.delete("/:id", requireRole(Role.ADMIN, Role.TUTOR), async (req, res, next) => {
   try {
     const item = await prisma.studentTopicProgress.delete({
-      where: { id: req.params.id },
+      where: { id: String(req.params.id) },
     });
     return res.json({ success: true, data: item });
   } catch (error) {

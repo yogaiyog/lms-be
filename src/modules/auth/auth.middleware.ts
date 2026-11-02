@@ -42,3 +42,17 @@ export function requireRole(...allowed: Role[]) {
     return next();
   };
 }
+
+const READ_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+
+/**
+ * Baca (GET) boleh semua user yang login; tulis (POST/PATCH/PUT/DELETE)
+ * hanya untuk role yang diizinkan.
+ */
+export function requireRoleForWrites(...allowed: Role[]) {
+  const guard = requireRole(...allowed);
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (READ_METHODS.has(req.method)) return next();
+    return guard(req, res, next);
+  };
+}

@@ -10,7 +10,7 @@ import { notFoundMiddleware } from "./middlewares/not-found.middleware";
 export function createApp() {
   const app = express();
 
-  app.set("trust proxy", true);
+  app.set("trust proxy", env.TRUST_PROXY);
   app.use(helmet({ contentSecurityPolicy: false }));
 
   const corsOrigins = env.CORS_ORIGIN === "*"

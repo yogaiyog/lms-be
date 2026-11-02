@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { safeUserInclude } from "../../lib/safe-user";
 import { createCrudRouter } from "../../lib/crud-router";
 import {
   tutorProfileCreateSchema,
@@ -10,7 +11,7 @@ export const tutorProfilesRouter = createCrudRouter({
   createSchema: tutorProfileCreateSchema,
   updateSchema: tutorProfileUpdateSchema,
   include: {
-    user: true,
+    user: safeUserInclude,
     classes: true,
     announcements: true,
   },

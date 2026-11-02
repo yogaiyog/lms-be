@@ -17,6 +17,26 @@ import { trialRegisterSchema } from "./trial.schema";
 import { authenticate, requireRole } from "./auth.middleware";
 import { prisma } from "../../lib/prisma";
 
+
+import { rateLimit } from "../../middlewares/rate-limit.middleware";
+
+const MIN = 60 * 1000;
+const bodyEmail = (req: { body?: { email?: unknown } }) =>
+  typeof req.body?.email === "string" ? req.body.email : undefined;
+
+// Satu kelas bisa login dari satu IP (NAT sekolah) → limit per-IP dibuat longgar,
+// limit per-IP+email dibuat ketat untuk mencegah brute force.
+const loginPerEmail = rateLimit({ name: "login-email", windowMs: 15 * MIN, max: 10, keyExtra: bodyEmail });
+const loginPerIp = rateLimit({ name: "login-ip", windowMs: 15 * MIN, max: 100 });
+const registerLimit = rateLimit({ name: "register", windowMs: 60 * MIN, max: 20 });
+const refreshLimit = rateLimit({ name: "refresh", windowMs: 15 * MIN, max: 300 });
+const checkEmailLimit = rateLimit({ name: "check-email", windowMs: 15 * MIN, max: 30 });
+const forgotPerEmail = rateLimit({ name: "forgot-email", windowMs: 15 * MIN, max: 3, keyExtra: bodyEmail });
+const forgotPerIp = rateLimit({ name: "forgot-ip", windowMs: 60 * MIN, max: 20 });
+const resetLimit = rateLimit({ name: "reset-password", windowMs: 15 * MIN, max: 10 });
+const verifyLimit = rateLimit({ name: "verify-email", windowMs: 15 * MIN, max: 20 });
+const resendPerEmail = rateLimit({ name: "resend-email", windowMs: 15 * MIN, max: 3, keyExtra: bodyEmail });
+
 export const authRouter = Router();
 
 function requestMeta(req: import("express").Request) {
@@ -29,7 +49,7 @@ function requestMeta(req: import("express").Request) {
   };
 }
 
-authRouter.post("/register", async (req, res, next) => {
+authRouter.post("/register", registerLimit, async (req, res, next) => {
   try {
     const payload = parentRegisterSchema.parse(req.body);
     const result = await authService.registerParent(payload, requestMeta(req));
@@ -99,7 +119,7 @@ authRouter.post(
   },
 );
 
-authRouter.post("/login", async (req, res, next) => {
+authRouter.post("/login", loginPerIp, loginPerEmail, async (req, res, next) => {
   try {
     const payload = loginSchema.parse(req.body);
     const result = await authService.login(payload, requestMeta(req));
@@ -109,7 +129,7 @@ authRouter.post("/login", async (req, res, next) => {
   }
 });
 
-authRouter.post("/refresh", async (req, res, next) => {
+authRouter.post("/refresh", refreshLimit, async (req, res, next) => {
   try {
     const payload = refreshSchema.parse(req.body);
     const result = await authService.refresh(payload, requestMeta(req));
@@ -164,7 +184,7 @@ authRouter.post(
   },
 );
 
-authRouter.get("/check-email", async (req, res, next) => {
+authRouter.get("/check-email", checkEmailLimit, async (req, res, next) => {
   try {
     const email = req.query.email as string | undefined;
     if (!email) {
@@ -190,7 +210,7 @@ authRouter.get("/me", authenticate, async (req, res, next) => {
   }
 });
 
-authRouter.post("/forgot-password", async (req, res, next) => {
+authRouter.post("/forgot-password", forgotPerIp, forgotPerEmail, async (req, res, next) => {
   try {
     const payload = forgotPasswordSchema.parse(req.body);
     const result = await authService.forgotPassword(payload);
@@ -200,7 +220,7 @@ authRouter.post("/forgot-password", async (req, res, next) => {
   }
 });
 
-authRouter.post("/reset-password", async (req, res, next) => {
+authRouter.post("/reset-password", resetLimit, async (req, res, next) => {
   try {
     const payload = resetPasswordSchema.parse(req.body);
     const result = await authService.resetPassword(payload);
@@ -210,7 +230,7 @@ authRouter.post("/reset-password", async (req, res, next) => {
   }
 });
 
-authRouter.post("/verify-email", async (req, res, next) => {
+authRouter.post("/verify-email", verifyLimit, async (req, res, next) => {
   try {
     const payload = verifyEmailSchema.parse(req.body);
     const result = await authService.verifyEmail(payload);
@@ -220,7 +240,7 @@ authRouter.post("/verify-email", async (req, res, next) => {
   }
 });
 
-authRouter.post("/resend-verification", async (req, res, next) => {
+authRouter.post("/resend-verification", resendPerEmail, async (req, res, next) => {
   try {
     const payload = forgotPasswordSchema.parse(req.body);
     const result = await authService.resendVerification(payload);

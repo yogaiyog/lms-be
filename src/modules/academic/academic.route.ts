@@ -1,4 +1,9 @@
 import { Router } from "express";
+import { requireRole, requireRoleForWrites } from "../auth/auth.middleware";
+import { Role } from "../../types/enums";
+
+const adminWrites = requireRoleForWrites(Role.ADMIN);
+const adminOnly = requireRole(Role.ADMIN);
 import { classesRouter } from "../classes/classes.route";
 import { enrollmentsRouter } from "../enrollments/enrollments.route";
 import { schedulesRouter } from "../schedules/schedules.route";
@@ -27,28 +32,29 @@ import { tutorCostsRouter } from "../tutor-costs/tutor-costs.route";
 
 export const academicRouter = Router();
 
-academicRouter.use("/classes", classesRouter);
+academicRouter.use("/classes", adminWrites, classesRouter);
 academicRouter.use("/enrollments", enrollmentsRouter);
 academicRouter.use("/schedules", schedulesRouter);
 academicRouter.use("/attendances", attendancesRouter);
 academicRouter.use("/announcements", announcementsRouter);
-academicRouter.use("/curriculums", curriculumsRouter);
-academicRouter.use("/topics", topicsRouter);
+academicRouter.use("/curriculums", adminWrites, curriculumsRouter);
+academicRouter.use("/topics", adminWrites, topicsRouter);
 academicRouter.use("/tutor-slots", tutorSlotsRouter);
-academicRouter.use("/assessment-sets", assessmentSetsRouter);
-academicRouter.use("/assessment-aspects", assessmentAspectsRouter);
+academicRouter.use("/assessment-sets", adminWrites, assessmentSetsRouter);
+academicRouter.use("/assessment-aspects", adminWrites, assessmentAspectsRouter);
 academicRouter.use("/attendance-assessments", attendanceAssessmentsRouter);
 academicRouter.use("/attendance-assessment-scores", attendanceAssessmentScoresRouter);
 academicRouter.use("/reports", reportsRouter);
 academicRouter.use("/saved-reports", savedReportsRouter);
 academicRouter.use("/certificates", certificatesRouter);
-academicRouter.use("/categories", categoriesRouter);
+academicRouter.use("/categories", adminWrites, categoriesRouter);
 academicRouter.use("/student-topic-progress", studentTopicProgressRouter);
 academicRouter.use("/roadmap", roadmapRouter);
+// Guard role ada di dalam quizRouter: siswa boleh POST /answer & /submit, tulis soal khusus ADMIN.
 academicRouter.use("/quiz", quizRouter);
-academicRouter.use("/topic-tasks", topicTaskRouter);
+academicRouter.use("/topic-tasks", adminWrites, topicTaskRouter);
 academicRouter.use("/invoices", invoicesRouter);
 academicRouter.use("/payments", paymentsRouter);
-academicRouter.use("/expenses", expensesRouter);
-academicRouter.use("/tutor-costs", tutorCostsRouter);
+academicRouter.use("/expenses", requireRole(Role.ADMIN, Role.TUTOR), expensesRouter);
+academicRouter.use("/tutor-costs", adminOnly, tutorCostsRouter);
 academicRouter.use("/events", eventsRouter);
